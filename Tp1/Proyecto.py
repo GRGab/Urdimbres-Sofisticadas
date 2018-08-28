@@ -58,6 +58,7 @@ nx.draw(g_y2h, node_size = 10)
 plt.sca(ax3)
 ax3.set_title('APMS')
 nx.draw(g_apms, node_size = 10)
+
 #%%
 #Cuantos nodos hay?
 print('El número de nodos de cada grafo es',
@@ -65,7 +66,7 @@ print('El número de nodos de cada grafo es',
 #Enlaces
 print('El número de enlaces para cada grafo es',
       g_lit.size(), g_y2h.size(), g_apms.size())
-
+#%%
 def k_medio(G):
     N = G.order()
     if isinstance(G, nx.DiGraph):
@@ -82,3 +83,44 @@ k_medio_apms = k_medio(g_apms)
 print(kin_medio_lit, kout_medio_lit,
       kin_medio_y2h, kout_medio_y2h,
       k_medio_apms)
+
+#Valor de k max y min
+def k_extremos(G):
+   k_min = min(k for (nodo, k) in G.degree)
+   k_max = max(k for (nodo, k) in G.degree)
+   return k_min, k_max
+k_min_apms, k_max_apms = k_extremos(g_apms)
+k_min_lit, k_max_lit = k_extremos(g_lit)
+k_min_y2h, k_max_y2h = k_extremos(g_y2h)
+print(k_min_apms, k_max_apms)
+print(k_min_y2h, k_max_y2h)
+print(k_min_lit, k_max_lit)
+
+#%%
+#Coeficientes de clustering <C_i> y C_Δ de la red.
+#C_Δ
+print (nx.transitivity(g_apms),nx.transitivity(g_y2h),nx.transitivity(g_lit))
+#<C_i> (No definido para apms y y2h. Mati: pensar porque es asi)
+print(nx.average_clustering(g_apms))
+
+#%%
+#Densidad de la red
+print('La desnidad de las redes son', nx.density(g_lit), nx.density(g_y2h)
+, nx.density(g_apms))
+#%%
+#Diámetro de la red 
+#(Mati: tira error-->'infinito path lenght porque el diagrama no esta
+# fuertemente conectado.' Hay que consultar.)
+
+print('El diámetro de las redes son', nx.diameter(g_lit,e=None)
+,nx.diameter(g_y2h,e=None), nx.diameter(g_apms,e=None))
+
+
+
+
+
+
+
+
+
+
