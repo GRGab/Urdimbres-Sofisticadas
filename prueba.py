@@ -16,7 +16,16 @@ h.add_edges_from([(1,2), (1,3), (1,4), (4,5), (5,1)])
 fig, (ax1, ax2) = plt.subplots(1, 2)
 plt.sca(ax1)
 plt.title("Una red")
-nx.draw(g)
+nx.draw(g, with_labels=True)
 plt.sca(ax2)
 plt.title("Otra red")
-nx.draw(h)
+nx.draw(h, with_labels=True)
+
+#%% Clustering
+
+clust_g = nx.clustering(g)
+print(clust_g)
+clust_h = nx.clustering(h)
+print(clust_h)
+
+

@@ -8,16 +8,15 @@ Created on Fri Aug 24 18:06:47 2018
 
 from lectura import ldata
 import networkx as nx
+import numpy as np
 from matplotlib import pyplot as plt
 
-apms = ldata('/home/matias/Documentos/Facultad/Redes/Urdimbres-Sofisticadas/'
-             +'Tp1/tc01_data/yeast_AP-MS.txt')
 
-lit = ldata('/home/matias/Documentos/Facultad/Redes/Urdimbres-Sofisticadas/'
-             +'Tp1/tc01_data/yeast_LIT.txt')
+apms = ldata('tc01_data/yeast_AP-MS.txt')
 
-y2h = ldata('/home/matias/Documentos/Facultad/Redes/Urdimbres-Sofisticadas/'
-             +'Tp1/tc01_data/yeast_Y2H.txt')
+lit = ldata('tc01_data/yeast_LIT.txt')
+
+y2h = ldata('tc01_data/yeast_Y2H.txt')
 
 #%%
 def es_dirigido(data):
@@ -46,6 +45,9 @@ g_y2h = nx.DiGraph()
 g_y2h.add_edges_from(y2h)
 #nx.draw(g_y2h, node_size = 35)
 #%%
+print(es_dirigido(apms) / g_apms.size(), es_dirigido(lit) / g_lit.size(),
+      es_dirigido(y2h) / g_y2h.size())
+#%%
 f, (ax1, ax2, ax3) = plt.subplots(1, 3)
 plt.sca(ax1)
 ax1.set_title('Lit')
@@ -72,17 +74,21 @@ def k_medio(G):
     if isinstance(G, nx.DiGraph):
         kin_med = sum(k for (nodo, k) in G.in_degree) / N
         kout_med = sum(k for (nodo, k) in G.out_degree) / N
-        return kin_med, kout_med
     else:
-        k_med = sum(k for (nodo, k) in G.degree) / N
-        return k_med
+        kin_med, kout_med = 0, 0
+    k_med = sum(k for (nodo, k) in G.degree) / N
+    return kin_med, kout_med, k_med
         
-kin_medio_lit, kout_medio_lit = k_medio(g_lit)
-kin_medio_y2h, kout_medio_y2h = k_medio(g_y2h)
-k_medio_apms = k_medio(g_apms)
-print(kin_medio_lit, kout_medio_lit,
-      kin_medio_y2h, kout_medio_y2h,
-      k_medio_apms)
+kin_medio_lit, kout_medio_lit, k_medio_lit = k_medio(g_lit)
+kin_medio_y2h, kout_medio_y2h, k_medio_y2h = k_medio(g_y2h)
+_, _, k_medio_apms = k_medio(g_apms)
+
+print('Grados medios')
+print(kin_medio_lit, kout_medio_lit, k_medio_lit)
+print(kin_medio_y2h, kout_medio_y2h, k_medio_y2h)
+print(k_medio_apms)
+
+# kin y kout medios dan lo mismo. Parece no trivial pero es trivial ! :D ;)
 
 #Valor de k max y min
 def k_extremos(G):
@@ -92,35 +98,45 @@ def k_extremos(G):
 k_min_apms, k_max_apms = k_extremos(g_apms)
 k_min_lit, k_max_lit = k_extremos(g_lit)
 k_min_y2h, k_max_y2h = k_extremos(g_y2h)
+print('Grados extremos')
 print(k_min_apms, k_max_apms)
 print(k_min_y2h, k_max_y2h)
 print(k_min_lit, k_max_lit)
 
+
 #%%
 #Coeficientes de clustering <C_i> y C_Δ de la red.
-#C_Δ
-print (nx.transitivity(g_apms),nx.transitivity(g_y2h),nx.transitivity(g_lit))
+print('C_Δ')
+print (nx.transitivity(g_apms), nx.transitivity(g_y2h),
+       nx.transitivity(g_lit))
+# Ignora diferencia entre in y out
 #<C_i> (No definido para apms y y2h. Mati: pensar porque es asi)
-print(nx.average_clustering(g_apms))
+print('<C_i>')
+def clustering(nodo):
+    # Esto sería para grafos dirigidos
+    pass
+def clustering_medio(G):
+    # Esto sería para grafos dirigidos
+    return np.average(list(dict(nx.clustering(G)).values()))
+
+print(clustering_medio(g_apms))
+print(clustering_medio(g_lit))
 
 #%%
 #Densidad de la red
-print('La desnidad de las redes son', nx.density(g_lit), nx.density(g_y2h)
-, nx.density(g_apms))
+print('La densidad de las redes es', nx.density(g_lit), nx.density(g_y2h),
+      nx.density(g_apms))
 #%%
 #Diámetro de la red 
 #(Mati: tira error-->'infinito path lenght porque el diagrama no esta
 # fuertemente conectado.' Hay que consultar.)
 
-print('El diámetro de las redes son', nx.diameter(g_lit,e=None)
-,nx.diameter(g_y2h,e=None), nx.diameter(g_apms,e=None))
+print('El diámetro de las redes es', nx.diameter(g_lit,e=None),
+nx.diameter(g_y2h,e=None), nx.diameter(g_apms,e=None))
 
-
-
-
-
-
-
-
-
-
+#%%
+# Pregunta extra sobre APMS
+# Pareciera estar hecho con el método de conectar
+# todas las proteínas con todas porque tiene densidad y coefs de clustering
+# mayores que los otros dos datasets, los cuales a su vez tienen valores
+# relativamente similares para estas magnitudes
