@@ -35,14 +35,17 @@ print(es_dirigido(apms), es_dirigido(lit),
 
 g_apms = nx.Graph()
 g_apms.add_edges_from(apms)
+#plt.figure()
 #nx.draw(g_apms, node_size = 50)
 #
 g_lit = nx.DiGraph()
 g_lit.add_edges_from(lit)
+#plt.figure()
 #nx.draw(g_lit, node_size = 50)
 #
 g_y2h = nx.DiGraph()
 g_y2h.add_edges_from(y2h)
+#plt.figure()
 #nx.draw(g_y2h, node_size = 35)
 #%%
 print(es_dirigido(apms) / g_apms.size(), es_dirigido(lit) / g_lit.size(),
@@ -128,8 +131,6 @@ print('La densidad de las redes es', nx.density(g_lit), nx.density(g_y2h),
       nx.density(g_apms))
 #%%
 #Diámetro de la red 
-#(Mati: tira error-->'infinito path lenght porque el diagrama no esta
-# fuertemente conectado.' Hay que consultar.)
 
 print('El diámetro de las redes es', nx.diameter(g_lit,e=None),
 nx.diameter(g_y2h,e=None), nx.diameter(g_apms,e=None))
