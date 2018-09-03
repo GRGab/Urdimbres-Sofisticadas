@@ -3,9 +3,6 @@
 Created on Sun Sep  2 19:05:25 2018
 
 @author: Gabo
-
-Modificado a partir de código de James A. Foster en
-https://stackoverflow.com/questions/35472402/how-do-display-bipartite-graphs-with-python-networkx-package
 """
 
 import networkx as nx
@@ -21,6 +18,9 @@ def position_multipartito(g, clases, nombre_clase):
   Ejemplo con datos de los delfines:
       clases == ['f', 'm', 'NA']
       nombre_clase == 'gender'
+      
+  Modificado a partir de código de James A. Foster en
+  https://stackoverflow.com/questions/35472402/how-do-display-bipartite-graphs-with-python-networkx-package
   """
   xPos = {}
   yPos = {}
@@ -128,4 +128,5 @@ def position_multipartito_kk(g, clases, nombre_clase, dhorizontal=1):
       posx_old = pos[node][0]
       posy_old = pos[node][1]
       pos[node] = np.array([posx_old + adicion, posy_old])
+      
   return pos

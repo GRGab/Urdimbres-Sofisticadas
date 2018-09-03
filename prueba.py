@@ -7,6 +7,8 @@ Created on Fri Aug 24 18:33:13 2018
 
 import networkx as nx
 import matplotlib.pyplot as plt
+from dolphins_funciones import (contar_enlaces_internos,
+                                contar_enlaces_entre_grupos)
 
 g = nx.Graph()
 g.add_edges_from([(1,2), (1,3), (1,4), (3,4)])
@@ -29,3 +31,10 @@ clust_h = nx.clustering(h)
 print(clust_h)
 
 
+#%% Contar enlaces internos
+
+for nodo, dictattr in dict(h.nodes()).items():
+    dictattr['aroma'] = 'rico' if nodo in [1,4,5] else 'feo'
+
+#print(contar_enlaces_internos(h, 'aroma', 'rico'))
+print(contar_enlaces_entre_grupos(h, 'aroma'))
