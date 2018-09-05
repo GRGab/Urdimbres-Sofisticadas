@@ -10,11 +10,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from networkx.readwrite.gml import read_gml
 from graficar_multipartito import position_multipartito, position_multipartito_spring
-from lectura import ldata
+
 from random import sample
 from dolphins_funciones import (genero_a_color, particionar_por_genero,
                                 crear_leyenda, contar_enlaces_internos,
                                 contar_enlaces_entre_grupos)
+
+from lectura import ldata
+import sys
+sys.path.append('./Tp1/')
 from histograma import histograma
 
 

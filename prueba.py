@@ -7,6 +7,8 @@ Created on Fri Aug 24 18:33:13 2018
 
 import networkx as nx
 import matplotlib.pyplot as plt
+import sys
+sys.path.append('./Tp1/')
 from dolphins_funciones import (contar_enlaces_internos,
                                 contar_enlaces_entre_grupos)
 

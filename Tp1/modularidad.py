@@ -15,4 +15,8 @@ def modularidad(g, atributo):
                 B += A[i, j] - k[i]*k[j]/(2*m)
     return float(B)/(2*m)
 
-print modularidad(dolph, 'gender')
+if __name__ == '__main__':
+    g = nx.complete_graph(5)
+    for node, attrDict in dict(g.nodes()).items():
+        attrDict['gender'] = 'a' if (node % 3 == 0) else 'b'
+    print(modularidad(g, 'gender'))
