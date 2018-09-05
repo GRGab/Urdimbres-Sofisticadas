@@ -36,7 +36,15 @@ def crear_leyenda(ax):
     ax.legend()
     
 ################## Para cuantificar homofilia
-    
+
+def contar_clases(g, atributo, valores_posibles):
+    ns = []
+    for valor in valores_posibles:
+        n = len([n for n, attrdict in dict(g.nodes).items() if attrdict[atributo]==valor])
+        ns.append(n)
+        print('Hay {} nodos con {}={}'.format(n, atributo, valor))
+    return ns
+
 def contar_enlaces_internos(g, atributo, valor):
     """Cuenta los enlaces internos en el grupo de nodos que tienen
     atributo=valor. g debe ser objeto Graph de NetworkX.

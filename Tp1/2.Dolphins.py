@@ -9,12 +9,14 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 from networkx.readwrite.gml import read_gml
-from graficar_multipartito import position_multipartito, position_multipartito_spring
+from graficar_multipartito import *
+from modularidad import modularidad
 
 from random import sample
 from dolphins_funciones import (genero_a_color, particionar_por_genero,
                                 crear_leyenda, contar_enlaces_internos,
-                                contar_enlaces_entre_grupos)
+                                contar_enlaces_entre_grupos,
+                                contar_clases)
 
 from lectura import ldata
 import sys
@@ -127,11 +129,14 @@ crear_leyenda(ax)
 delfines_con_info = [d for d in dolph.nodes() if d not in particiones[1]]
 dolph2 = nx.subgraph(dolph, delfines_con_info).copy()
 # De ahora en adelante trabajamos con dolph2 en vez de dolph
+
+contar_clases(dolph2, 'gender', ['f','m'])
 # Hay 24 delfines hembra y 34 delfines macho.
 
-
+#%%
 n_simulaciones = int(1e4)
 enlaces_entre_grupos = np.zeros((n_simulaciones))
+modularidades = np.zeros((n_simulaciones))
 grafo_h0 = dolph2.copy()
 # Vamos a ir modificando este grafo "in place" (no lo clonamos n veces)
 
@@ -146,7 +151,7 @@ for i in range(n_simulaciones):
         else:
             grafo_h0.nodes()[nombre]['gender'] = 'm'
     enlaces_entre_grupos[i] = contar_enlaces_entre_grupos(grafo_h0, 'gender')
-    
+    modularidades[i] = modularidad(grafo_h0, 'gender')
     # Generar visualización para cada grafo (solo descomentar si
     # n_simulaciones es menor a 10!!!!))
     # fig, ax = plt.subplots()
@@ -159,10 +164,17 @@ for i in range(n_simulaciones):
     # crear_leyenda(ax)
 #%%
 # Visualizar distribución de enlaces entre grupos bajo hipótesis nula
+valor_real = contar_enlaces_entre_grupos(dolph2, 'gender')
 fig, ax = histograma(enlaces_entre_grupos, bins=15, density=True,
                      titulo_hist=r'Distribución de enlaces entre delfines de géneros distintos bajo $H_0$',
                      magnitud_x='# de enlaces')
-valor_real = contar_enlaces_entre_grupos(dolph2, 'gender')
 ax.axvline(valor_real, color='deeppink',
            label='Valor real = {}'.format(valor_real))
 ax.legend()
+# Visualizar distribución de modularidades
+modularidad_real = modularidad(dolph2, 'gender')
+fig, ax = histograma(modularidades, bins=15, density=True,
+                     titulo_hist=r'Distribución de modularidad bajo $H_0$',
+                     magnitud_x='Modularidad')
+ax.axvline(modularidad_real, color='deeppink',
+           label='Valor real = {}'.format(valor_real))
