@@ -17,8 +17,9 @@ def ClosestToOne(v):
         compliance.append(abs(v[j] - 1))
     return compliance.index(np.min(compliance))
 
-def inf_delete(k, k_nn):
+def nan_delete(k_nn):
     '''Remueve los inf y los nan de la lista manteniendo su k especifico'''
+    k = np.arange(0, len(k_nn), 1)
     k_nn_temp = []
     k_temp = []    
     for i in range(len(k_nn)):
@@ -27,44 +28,45 @@ def inf_delete(k, k_nn):
             k_temp.append(k[i])
     return k_temp, k_nn_temp
 
-
-net_science = read_gml('/home/tomas/Desktop/Redes complejas/Urdimbres-Sofisticadas/Tp1/tc01_data/netscience.gml')
-july = read_gml('/home/tomas/Desktop/Redes complejas/Urdimbres-Sofisticadas/Tp1/tc01_data/as-22july06.gml')
-
- 
-lista_1 = nx.average_neighbor_degree(july)
-lista_2 = nx.average_neighbor_degree(net_science)
-
-vecinos_degree_1 = list(lista_1.values())
-nodes_1 = list(lista_1.keys())
-    
-vecinos_degree_2 = list(lista_2.values())
-nodes_2 = list(lista_2.keys())
-    
-
-av_ne_degree_1, bines_1 = np.histogram(vecinos_degree_1, bins = np.arange(0, len(vecinos_degree_1), 1))
-av_ne_degree_2, bines_2 = np.histogram(vecinos_degree_2, bins = np.arange(0, len(vecinos_degree_2), 1))
-
-
 def annd(red):
     ''' annd (average neighbouhr degree distribution) devuelve el and en orden
     de los grados del nodo'''
     nombres = list(red.nodes)
     avnedeg = nx.average_neighbor_degree(red)
     grados = nx.degree(red)
-#    a = {}
-#    for nombre in nombres:
-#        key = grados[nombre]
-#        if key not in a.keys():
-#            a[keys] = []
-#        a[keys].append(avnedeg[nombre])
     a = []
-    for grado in range (max(dict(nx.degree(red)).values())):
-        for nodos in 
+    for i in range(max(dict(nx.degree(red)).values())):
         b = []
-        b.append(avnedeg[grado])
-        a.append(avnedeg[grado])
-        
+        for j in range(len(nombres)):
+            if i == grados[nombres[j]]:
+                b.append(avnedeg[nombres[j]])
+        a.append(np.mean(b))
+    k, k_nn = nan_delete(a)
+    return k, k_nn
+
+
+net_science = read_gml('/home/tomas/Desktop/Redes complejas/Urdimbres-Sofisticadas/Tp1/tc01_data/netscience.gml')
+july = read_gml('/home/tomas/Desktop/Redes complejas/Urdimbres-Sofisticadas/Tp1/tc01_data/as-22july06.gml')
+
+ 
+degree, annd = annd(july)
+
+
+#lista_1 = nx.average_neighbor_degree(july)
+#lista_2 = nx.average_neighbor_degree(net_science)
+#
+#vecinos_degree_1 = list(lista_1.values())
+#nodes_1 = list(lista_1.keys())
+#    
+#vecinos_degree_2 = list(lista_2.values())
+#nodes_2 = list(lista_2.keys())
+#    
+#
+#av_ne_degree_1, bines_1 = np.histogram(vecinos_degree_1, bins = np.arange(0, len(vecinos_degree_1), 1))
+#av_ne_degree_2, bines_2 = np.histogram(vecinos_degree_2, bins = np.arange(0, len(vecinos_degree_2), 1))
+
+
+
         
 #En este plot se puede ver que no aparece una recta, por lo que no hay que ajustar aca.
 plt.figure(1)
@@ -74,7 +76,7 @@ plt.plot(av_ne_degree_2, '.')
 
 #En este plot se puede ver que no aparece una recta, por lo que no hay que ajustar aca.
 plt.figure(3)
-plt.plot(av_ne_degree_1, '.')
+plt.plot(k, k_nn, '.')
 plt.yscale('log')
 plt.xscale('log')
 plt.figure(4)
@@ -84,11 +86,11 @@ plt.xscale('log')
 
 
 #En este plot se puede ver la cumulativa de los Knn en escala logaritmica.
-coefs_reversed = np.flip(av_ne_degree_1, 0)
+coefs_reversed = np.flip(k_nn, 0)
 cumulative = np.cumsum(coefs_reversed)
 cumulative = np.flip(cumulative, 0)
 plt.figure(5)
-plt.plot(cumulative, '.')
+plt.plot(k, cumulative, '.')
 plt.yscale('log')
 plt.xscale('log')
 
@@ -97,8 +99,6 @@ plt.xscale('log')
 #%%
 #Metodo iterativo para calcular la mejor recta con el metodo del chi2
 
-coefs = av_ne_degree_2
-
 #k = np.delete(coefs, 0)
 #k_nn = np.log(coefs)
 #k = np.log(np.arange(1, len(coefs)+1, 1))
@@ -106,11 +106,8 @@ coefs = av_ne_degree_2
 #k_nn = np.log(coefs[np.where(coefs)[0]])
 #k = np.log(np.arange(1, len(k_nn)+1))
 
-k = np.arange(0, len(coefs), 1)
-k_nn = [np.log(i) for i in coefs]
-k = [np.log(i) for i in k]
-
-k, k_nn = inf_delete(k, k_nn)
+k_nn = [np.log(i) for i in annd]
+k = [np.log(i) for i in degree]
 
 chi2_list = []
 m_list = []
@@ -126,7 +123,8 @@ for j in range(0, len(k)-3):
     m_list.append(out.beta[0])
     b_list.append(out.beta[1])
 
-index = ClosestToOne(chi2_list)
+#index = ClosestToOne(chi2_list)
+index = chi2_list.index(min(chi2_list))
 m = m_list[index]
 b = b_list[index]
 chi2 = chi2_list[index]
@@ -136,6 +134,9 @@ plt.plot(k, [i*m+b for i in k])
 
 #%%
 #Metodo iterativo para calcular la mejor recta con el metodo de kolmogorov smirnov
+
+k_nn = [np.log(i) for i in annd]
+k = [np.log(i) for i in degree]
 
 KS_list = []
 pvalue_list = []
