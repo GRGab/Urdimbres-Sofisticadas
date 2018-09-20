@@ -12,12 +12,13 @@ import matplotlib.pyplot as plt
 #['bmh', 'classic', 'dark_background', 'fast', 'fivethirtyeight', 'ggplot',
 # 'grayscale', 'seaborn-bright', 'seaborn-colorblind', 'seaborn-dark-palette',
 # 'seaborn-dark', 'seaborn-darkgrid', 'seaborn-deep', 'seaborn-muted',
-# 'seaborn-notebook', 'seaborn-paper', 'seaborn-pastel', 'seaborn-poster',
+# 'seaborn-notebook', 'sea5born-paper', 'seaborn-pastel', 'seaborn-poster',
 # 'seaborn-talk', 'seaborn-ticks', 'seaborn-white', 'seaborn-whitegrid',
 # 'seaborn', 'Solarize_Light2', '_classic_test']
 
 def histograma(valores_a_binear, bins='auto', titulo=None, magnitud_x=None,
-               density=False, logbins=False, logx=False, logy=False, ax=None):
+               density=False, logbins=False, logx=False, logy=False, ax=None,
+               ecolor=None):
     """Si logbins=True, el parámetro bins debe ser una tupla que contenga
     los dos extremos del intervalo que se desea binear, y el número de bines
     logarítmicos que se desea usar, en ese orden."""
@@ -27,14 +28,20 @@ def histograma(valores_a_binear, bins='auto', titulo=None, magnitud_x=None,
             fig, ax = plt.subplots()
     else:
         fig = ax.get_figure()
-    
-    if logbins:
-        assert isinstance(bins, tuple), 'bins debe ser una tupla de 3 elementos'
-        logstart = np.log10(bins[0])
-        logstop = np.log10(bins[1])
-        nbins = bins[2]
-        bins = np.logspace(logstart, logstop, num=nbins)
-        bins = np.concatenate(([0], bins))
+        
+    if logx:
+        ax.set_xscale('log')
+    if logy:
+        ax.set_yscale('log')
+
+    if isinstance(bins, tuple):
+        if logbins:
+            start, stop, nbins = bins
+            bins = np.geomspace(start, stop, num=nbins)
+#            ax.plot(bins,[0]*len(bins), '+k') # testing
+        else:
+            start, stop, nbins = bins
+            bins = np.linspace(start, stop, num=nbins)
         
     conteos, bordes_bines = np.histogram(valores_a_binear, bins=bins)
     w = np.diff(bordes_bines) # Anchos de los bines
@@ -49,14 +56,7 @@ def histograma(valores_a_binear, bins='auto', titulo=None, magnitud_x=None,
     
     # Graficar
     ax.bar(bordes_bines[:-1], conteos, width=w, yerr=errores, align='edge',
-           color='dodgerblue', capsize=0)
-    
-#    centros_bines = 0.5 * (bordes_bines[:-1] + bordes_bines[1:])
-#    plt.errorbar(centros_bines, conteos,
-#                 yerr=errores,
-#                 fmt='none',
-#                 capsize=0,
-#                 ecolor='k')
+           color='dodgerblue', capsize=0, edgecolor=ecolor)
     
     if titulo != None:
         ax.set_title(titulo, fontsize=16)
@@ -70,8 +70,8 @@ def histograma(valores_a_binear, bins='auto', titulo=None, magnitud_x=None,
     ax.annotate(anotacion,
                 (.8, .8), xycoords='axes fraction',
                 backgroundcolor='w', fontsize=14)
-    fig.tight_layout()
     
+    fig.tight_layout()
     plt.show()
     return fig, ax
 
@@ -131,7 +131,13 @@ def hist_discreto(xs, imin=None, imax=None, titulo=None,
     
 if __name__ == '__main__':
     from scipy.stats import expon
-    xs = expon(0.5).rvs(1000)
-#    fig, ax = histograma(xs, titulo='El título', magnitud_x='El eje x')
-#    histograma(xs, density=True)
-    histograma(xs, logbins=True, bins=(1,10,20))
+    xs = expon(scale = (1 / 0.5)).rvs(int(1e5)) # lambda = 0.5
+    histograma(xs, density=True, ecolor='k', bins=(0.01,40,100))
+    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
+               ecolor='k')
+    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
+               logx=True, ecolor='k')
+    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
+               logy=True, ecolor='k')
+    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
+               logx=True, logy=True, ecolor='k')
