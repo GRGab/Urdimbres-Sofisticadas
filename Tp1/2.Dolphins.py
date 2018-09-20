@@ -134,7 +134,7 @@ contar_clases(dolph2, 'gender', ['f','m'])
 # Hay 24 delfines hembra y 34 delfines macho.
 
 #%%
-n_simulaciones = int(1e4)
+n_simulaciones = int(4)
 enlaces_entre_grupos = np.zeros((n_simulaciones))
 modularidades = np.zeros((n_simulaciones))
 grafo_h0 = dolph2.copy()
@@ -154,19 +154,19 @@ for i in range(n_simulaciones):
     modularidades[i] = modularidad(grafo_h0, 'gender')
     # Generar visualización para cada grafo (solo descomentar si
     # n_simulaciones es menor a 10!!!!))
-    # fig, ax = plt.subplots()
-    # colores = [genero_a_color(g) for g in nx.get_node_attributes(grafo_h0, "gender").values()]    
-    # multi_spring_pos = position_multipartito_spring(grafo_h0, ['f', 'm'],
-    #                                                 'gender', dhorizontal=1.5)
-    # nx.draw(grafo_h0, ax = ax, node_size = ns, node_color=colores,
-    #         pos=multi_spring_pos)
-    # ax.set_title('Género aleatorizado, delfines sin información ignorados')
-    # crear_leyenda(ax)
+#    fig, ax = plt.subplots()
+#    colores = [genero_a_color(g) for g in nx.get_node_attributes(grafo_h0, "gender").values()]    
+#    multi_spring_pos = position_multipartito_spring(grafo_h0, ['f', 'm'],
+#                                                    'gender', dhorizontal=1.5)
+#    nx.draw(grafo_h0, ax = ax, node_size = ns, node_color=colores,
+#            pos=multi_spring_pos)
+#    ax.set_title('Género aleatorizado, delfines sin información ignorados')
+#    crear_leyenda(ax)
 #%%
 # Visualizar distribución de enlaces entre grupos bajo hipótesis nula
 valor_real = contar_enlaces_entre_grupos(dolph2, 'gender')
 fig, ax = histograma(enlaces_entre_grupos, bins=15, density=True,
-                     titulo_hist=r'Distribución de enlaces entre delfines de géneros distintos bajo $H_0$',
+                     titulo=r'Distribución de enlaces entre delfines de géneros distintos bajo $H_0$',
                      magnitud_x='# de enlaces')
 ax.axvline(valor_real, color='deeppink',
            label='Valor real = {}'.format(valor_real))
@@ -174,7 +174,17 @@ ax.legend()
 # Visualizar distribución de modularidades
 modularidad_real = modularidad(dolph2, 'gender')
 fig, ax = histograma(modularidades, bins=15, density=True,
-                     titulo_hist=r'Distribución de modularidad bajo $H_0$',
+                     titulo=r'Distribución de modularidad bajo $H_0$',
                      magnitud_x='Modularidad')
 ax.axvline(modularidad_real, color='deeppink',
            label='Valor real = {}'.format(valor_real))
+#%%
+#Calculamos el p-value
+def p_value(datos, bin1=0, bin2=10):
+    a = plt.hist(datos)[0]
+    b = plt.hist(datos)[1]
+    integral = sum(np.diff(a[bin1:bin2])*b[bin1:bin2-1])
+    return integral
+    
+     
+

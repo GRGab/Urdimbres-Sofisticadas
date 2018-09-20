@@ -28,11 +28,8 @@ def es_dirigido(data):
             if a == y and b == x:
                 n += 1
     return n/2
-print(es_dirigido(apms), es_dirigido(lit),
-      es_dirigido(y2h))
-# Vemos que y2h y lit son dirigidos, mientras que apms no.
-#%%
 
+#%%Iportamos y graficamos por separado cada red
 g_apms = nx.Graph()
 g_apms.add_edges_from(apms)
 #plt.figure()
@@ -47,10 +44,7 @@ g_y2h = nx.DiGraph()
 g_y2h.add_edges_from(y2h)
 #plt.figure()
 #nx.draw(g_y2h, node_size = 35)
-#%%
-print(es_dirigido(apms) / g_apms.size(), es_dirigido(lit) / g_lit.size(),
-      es_dirigido(y2h) / g_y2h.size())
-#%%
+#%% Graficamos en subplots
 f, (ax1, ax2, ax3) = plt.subplots(1, 3)
 plt.sca(ax1)
 ax1.set_title('Lit')
@@ -63,6 +57,13 @@ nx.draw(g_y2h, node_size = 10)
 plt.sca(ax3)
 ax3.set_title('APMS')
 nx.draw(g_apms, node_size = 10)
+#%% Son dirigidas?
+print(es_dirigido(apms), es_dirigido(lit),
+      es_dirigido(y2h))
+# Vemos que y2h y lit son dirigidos, mientras que apms no.
+#%%
+print(es_dirigido(apms) / g_apms.size(), es_dirigido(lit) / g_lit.size(),
+      es_dirigido(y2h) / g_y2h.size())
 
 #%%
 #Cuantos nodos hay?
@@ -106,7 +107,10 @@ print(k_min_apms, k_max_apms)
 print(k_min_y2h, k_max_y2h)
 print(k_min_lit, k_max_lit)
 
-
+#%%
+#Densidad de la red
+print('La densidad de las redes es', nx.density(g_lit), nx.density(g_y2h),
+      nx.density(g_apms))
 #%%
 #Coeficientes de clustering <C_i> y C_Δ de la red.
 print('C_Δ')
@@ -125,10 +129,6 @@ def clustering_medio(G):
 print(clustering_medio(g_apms))
 print(clustering_medio(g_lit))
 
-#%%
-#Densidad de la red
-print('La densidad de las redes es', nx.density(g_lit), nx.density(g_y2h),
-      nx.density(g_apms))
 #%%
 #Diámetro de la red 
 
