@@ -12,7 +12,7 @@ import numpy as np
 from networkx.readwrite.gml import read_gml
 from lectura import ldata
 
-internet = read_gml('/home/tomas/Desktop/Redes complejas/Urdimbres-Sofisticadas/Tp1/tc01_data/as-22july06.gml')
+internet = read_gml('/tc01_data/as-22july06.gml')
 nodes = []
 degree = []
 for a, b in internet.degree():
