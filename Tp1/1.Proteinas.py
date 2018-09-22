@@ -12,16 +12,23 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-apms = ldata('tc01_data/yeast_AP-MS.txt')
+apms = ldata('Tp1/tc01_data/yeast_AP-MS.txt')
 
-lit = ldata('tc01_data/yeast_LIT.txt')
+lit = ldata('Tp1/tc01_data/yeast_LIT.txt')
 
-y2h = ldata('tc01_data/yeast_Y2H.txt')
+y2h = ldata('Tp1/tc01_data/yeast_Y2H.txt')
 
 #%%
 def es_dirigido(data):
     """data debe ser una lista de enlaces (tuplas). Si el resultado es 0,
-    entonces es no dirigido; si es distinto de cero, es dirigido."""
+    entonces es no dirigido; si es distinto de cero, es dirigido.
+    
+    Esta función implementa una manera de inferir si un grafo es dirigido o no
+    a partir de cómo se presentan sus enlaces en una lista; sin embargo este
+    criterio no es infalible. De hecho, nos fue revelado que las 3 redes
+    consideradas en este ejercicio son efectivamente no dirigidas, lo cual
+    tiene sentido pues se trata de interacciones entre proteínas en las cuales
+    no es evidente qué significado podría tener la direccionalidad."""
     n = 0
     for (x, y) in data:
         for (a, b) in data:
@@ -32,18 +39,18 @@ def es_dirigido(data):
 #%%Iportamos y graficamos por separado cada red
 g_apms = nx.Graph()
 g_apms.add_edges_from(apms)
-#plt.figure()
-#nx.draw(g_apms, node_size = 50)
+plt.figure()
+nx.draw(g_apms, node_size = 50)
 #
 g_lit = nx.DiGraph()
 g_lit.add_edges_from(lit)
-#plt.figure()
-#nx.draw(g_lit, node_size = 50)
+plt.figure()
+nx.draw(g_lit, node_size = 50)
 #
 g_y2h = nx.DiGraph()
 g_y2h.add_edges_from(y2h)
-#plt.figure()
-#nx.draw(g_y2h, node_size = 35)
+plt.figure()
+nx.draw(g_y2h, node_size = 35)
 #%% Graficamos en subplots
 f, (ax1, ax2, ax3) = plt.subplots(1, 3)
 plt.sca(ax1)
@@ -141,3 +148,13 @@ nx.diameter(g_y2h,e=None), nx.diameter(g_apms,e=None))
 # todas las proteínas con todas porque tiene densidad y coefs de clustering
 # mayores que los otros dos datasets, los cuales a su vez tienen valores
 # relativamente similares para estas magnitudes
+
+# Por otro lado, se observa mirando a ojo las componentes más pequeñas de la
+# red que no parecen ser cliques, sino que tienen nodos especiales que funcionan
+# de hubs, además de tener subgrafos que sí parecen ser cliques.
+# Incluso en la componente gigante, parece muy preponderante esta estructura
+# "arbórea" en la que muchos nodos "salen" de un único nodo, y después se
+# conectan más o menos densamente entre sí.
+
+# Estas observaciones parecerían refutar que la red esté hecha con el método de conectar
+# todas con todas.

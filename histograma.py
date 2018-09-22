@@ -16,9 +16,12 @@ import matplotlib.pyplot as plt
 # 'seaborn-talk', 'seaborn-ticks', 'seaborn-white', 'seaborn-whitegrid',
 # 'seaborn', 'Solarize_Light2', '_classic_test']
 
-def histograma(valores_a_binear, bins='auto', titulo=None, magnitud_x=None,
-               density=False, logbins=False, logx=False, logy=False, ax=None,
-               ecolor=None):
+def histograma(valores_a_binear, bins='auto', errbars=True, density=True,
+               logbins=False, logx=False, logy=False,
+               ax=None,
+               titulo=None, xlabel=None, ylabel=True,
+               labelsize=18, ticksize=16,
+               ecolor=None, anotacion=False):
     """Función maestra (?) para realizar los histogramas más bellos que usted
     haya soñado jamás.
     
@@ -35,7 +38,7 @@ def histograma(valores_a_binear, bins='auto', titulo=None, magnitud_x=None,
         (en ese orden).
     titulo : string
         Título a ponerle al histograma.
-    magnitud_x : string
+    xlabel : string
         Rótulo del eje x del histograma
     density : Bool
         Si True, grafica el histograma normalizado (funciona bien incluso si
@@ -54,6 +57,10 @@ def histograma(valores_a_binear, bins='auto', titulo=None, magnitud_x=None,
     ecolor : string
         Color de los bordes de los bines. Si esNone, los bines no tienen bordes
         diferenciados.
+    anotacion : Bool
+        Si True, agrega un cuadro con el número de eventos y de bines graficados
+        Por ahora, el lugar en que el cuadro se coloca es estático y puede
+        solaparse con el histograma.
         
     Notas
     -----
@@ -61,7 +68,11 @@ def histograma(valores_a_binear, bins='auto', titulo=None, magnitud_x=None,
     para hacer histogramas de cantidades discretas en escala lineal (en los
     cuales es habitual no agregar eventos correspondientes a números enteros
     diferentes). Para ello, basta pasar como parámetro
-        bins=np.arange(x_inicial, x_final+1).
+        bins=np.arange(x_inicial, x_final+2).
+    El +2 dos es por lo siguiente: un +1 es necesario para que np.arange
+    incluya el valor x_final en el array resultante, y otro es necesario para
+    que además incluya el valor x_final + 1 que corresponde al borde derecho
+    del último bin, el cual es necesario pasar a np.histogram.
     """
     
     if ax is None:
@@ -96,21 +107,28 @@ def histograma(valores_a_binear, bins='auto', titulo=None, magnitud_x=None,
         errores = np.sqrt(conteos)
     
     # Graficar
-    ax.bar(bordes_bines[:-1], conteos, width=w, yerr=errores, align='edge',
-           color='dodgerblue', capsize=0, edgecolor=ecolor)
+    if errbars:
+        ax.bar(bordes_bines[:-1], conteos, width=w, yerr=errores, align='edge',
+               color='dodgerblue', capsize=0, edgecolor=ecolor)
+    else:
+        ax.bar(bordes_bines[:-1], conteos, width=w, align='edge',
+               color='dodgerblue', edgecolor=ecolor)
     
+    ax.tick_params(labelsize=ticksize)
     if titulo != None:
-        ax.set_title(titulo, fontsize=16)
-    if magnitud_x != None:
-        ax.set_xlabel(magnitud_x, fontsize=14)
-    ylabel = '# de eventos' if density==False else '# de eventos normalizado'
-    ax.set_ylabel(ylabel, fontsize=14)
-    num_bines = len(bordes_bines) - 1
-    anotacion = ('$N = $' + str(len(valores_a_binear))+ '\n' +
-                 r'$N_{bines}$ = ' + str(num_bines))
-    ax.annotate(anotacion,
-                (.8, .8), xycoords='axes fraction',
-                backgroundcolor='w', fontsize=14)
+        ax.set_title(titulo, fontsize=labelsize)
+    if xlabel != None:
+        ax.set_xlabel(xlabel, fontsize=labelsize)
+    if ylabel:
+        ylabel = '# de eventos' if density==False else '# de eventos normalizado'
+        ax.set_ylabel(ylabel, fontsize=labelsize)    
+    if anotacion:
+        num_bines = len(bordes_bines) - 1
+        anotacion = ('$N = $' + str(len(valores_a_binear))+ '\n' +
+                     r'$N_{bines}$ = ' + str(num_bines))
+        ax.annotate(anotacion,
+                    (.8, .8), xycoords='axes fraction',
+                    backgroundcolor='w', fontsize=14)
     
     fig.tight_layout()
     plt.show()
@@ -170,15 +188,15 @@ def hist_discreto(xs, imin=None, imax=None, titulo=None,
             errorbars=errorbars, ax=ax)
 
     
-if __name__ == '__main__':
-    from scipy.stats import expon
-    xs = expon(scale = (1 / 0.5)).rvs(int(1e5)) # lambda = 0.5
-    histograma(xs, density=True, ecolor='k', bins=(0.01,40,100))
-    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
-               ecolor='k')
-    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
-               logx=True, ecolor='k')
-    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
-               logy=True, ecolor='k')
-    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
-               logx=True, logy=True, ecolor='k')
+#if __name__ == '__main__':
+#    from scipy.stats import expon
+#    xs = expon(scale = (1 / 0.5)).rvs(int(1e5)) # lambda = 0.5
+#    histograma(xs, density=True, ecolor='k', bins=(0.01,40,100))
+#    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
+#               ecolor='k')
+#    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
+#               logx=True, ecolor='k')
+#    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
+#               logy=True, ecolor='k')
+#    histograma(xs, logbins=True, bins=(0.01,40,100), density=True,
+#               logx=True, logy=True, ecolor='k')
