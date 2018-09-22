@@ -19,9 +19,50 @@ import matplotlib.pyplot as plt
 def histograma(valores_a_binear, bins='auto', titulo=None, magnitud_x=None,
                density=False, logbins=False, logx=False, logy=False, ax=None,
                ecolor=None):
-    """Si logbins=True, el parámetro bins debe ser una tupla que contenga
-    los dos extremos del intervalo que se desea binear, y el número de bines
-    logarítmicos que se desea usar, en ese orden."""
+    """Función maestra (?) para realizar los histogramas más bellos que usted
+    haya soñado jamás.
+    
+    Inputs
+    ------
+    valores_a_binear : lista o ndarray
+        Los valores que se van a volcar en el histograma
+    bins : int, list, string o 3-tuple        
+        Si es int, es el número de bines. Si es list, debe ser la lista de
+        los bordes de los bines. Si es string 'auto', funciona igual
+        que pasarle bins='auto' a la función np.histogram. Si es una tupla,
+        sus elementos deben ser la pos. del borde izquierdo del 1er bin, la
+        pos. del borde derecho del último bin, y el número de bines deseado
+        (en ese orden).
+    titulo : string
+        Título a ponerle al histograma.
+    magnitud_x : string
+        Rótulo del eje x del histograma
+    density : Bool
+        Si True, grafica el histograma normalizado (funciona bien incluso si
+        los bines son de diferente tamaño)
+    logbins : Bool
+        Si True, y bins es una 3-tupla con inicio, final y número de bines,
+        entonces el tamaño de los bines entre inicio y final crece 
+        exponencialmente (ancho constante en escala logarítmica en eje x).
+    logx : Bool
+        Si True, se grafica el eje x en escala logarítmica.
+    logy : Bool
+        Si True, se grafica el eje y en escala logarítmica.
+    ax : matplotlib.axes.Axes object
+        axes sobre el cual graficar el histograma. Si es None, crea una nueva
+        figura para graficar.
+    ecolor : string
+        Color de los bordes de los bines. Si esNone, los bines no tienen bordes
+        diferenciados.
+        
+    Notas
+    -----
+    Si bien no está expuesto de manera explícita, esta función también sirve
+    para hacer histogramas de cantidades discretas en escala lineal (en los
+    cuales es habitual no agregar eventos correspondientes a números enteros
+    diferentes). Para ello, basta pasar como parámetro
+        bins=np.arange(x_inicial, x_final+1).
+    """
     
     if ax is None:
         with plt.style.context(('seaborn')):
