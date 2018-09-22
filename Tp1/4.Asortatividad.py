@@ -1,6 +1,6 @@
+from __future__ import division
 import os
 os.chdir('/home/tomas/Desktop/Redes complejas/Urdimbres-Sofisticadas/Tp1')
-from __future__ import division
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -169,14 +169,14 @@ plt.plot(k, [i*m+b for i in k])
 plt.plot(k[index_max], k_nn[index_max], 'o')
 plt.plot(k[index_min], k_nn[index_min], 'o')
 
-gamma = gamma(july, k, k_min)
+gamma = gamma(july, degree, k_min)
 
 
 #%%
 #Metodo iterativo para calcular la mejor recta con el metodo de kolmogorov smirnov
 
-k_nn = [np.log(i) for i in annd[1:]]
-k = [np.log(i) for i in degree[1:]]
+k_nn = [np.log(i) for i in annd]
+k = [np.log(i) for i in degree]
 
 def ks_iterative(k, k_nn, Foward = True):
     """
@@ -238,9 +238,9 @@ def ks_iterative(k, k_nn, Foward = True):
     return m, b, ks_stat, index
 
 m, b, ks_stat, index_max = ks_iterative(k, k_nn, Foward=True)
-k_max = np.exp(k[index_max])
+k_max = degree[index_max]
 _,_,_, index_min = ks_iterative(k, k_nn, Foward=False)
-k_min = np.exp(k[index_min])
+k_min = degree[index_min]
 
 plt.plot(k, k_nn, '.')
 plt.plot(k, [i*m+b for i in k])
