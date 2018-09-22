@@ -134,7 +134,7 @@ contar_clases(dolph2, 'gender', ['f','m'])
 # Hay 24 delfines hembra y 34 delfines macho.
 
 #%%
-n_simulaciones = int(4)
+n_simulaciones = int(100)
 enlaces_entre_grupos = np.zeros((n_simulaciones))
 modularidades = np.zeros((n_simulaciones))
 grafo_h0 = dolph2.copy()
@@ -167,7 +167,7 @@ for i in range(n_simulaciones):
 valor_real = contar_enlaces_entre_grupos(dolph2, 'gender')
 fig, ax = histograma(enlaces_entre_grupos, bins=15, density=True,
                      titulo=r'Distribución de enlaces entre delfines de géneros distintos bajo $H_0$',
-                     magnitud_x='# de enlaces')
+                     xlabel='# de enlaces')
 ax.axvline(valor_real, color='deeppink',
            label='Valor real = {}'.format(valor_real))
 ax.legend()
@@ -175,14 +175,22 @@ ax.legend()
 modularidad_real = modularidad(dolph2, 'gender')
 fig, ax = histograma(modularidades, bins=15, density=True,
                      titulo=r'Distribución de modularidad bajo $H_0$',
-                     magnitud_x='Modularidad')
+                     xlabel='Modularidad')
 ax.axvline(modularidad_real, color='deeppink',
            label='Valor real = {}'.format(valor_real))
 #%%
 #Calculamos el p-value
 def p_value(datos, bin1=0, bin2=10):
-    a = plt.hist(datos)[0]
+    a, b, _ = plt.hist(datos, 15)
     b = plt.hist(datos)[1]
+    # use _ to assign the patches to a dummy variable since we don't need them
+n, bins, _ = plt.hist(x, nbins)
+
+# get the width of each bin
+bin_width = bins[1] - bins[0]
+# sum over number in each bin and mult by bin width, which can be factored out
+integral = bin_width * sum(n[bin1:bin2])
+    
     integral = sum(np.diff(a[bin1:bin2])*b[bin1:bin2-1])
     return integral
     
