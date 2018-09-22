@@ -22,7 +22,7 @@ from lectura import ldata
 import sys
 sys.path.append('./Tp1/')
 from histograma import histograma
-
+from collections import Counter
 
 
 dolph = read_gml('tc01_data/new_dolphins.gml')
@@ -134,7 +134,7 @@ contar_clases(dolph2, 'gender', ['f','m'])
 # Hay 24 delfines hembra y 34 delfines macho.
 
 #%%
-n_simulaciones = int(100)
+n_simulaciones = int(1000)
 enlaces_entre_grupos = np.zeros((n_simulaciones))
 modularidades = np.zeros((n_simulaciones))
 grafo_h0 = dolph2.copy()
@@ -165,12 +165,24 @@ for i in range(n_simulaciones):
 #%%
 # Visualizar distribución de enlaces entre grupos bajo hipótesis nula
 valor_real = contar_enlaces_entre_grupos(dolph2, 'gender')
-fig, ax = histograma(enlaces_entre_grupos, bins=15, density=True,
+fig, ax = histograma(enlaces_entre_grupos, bins=150, density=True,
                      titulo=r'Distribución de enlaces entre delfines de géneros distintos bajo $H_0$',
                      xlabel='# de enlaces')
-ax.axvline(valor_real, color='deeppink',
-           label='Valor real = {}'.format(valor_real))
+#ax.axvline(valor_real, color='deeppink',
+#           label='Valor real = {}'.format(valor_real))
 ax.legend()
+#%%
+#Calculamos el p-value
+def p_value(datos, valor_real=52):
+    a = []
+    enlace = list(Counter(datos).keys())
+    cuantos = list(Counter(datos).values())
+    indices = np.where(np.array(enlace)<= valor_real)[0] 
+    for i in indices:
+        a.append(cuantos[i])
+    integral = 2 * len(a)/len(datos)
+    return integral
+#%%
 # Visualizar distribución de modularidades
 modularidad_real = modularidad(dolph2, 'gender')
 fig, ax = histograma(modularidades, bins=15, density=True,
@@ -178,21 +190,41 @@ fig, ax = histograma(modularidades, bins=15, density=True,
                      xlabel='Modularidad')
 ax.axvline(modularidad_real, color='deeppink',
            label='Valor real = {}'.format(valor_real))
-#%%
-#Calculamos el p-value
-def p_value(datos, bin1=0, bin2=10):
-    a, b, _ = plt.hist(datos, 15)
-    b = plt.hist(datos)[1]
-    # use _ to assign the patches to a dummy variable since we don't need them
-n, bins, _ = plt.hist(x, nbins)
-
-# get the width of each bin
-bin_width = bins[1] - bins[0]
-# sum over number in each bin and mult by bin width, which can be factored out
-integral = bin_width * sum(n[bin1:bin2])
-    
-    integral = sum(np.diff(a[bin1:bin2])*b[bin1:bin2-1])
-    return integral
-    
      
+#%%
+#Intentos de Mati de hacer esto sin haber cursado estadistica. Riansenn.
+#def p_value_1(datos, valor_real=52):     
+#    a=[]
+#    #Creo 2 listas una con los numeros de enlaces que aparecen y otra
+#    # con cuantas veces se repiten cada numero enlace ("la altura de cada bin").
+#    enlace = list(Counter(datos).keys())
+#    cuantos = list(Counter(datos).values())
+#    #Creo una lista comparador, cada componente sera la "altura del hist" si el
+#    #valor medido se encuentra en mi histograma y sino un 1
+#    comparador = []
+#    for j in range (0,len(enlace)):
+#        if enlace[j] == valor_real:
+#            comparador.append(cuantos[j])
+#        else:
+#            comparador.append(1)
+#    #Componente a componente, voy a comparar cada valor de "altura" con el comparador.
+#    #Si es menor o igual al mismo, lo appendeo a una lista.
+#    for i in range (0,len(enlace)):
+#        if cuantos[i] <= comparador[i]:
+#            a.append(cuantos[i])
+#    #Finalemente, el P-value sera el largo de esta lista dividido el numero
+#    #total de eventos
+#    return len(a)/len(datos)
+#
+#def p_value_2(datos, bin1=0, bin2=1, nbins = 150, valor_real=52):
+#    # use _ to assign the patches to a dummy variable since we don't need them
+#    conteos, bins, _ = plt.hist(datos, nbins)    
+#    # get the width of each bin
+#    bin_width = bins[1] - bins[0]
+#    cnorm = conteos / (np.sum(conteos) * bin_width)
+#    conteos = cnorm    
+#    # sum over number in each bin and mult by bin width, which can be factored out
+#    integral = bin_width * sum(conteos[bin1:bin2])    
+#    return integral
+
 
