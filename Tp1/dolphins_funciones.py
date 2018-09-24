@@ -7,6 +7,8 @@ Created on Sun Sep  2 21:13:35 2018
 
 import networkx as nx
 import matplotlib.pyplot as plt
+from collections import Counter
+import numpy as np
 
 ################## Para graficar 
 def genero_a_color(gender):
@@ -65,3 +67,11 @@ def contar_enlaces_entre_grupos(g, atributo):
         if g.nodes()[a][atributo] != g.nodes()[b][atributo]:
             n = n + 1
     return n
+
+#Calculo del p-value
+def p_value(datos, valor_real=52):
+    enlace = list(Counter(datos).keys())
+    cuantos = list(Counter(datos).values())
+    indices = np.where(np.array(enlace)<= valor_real)[0] 
+    a = [cuantos[i] for i in indices]
+    return 2 * len(a)/len(datos)

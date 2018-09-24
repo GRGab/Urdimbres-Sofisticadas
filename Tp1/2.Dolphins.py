@@ -16,7 +16,7 @@ from random import sample
 from dolphins_funciones import (genero_a_color, particionar_por_genero,
                                 crear_leyenda, contar_enlaces_internos,
                                 contar_enlaces_entre_grupos,
-                                contar_clases)
+                                contar_clases,p_value)
 
 from lectura import ldata
 import sys
@@ -172,16 +172,8 @@ fig, ax = histograma(enlaces_entre_grupos, bins=150, density=True,
 #           label='Valor real = {}'.format(valor_real))
 ax.legend()
 #%%
-#Calculamos el p-value
-def p_value(datos, valor_real=52):
-    a = []
-    enlace = list(Counter(datos).keys())
-    cuantos = list(Counter(datos).values())
-    indices = np.where(np.array(enlace)<= valor_real)[0] 
-    for i in indices:
-        a.append(cuantos[i])
-    integral = 2 * len(a)/len(datos)
-    return integral
+#Calculo del p-value
+p_value(enlaces_entre_grupos)
 #%%
 # Visualizar distribución de modularidades
 modularidad_real = modularidad(dolph2, 'gender')
