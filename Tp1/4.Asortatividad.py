@@ -26,6 +26,8 @@ net_science = read_gml('tc01_data/netscience.gml')
 july = read_gml('tc01_data/as-22july06.gml')
 degree_1, annd_1 = annd(net_science)
 degree_2, annd_2 = annd(july)
+degree_3, annd_3 = annd(g_apms)
+degree_4, annd_4 = annd(g_y2h)
 #%%
 #En este plot se puede ver que no aparece una recta, por lo que no hay que ajustar aca.
 plt.figure(1)
@@ -46,8 +48,8 @@ plt.xscale('log')
 
 #%%
 #Para July
-k_nn = [np.log(i) for i in annd_2]
-k = [np.log(i) for i in degree_2]
+log_k_nn = [np.log(i) for i in annd_4]
+log_k = [np.log(i) for i in degree_4]
 #%%
 #En este plot se puede ver la cumulativa de los Knn en escala logaritmica.
 coefs_reversed = np.flip(k_nn, 0)
@@ -59,9 +61,9 @@ plt.yscale('log')
 plt.xscale('log')
 #%%
 #Calculo del ajuste por chi2 y ploteo del mismo
-m, b, ks_stat, index_max = chi2_iterative(k, k_nn, Foward=True)
+m, b, ks_stat, index_max = chi2_iterative(log_k, log_k_nn, Foward=True)
 k_max_chi = np.exp(k[index_max])
-_,_,_, index_min = chi2_iterative(k, k_nn, Foward=False)
+_,_,_, index_min = chi2_iterative(log_k, log_k_nn, Foward=False)
 k_min_chi = np.exp(k[index_min])
 
 plt.plot(k, k_nn, '.')
@@ -69,20 +71,31 @@ plt.plot(k, [i*m+b for i in k])
 plt.plot(k[index_max], k_nn[index_max], 'o')
 plt.plot(k[index_min], k_nn[index_min], 'o')
 
-#%%
+#%% 4.iii
+# Hacer esto para las 4 redes!
+
 #Calculo del ajuste por Kolmogorov y ploteo del mismo
-m, b, ks_stat, index_max = ks_iterative(k, k_nn, Foward=True)
-k_max_kol = degree_2[index_max]
-_,_,_, index_min = ks_iterative(k, k_nn, Foward=False)
-k_min_kol = degree_2[index_min]
+#_, _, _, index_max = ks_iterative(log_k, log_k_nn, Foward=True)
+#k_max_kol = degree_2[index_max]
+#m,b,ks_stat, index_min = ks_iterative(log_k[:index_max], log_k_nn[:index_max], Foward=False)
+##m,b,ks_stat, index_min = ks_iterative(log_k, log_k_nn, Foward=True)
+#k_min_kol = degree_2[index_min]
 
-plt.plot(k, k_nn, '.')
-plt.plot(k, [i*m+b for i in k])
-plt.plot(k[index_max], k_nn[index_max], 'o')
-plt.plot(k[index_min], k_nn[index_min], 'o')
+linear_model = Model(linear)
+data = RealData(log_k, log_k_nn)
+odr = ODR(data, linear_model, beta0=[0., 1.])
+out = odr.run()
+log_modelo = [j*out.beta[0]+out.beta[1] for j in log_k]
 
+plt.plot(log_k, log_k_nn, '.')
+plt.plot(log_k, [i*out.beta[0]+out.beta[1] for i in log_k])
+#plt.plot(log_k[index_max], log_k_nn[index_max], 'o')
+#plt.plot(log_k[index_min], log_k_nn[index_min], 'o')
+r = nx.degree_assortativity_coefficient(g_y2h)
+
+print(r, out.beta[0])
 #%%
-r = nx.degree_assortativity_coefficient(july)
+
 gamma_kol = gamma(july, degree_2, k_min_kol)
 gamma_chi = gamma(july, degree_2, k_min_chi)
 

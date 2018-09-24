@@ -43,7 +43,7 @@ def annd(red):
     avnedeg = nx.average_neighbor_degree(red)
     grados = nx.degree(red)
     a = []
-    for i in range(max(dict(nx.degree(red)).values())):
+    for i in range(max(dict(nx.degree(red)).values())+1):
         b = []
         for j in range(len(nombres)):
             if i == grados[nombres[j]]:
@@ -138,7 +138,7 @@ def ks_iterative(log_k, log_k_nn, Foward = True):
     b_list = []
     
     if Foward==True:
-        for j in range(0, len(k)-3):
+        for j in range(0, len(log_k)-3):
             log_k_nn_temp = log_k_nn[:len(log_k_nn)-j]
             log_k_temp = log_k[:len(log_k)-j]
             linear_model = Model(linear)
@@ -155,7 +155,7 @@ def ks_iterative(log_k, log_k_nn, Foward = True):
             m_list.append(out.beta[0])
             b_list.append(out.beta[1])
     else:
-        for j in range(0, len(k)-3):
+        for j in range(0, len(log_k)-3):
             log_k_nn_temp = log_k_nn[j:]
             log_k_temp = log_k[j:]
             linear_model = Model(linear)
