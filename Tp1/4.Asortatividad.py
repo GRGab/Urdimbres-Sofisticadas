@@ -24,28 +24,45 @@ from asortatividad_funciones import (linear, ClosestToOne, annd, gamma,
 
 net_science = read_gml('tc01_data/netscience.gml')
 july = read_gml('tc01_data/as-22july06.gml')
-degree_1, annd_1 = annd(net_science)
-degree_2, annd_2 = annd(july)
-degree_3, annd_3 = annd(g_apms)
-degree_4, annd_4 = annd(g_y2h)
+degree_2, annd_2 = annd(net_science)
+degree_1, annd_1 = annd(july)
+
 #%%
 #En este plot se puede ver que no aparece una recta, por lo que no hay que ajustar aca.
-plt.figure(1)
-plt.plot(degree_1, annd_1, '.')
-plt.figure(2)
-plt.plot(degree_2, annd_2, '.')
 
-#En este plot se puede ver que no aparece una recta, por lo que no hay que ajustar aca.
-plt.figure(3)
-plt.plot(degree_1, annd_1, '.')
-plt.yscale('log')
-plt.xscale('log')
+f, ([ax1, ax2], [ax3, ax4]) = plt.subplots(2, 2)
+f.tight_layout()
 
-plt.figure(4)
-plt.plot(degree_2, annd_2, '.')
-plt.yscale('log')
-plt.xscale('log')
+plt.sca(ax1)
+ax1.set_title('(a)  Lineal')
+ax1.plot(degree_1, annd_1, '.')
+ax1.set_ylabel(r'$k_{nn}$')
+ax1.set_xlabel('k')
 
+plt.sca(ax2)
+ax2.set_title('(b)  Log Log')
+ax2.loglog(degree_1, annd_1, '.')
+ax2.set_ylabel(r'$k_{nn}$')
+ax2.set_xlabel('k')
+#ax2.yscale('log')
+#ax2.xscale('log')
+
+plt.sca(ax3)
+coefs_reversed = np.flip(annd_1, 0)
+cumulative = np.cumsum(coefs_reversed)
+cumulative = np.flip(cumulative, 0)
+ax3.set_title('(c)  Cumulative')
+ax3.loglog(degree_1, cumulative, '.')
+ax3.set_xlabel(r'$k_{nn}$')
+#ax3.yscale('log')
+#ax3.xscale('log')
+
+plt.sca(ax4)
+ax4.set_title('(d)  Log binned histogram')
+histograma(annd_1, ax=ax4, xlabel=r'$k_{nn}$', labelsize=10, ticksize=10)
+
+
+plt.savefig('Ej 4 plotteos del knn')
 #%%
 #Para July
 log_k_nn = [np.log(i) for i in annd_4]
@@ -95,7 +112,37 @@ r = nx.degree_assortativity_coefficient(g_y2h)
 
 print(r, out.beta[0])
 #%%
+redes = [net_science, july, g_apms, g_y2h]
+for G in redes:
+    degree, annds = annd(G)
+    log_k_nn = [np.log(i) for i in annds]
+    log_k = [np.log(i) for i in degree]
+    linear_model = Model(linear)
+    data = RealData(log_k, log_k_nn)
+    odr = ODR(data, linear_model, beta0=[0., 1.])
+    out = odr.run()
+    log_modelo = [j*out.beta[0]+out.beta[1] for j in log_k]
+    
+    plt.figure(redes.index(G))
+    plt.plot(log_k, log_k_nn, '.')
+    plt.plot(log_k, [i*out.beta[0]+out.beta[1] for i in log_k])
+    #plt.plot(log_k[index_max], log_k_nn[index_max], 'o')
+    #plt.plot(log_k[index_min], log_k_nn[index_min], 'o')
+    r = nx.degree_assortativity_coefficient(G)
+    
+    print(r, out.beta[0])
+    
+'''
+4.b
+Si el grafico de k_nn vs k crece para k altos, significa que en promedio, los nodos con
+grado alto van a tener vecinos que (en promedio) tambien tienen grado alto. Es decir,
+los nodos de grado alto se van a conectar con nodos de grado alto.
+Por otro lado, los nodos de k bajo tienen presentan k_nn bajo. Esto significa que los 
+vecinos de estos nodos en promedio van a tener pocos vecinos. 
+Luego, en este tipo de arreglos se observa que los nodos con grado alto se relacionan
+con nodos de grado alto, y los nodos de grado bajo se relacionan con nodos de grado
+bajo. En otras palabras, hubs se relacionan con hubs y los \textit{solitarios} con 
+\textit{solitarios}. Es decir, la red es asortativa.
+'''
 
-gamma_kol = gamma(july, degree_2, k_min_kol)
-gamma_chi = gamma(july, degree_2, k_min_chi)
 
