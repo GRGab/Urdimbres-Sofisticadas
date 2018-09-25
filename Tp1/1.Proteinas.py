@@ -36,23 +36,17 @@ def es_dirigido(data):
                 n += 1
     return n/2
 
-#%%Iportamos y graficamos por separado cada red
+#%%Iportamos por separado cada red
 g_apms = nx.Graph()
 g_apms.add_edges_from(apms)
-#plt.figure()
-#nx.draw(g_apms, node_size = 50)
-#
+
 #g_lit = nx.DiGraph()
 g_lit = nx.Graph()
 g_lit.add_edges_from(lit)
-#plt.figure()
-#nx.draw(g_lit, node_size = 50)
-#
+
 #g_y2h = nx.DiGraph()
 g_y2h = nx.Graph()
 g_y2h.add_edges_from(y2h)
-#plt.figure()
-#nx.draw(g_y2h, node_size = 35)
 #%% Graficamos en subplots
 f, (ax1, ax2, ax3) = plt.subplots(1, 3)
 plt.sca(ax1)
@@ -139,12 +133,19 @@ print(clustering_medio(g_apms))
 print(clustering_medio(g_lit))
 
 #%%
-#Diámetro de la red 
-
+#Diámetro de la red total
 print('El diámetro de las redes es', nx.diameter(g_lit,e=None),
 nx.diameter(g_y2h,e=None), nx.diameter(g_apms,e=None))
+#Da infinito en los 3 casos, porque la red no esta enteramente conectada.
 #%% Separamos la componente gigante de la red
-nx.connected_component_subgraphs(g_apms, copy=True)
+gc_apms = max(nx.connected_component_subgraphs(g_apms), key=len)
+gc_y2h = max(nx.connected_component_subgraphs(g_y2h), key=len)
+gc_lit = max(nx.connected_component_subgraphs(g_lit), key=len)
+
+print('Diámetro para la red AP-MS', nx.diameter(gc_apms))
+print('Diámetro para la red Y2H', nx.diameter(gc_y2h))
+print('Diámetro para la red Lit', nx.diameter(gc_lit))
+
 
 #%%
 # Pregunta extra sobre APMS
