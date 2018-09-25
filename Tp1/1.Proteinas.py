@@ -39,18 +39,20 @@ def es_dirigido(data):
 #%%Iportamos y graficamos por separado cada red
 g_apms = nx.Graph()
 g_apms.add_edges_from(apms)
-plt.figure()
-nx.draw(g_apms, node_size = 50)
+#plt.figure()
+#nx.draw(g_apms, node_size = 50)
 #
-g_lit = nx.DiGraph()
+#g_lit = nx.DiGraph()
+g_lit = nx.Graph()
 g_lit.add_edges_from(lit)
-plt.figure()
-nx.draw(g_lit, node_size = 50)
+#plt.figure()
+#nx.draw(g_lit, node_size = 50)
 #
-g_y2h = nx.DiGraph()
+#g_y2h = nx.DiGraph()
+g_y2h = nx.Graph()
 g_y2h.add_edges_from(y2h)
-plt.figure()
-nx.draw(g_y2h, node_size = 35)
+#plt.figure()
+#nx.draw(g_y2h, node_size = 35)
 #%% Graficamos en subplots
 f, (ax1, ax2, ax3) = plt.subplots(1, 3)
 plt.sca(ax1)
@@ -141,6 +143,8 @@ print(clustering_medio(g_lit))
 
 print('El diámetro de las redes es', nx.diameter(g_lit,e=None),
 nx.diameter(g_y2h,e=None), nx.diameter(g_apms,e=None))
+#%% Separamos la componente gigante de la red
+nx.connected_component_subgraphs(g_apms, copy=True)
 
 #%%
 # Pregunta extra sobre APMS
