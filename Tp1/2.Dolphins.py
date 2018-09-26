@@ -165,7 +165,7 @@ for i in range(n_simulaciones):
 #%%
 # Visualizar distribución de enlaces entre grupos bajo hipótesis nula
 valor_real = contar_enlaces_entre_grupos(dolph2, 'gender')
-fig, ax = histograma(enlaces_entre_grupos, bins=150, density=True,
+fig, ax = histograma(enlaces_entre_grupos, bins=35, density=True,
                      titulo=r'Distribución de enlaces entre delfines de géneros distintos bajo $H_0$',
                      xlabel='# de enlaces')
 ax.axvline(valor_real, color='deeppink',

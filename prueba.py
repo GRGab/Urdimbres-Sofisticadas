@@ -40,3 +40,4 @@ for nodo, dictattr in dict(h.nodes()).items():
 
 #print(contar_enlaces_internos(h, 'aroma', 'rico'))
 print(contar_enlaces_entre_grupos(h, 'aroma'))
+#%%
