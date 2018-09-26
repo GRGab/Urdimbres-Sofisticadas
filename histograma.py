@@ -105,6 +105,7 @@ def histograma(valores_a_binear, bins='auto', errbars=True, density=True,
         conteos, errores = cnorm, enorm
     else:
         errores = np.sqrt(conteos)
+    # print('La integral del histograma es igual a ', np.sum(w * conteos))
     
     # Graficar
     if errbars:
@@ -132,6 +133,7 @@ def histograma(valores_a_binear, bins='auto', errbars=True, density=True,
     
     fig.tight_layout()
     plt.show()
+    
     return fig, ax
 
 def binplot(valores, imin=None, imax=None, titulo=None,

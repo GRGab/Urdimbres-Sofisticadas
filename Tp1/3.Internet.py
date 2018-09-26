@@ -21,7 +21,7 @@ for a, b in internet.degree():
     degrees.append(b)
 #%% Comparación de visualizaciones
 
-# Para comparar los bineados logarítmicos y no logarítmicos, lo justo es
+# Para comparar los bineados logarítmicos y no logaasdrítmicos, lo justo es
 # excluir a los nodos de grado 0 en ambos 
 
 fig, axes = plt.subplots(4, 2, figsize=(10,10))
@@ -42,23 +42,69 @@ for i in range(8):
                ecolor='k', errbars=False, 
                labelsize=10, ticksize=10,
                bins=(1, max(degrees) + 2, 100))
-#%% Código viejo
-    
-#plt.hist([i for i in degree if i < 20], bins=20)
-#plt.hist([i for i in degree if i > 20], bins=50)
-
-k, values = np.histogram(degrees, bins = max(degrees))
-
-p_k = [i/len(nodes) for i in k]
-
+#%%
 '''Algo interesante de ver es que el 98% de los degrees estan entre los 
-degrees 0 y 20:    np.sum(p_k[0:20])'''
-plt.figure(1)
-plt.plot(p_k, '.')
-plt.yscale('log')
-plt.xscale('log')
+degrees 0 y 20:'''
+frac = np.sum([d <= 20 for d in degrees]) / len(degrees)
+print(frac)
+#%%
 
-plt.figure(2)
-plt.hist(p_k, bins = 50)
-plt.xscale('log')
-plt.yscale('log')
+import rpy2.robjects as ro # Al hacer esto se inicializa un subproceso de R
+from rpy2.robjects.packages import importr
+# Usando importr, importamos paquetes de R que van a funcionar algo 
+# así como módulos de Python
+
+#%%
+## EJECUTAR ESTO si no tienen instalado el paquete igraph (para instalarlo)
+## import rpy2's package module
+## select a mirror for R packages
+#utils = importr('utils')
+#utils.chooseCRANmirror(ind=2) # elijo de dónde descargar el paquete
+## Instalo
+#from rpy2.robjects.vectors import StrVector
+#utils.install_packages(StrVector(['igraph']))
+#%%
+# Realizo el ajuste de la powerlaw
+igraph = importr('igraph')
+# Creamos un vector de R pasándole los degrees
+degrees_r = ro.FloatVector(degrees)
+# Documentación de fit_power_law:
+# https://rdrr.io/cran/igraph/man/fit_power_law.html
+resultado = igraph.fit_power_law(degrees_r, implementation='plfit')
+print(resultado.r_repr())
+
+#%%
+# Graficamos histograma + ajuste
+kmin = resultado.rx2('xmin')[0]
+gamma = resultado.rx2('alpha')[0]
+ksp = resultado.rx2('KS.p')[0]
+
+from scipy.special import zeta
+def powerlaw(x, gamma, kmin):
+    # Como nuestro ajuste fue sobre una distribución de probabilidad discreta,
+    # la cte de normalización es 1 sobre la función zeta de Riemann generalizada
+    return x**(-gamma) / zeta(gamma, kmin)
+
+# ACLARACION IMPORTANTE
+# Para que se grafique bien la ley de potencias, es necesario llamar
+# a la función powerlaw poniendo kmin=1. Esto se debe a que el histograma
+# de grados está normalizado arrancando desde k=1, y no desde el kmin que
+# elige la función fit_power_law.
+
+fig, ax = plt.subplots(figsize=(8,6))
+titulo = 'Histograma de grados con ajuste por ley de potencias'
+histograma(degrees, logbins=True, ax=ax, titulo=titulo,
+           logx=True, logy=True,
+           xlabel='k (adim.)', ylabel=True, ecolor='k', errbars=False, 
+           labelsize=18, ticksize=16, bins=(1, max(degrees) + 2, 50))
+xs = np.linspace(1, max(degrees) + 2, 1000)
+ax.plot(xs, powerlaw(xs, gamma, 1), '--', color='deeppink',
+        label=r'$p(k) \propto k^{-\gamma}$')
+#xs = np.arange(1, max(degrees) + 2)
+#ax.plot(xs, powerlaw(xs, gamma, kmin), 'o', color='deeppink',
+#        label=r'$\gamma = $' + '{:.4g}'.format(gamma))
+ax.plot([], [], ' ', label=r'$\gamma = $' + '{:.4g}'.format(gamma))
+ax.plot([], [], ' ', label=r'$K_{min} = $' + '{:.0f}'.format(kmin))
+ax.plot([], [], ' ', label='p-value (KS) = {:.2g}'.format(ksp))
+ax.legend()
+#ax.axvline(kmin, color='deeppink')
