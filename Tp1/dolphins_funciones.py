@@ -17,7 +17,7 @@ def genero_a_color(gender):
     elif gender=='f':
         return 'dodgerblue'
     else:
-        return 'black'
+        return 'green'
     
 def particionar_por_genero(G, orden={'f':0, 'NA':1, 'm':2}):
     particiones = [[], [], []]

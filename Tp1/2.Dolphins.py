@@ -9,24 +9,24 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 from networkx.readwrite.gml import read_gml
-from graficar_multipartito import *
-from modularidad import modularidad
 
 from random import sample
-from dolphins_funciones import (genero_a_color, particionar_por_genero,
-                                crear_leyenda, contar_enlaces_internos,
-                                contar_enlaces_entre_grupos,
-                                contar_clases,p_value)
 
 from lectura import ldata
 import sys
 sys.path.append('./Tp1/')
+from dolphins_funciones import (genero_a_color, particionar_por_genero,
+                                crear_leyenda, contar_enlaces_internos,
+                                contar_enlaces_entre_grupos,
+                                contar_clases,p_value)
+from modularidad import modularidad
 from histograma import histograma
+from graficar_multipartito import *
 from collections import Counter
 
 
-dolph = read_gml('tc01_data/new_dolphins.gml')
-genders = dict(ldata('tc01_data/dolphinsGender.txt'))
+dolph = read_gml('Tp1/tc01_data/new_dolphins.gml')
+genders = dict(ldata('Tp1/tc01_data/dolphinsGender.txt'))
 #%%
 
 # Agrego los sexos a los dicts de cada delfín
@@ -168,9 +168,10 @@ valor_real = contar_enlaces_entre_grupos(dolph2, 'gender')
 fig, ax = histograma(enlaces_entre_grupos, bins=150, density=True,
                      titulo=r'Distribución de enlaces entre delfines de géneros distintos bajo $H_0$',
                      xlabel='# de enlaces')
-#ax.axvline(valor_real, color='deeppink',
-#           label='Valor real = {}'.format(valor_real))
+ax.axvline(valor_real, color='deeppink',
+           label='Valor real = {}'.format(valor_real))
 ax.legend()
+plt.show()
 #%%
 #Calculo del p-value
 p_value(enlaces_entre_grupos)

@@ -19,7 +19,7 @@ degrees = []
 for a, b in internet.degree():
     nodes.append(a)
     degrees.append(b)
-#%% Comparación de visualizaciones
+#%% PUNTO A: Comparación de visualizaciones
 
 # Para comparar los bineados logarítmicos y no logaasdrítmicos, lo justo es
 # excluir a los nodos de grado 0 en ambos 
@@ -42,12 +42,15 @@ for i in range(8):
                ecolor='k', errbars=False, 
                labelsize=10, ticksize=10,
                bins=(1, max(degrees) + 2, 100))
+
 #%%
 '''Algo interesante de ver es que el 98% de los degrees estan entre los 
 degrees 0 y 20:'''
 frac = np.sum([d <= 20 for d in degrees]) / len(degrees)
 print(frac)
 #%%
+######## AJUSTE DE LEY DE POTENCIAS VIA MÉTODO CLAUSET-SHALIZI-NEWMAN
+# Vamos a llamar a R desde Python usando la librería rpy2
 
 import rpy2.robjects as ro # Al hacer esto se inicializa un subproceso de R
 from rpy2.robjects.packages import importr
