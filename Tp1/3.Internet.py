@@ -19,7 +19,7 @@ degrees = []
 for a, b in internet.degree():
     nodes.append(a)
     degrees.append(b)
-#%% Comparación de visualizaciones
+#%% PUNTO A: Comparación de visualizaciones
 
 # Para comparar los bineados logarítmicos y no logarítmicos, lo justo es
 # excluir a los nodos de grado 0 en ambos 
@@ -42,6 +42,9 @@ for i in range(8):
                ecolor='k', errbars=False, 
                labelsize=10, ticksize=10,
                bins=(1, max(degrees) + 2, 100))
+#%% PUNTO B
+
+
 #%% Código viejo
     
 #plt.hist([i for i in degree if i < 20], bins=20)
