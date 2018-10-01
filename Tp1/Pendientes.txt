@@ -1,5 +1,0 @@
-- Punto 1
-    - Pasar todo a grafos no dirigidos
-    - Sacar las componentes gigantes de los grafos y sacarles el diámetro
-- Punto 2
-    - Seguir
