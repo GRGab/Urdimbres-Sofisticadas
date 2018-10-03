@@ -1,0 +1,1775 @@
+
+% Default to the notebook output style
+
+    
+
+
+% Inherit from the specified cell style.
+
+
+
+
+    
+\documentclass[11pt]{article}
+
+    
+    
+    \usepackage[T1]{fontenc}
+    % Nicer default font (+ math font) than Computer Modern for most use cases
+    \usepackage{mathpazo}
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % We will generate all images so they have a width \maxwidth. This means
+    % that they will get their normal width if they fit onto the page, but
+    % are scaled down if they would overflow the margins.
+    \makeatletter
+    \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+    \else\Gin@nat@width\fi}
+    \makeatother
+    \let\Oldincludegraphics\includegraphics
+    % Set max figure width to be 80% of text width, for now hardcoded.
+    \renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=.8\maxwidth]{#1}}
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionLabelFormat{nolabel}{}
+    \captionsetup{labelformat=nolabel}
+
+    \usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    
+
+    
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatability definitions
+    \def\gt{>}
+    \def\lt{<}
+    % Document parameters
+    \title{TC01\_FerreiraChase\_Leizerovich\_Goren}
+    
+    
+    
+
+    % Pygments definitions
+    
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+    \begin{document}
+    
+    
+    \maketitle
+    
+    
+
+    
+    \section{Redes Complejas 2018: Trabajo Computacional
+1}\label{redes-complejas-2018-trabajo-computacional-1}
+
+\emph{Por Tomás Ferreira Chase, Matías Leizerovich y Gabriel Goren}
+
+    Este trabajo fue realizado en Python con \texttt{networkx} versión 2.x.
+Se empleó la librería \texttt{rpy2} para llamar a la función
+\texttt{fit\_power\_law} de la librería \texttt{igraph} de R en el
+Ejercicio 3.
+
+    \subsection{Ejercicio 1: Proteínas}\label{ejercicio-1-proteuxednas}
+
+    En este ejercicio, nos familiarizamos con el manejo más básico de redes
+empleando la librería \texttt{networkx} así como con algunas cantidades
+que podemos medir sobre las mismas.
+
+Primero importamos las librerías que precisamos.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}6}]:} \PY{k+kn}{from} \PY{n+nn}{lectura} \PY{k+kn}{import} \PY{n}{ldata}
+        \PY{k+kn}{import} \PY{n+nn}{networkx} \PY{k+kn}{as} \PY{n+nn}{nx}
+        \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k+kn}{as} \PY{n+nn}{np}
+        \PY{k+kn}{from} \PY{n+nn}{matplotlib} \PY{k+kn}{import} \PY{n}{pyplot} \PY{k}{as} \PY{n}{plt}
+        \PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k+kn}{as} \PY{n+nn}{pd}
+        \PY{k+kn}{from} \PY{n+nn}{\PYZus{}\PYZus{}future\PYZus{}\PYZus{}} \PY{k+kn}{import} \PY{n}{division} \PY{c+c1}{\PYZsh{} Compatibilidad con python2}
+\end{Verbatim}
+
+
+    Luego definimos algunas funciones que vamos a utilizar.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}21}]:} \PY{k}{def} \PY{n+nf}{es\PYZus{}dirigido}\PY{p}{(}\PY{n}{data}\PY{p}{)}\PY{p}{:}
+             \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Función que calcula un criterio para determinar, en ausencia}
+         \PY{l+s+sd}{    de otra información, si un cierto grafo es o no es dirigido.}
+         \PY{l+s+sd}{    }
+         \PY{l+s+sd}{    Recibe la información de un grafo dada en forma de lista de}
+         \PY{l+s+sd}{    enlaces (tuplas).}
+         \PY{l+s+sd}{    }
+         \PY{l+s+sd}{    El criterio implementado es básicamente el siguiente: si un mismo}
+         \PY{l+s+sd}{    par de nodos aparece dos veces en la lista de enlaces, una en}
+         \PY{l+s+sd}{    cada orden posible, entonces la red debe ser dirigida, puesto que}
+         \PY{l+s+sd}{    de lo contrario se nos estaría proveyendo información redundante.}
+         \PY{l+s+sd}{    }
+         \PY{l+s+sd}{    Devuelve el número de veces que un par de nodos aparece repetido}
+         \PY{l+s+sd}{    de esta manera. Si el resultado es 0, entonces es no dirigido; si}
+         \PY{l+s+sd}{    es distinto de cero, es dirigido (según este criterio).}
+         \PY{l+s+sd}{    }
+         \PY{l+s+sd}{    }
+         \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+             \PY{n}{n} \PY{o}{=} \PY{l+m+mi}{0}
+             \PY{k}{for} \PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{)} \PY{o+ow}{in} \PY{n}{data}\PY{p}{:}
+                 \PY{k}{for} \PY{p}{(}\PY{n}{a}\PY{p}{,} \PY{n}{b}\PY{p}{)} \PY{o+ow}{in} \PY{n}{data}\PY{p}{:}
+                     \PY{k}{if} \PY{n}{a} \PY{o}{==} \PY{n}{y} \PY{o+ow}{and} \PY{n}{b} \PY{o}{==} \PY{n}{x}\PY{p}{:}
+                         \PY{n}{n} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+             \PY{k}{return} \PY{n}{n}\PY{o}{/}\PY{l+m+mi}{2}
+         
+         \PY{k}{def} \PY{n+nf}{k\PYZus{}medio}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{:}
+             \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Función que calcula el grado medio de un grafo, ya sea}
+         \PY{l+s+sd}{    dirigido o no dirigido. \PYZdq{}\PYZdq{}\PYZdq{}}
+             \PY{n}{N} \PY{o}{=} \PY{n}{G}\PY{o}{.}\PY{n}{order}\PY{p}{(}\PY{p}{)}
+             \PY{k}{if} \PY{n+nb}{isinstance}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{DiGraph}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{kin\PYZus{}med} \PY{o}{=} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{k} \PY{k}{for} \PY{p}{(}\PY{n}{nodo}\PY{p}{,} \PY{n}{k}\PY{p}{)} \PY{o+ow}{in} \PY{n}{G}\PY{o}{.}\PY{n}{in\PYZus{}degree}\PY{p}{)} \PY{o}{/} \PY{n}{N}
+                 \PY{n}{kout\PYZus{}med} \PY{o}{=} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{k} \PY{k}{for} \PY{p}{(}\PY{n}{nodo}\PY{p}{,} \PY{n}{k}\PY{p}{)} \PY{o+ow}{in} \PY{n}{G}\PY{o}{.}\PY{n}{out\PYZus{}degree}\PY{p}{)} \PY{o}{/} \PY{n}{N}
+             \PY{k}{else}\PY{p}{:}
+                 \PY{n}{kin\PYZus{}med}\PY{p}{,} \PY{n}{kout\PYZus{}med} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}
+             \PY{n}{k\PYZus{}med} \PY{o}{=} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{k} \PY{k}{for} \PY{p}{(}\PY{n}{nodo}\PY{p}{,} \PY{n}{k}\PY{p}{)} \PY{o+ow}{in} \PY{n}{G}\PY{o}{.}\PY{n}{degree}\PY{p}{)} \PY{o}{/} \PY{n}{N}
+             \PY{k}{return} \PY{n}{kin\PYZus{}med}\PY{p}{,} \PY{n}{kout\PYZus{}med}\PY{p}{,} \PY{n}{k\PYZus{}med}
+         
+         \PY{k}{def} \PY{n+nf}{k\PYZus{}extremos}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{:}
+             \PY{n}{k\PYZus{}min} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{n}{k} \PY{k}{for} \PY{p}{(}\PY{n}{nodo}\PY{p}{,} \PY{n}{k}\PY{p}{)} \PY{o+ow}{in} \PY{n}{G}\PY{o}{.}\PY{n}{degree}\PY{p}{)}
+             \PY{n}{k\PYZus{}max} \PY{o}{=} \PY{n+nb}{max}\PY{p}{(}\PY{n}{k} \PY{k}{for} \PY{p}{(}\PY{n}{nodo}\PY{p}{,} \PY{n}{k}\PY{p}{)} \PY{o+ow}{in} \PY{n}{G}\PY{o}{.}\PY{n}{degree}\PY{p}{)}
+             \PY{k}{return} \PY{n}{k\PYZus{}min}\PY{p}{,} \PY{n}{k\PYZus{}max}
+         
+         \PY{k}{def} \PY{n+nf}{clustering\PYZus{}medio}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{:}
+             \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{average}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n+nb}{dict}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{clustering}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    Importamos las redes.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}22}]:} \PY{n}{y2h} \PY{o}{=} \PY{n}{ldata}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tc01\PYZus{}data/yeast\PYZus{}Y2H.txt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{apms} \PY{o}{=} \PY{n}{ldata}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tc01\PYZus{}data/yeast\PYZus{}AP\PYZhy{}MS.txt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{lit} \PY{o}{=} \PY{n}{ldata}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tc01\PYZus{}data/yeast\PYZus{}LIT.txt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}23}]:} \PY{n}{g\PYZus{}y2h} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{Graph}\PY{p}{(}\PY{p}{)}
+         \PY{n}{g\PYZus{}y2h}\PY{o}{.}\PY{n}{add\PYZus{}edges\PYZus{}from}\PY{p}{(}\PY{n}{y2h}\PY{p}{)}
+         
+         \PY{n}{g\PYZus{}apms} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{Graph}\PY{p}{(}\PY{p}{)}
+         \PY{n}{g\PYZus{}apms}\PY{o}{.}\PY{n}{add\PYZus{}edges\PYZus{}from}\PY{p}{(}\PY{n}{apms}\PY{p}{)}
+         
+         \PY{n}{g\PYZus{}lit} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{Graph}\PY{p}{(}\PY{p}{)}
+         \PY{n}{g\PYZus{}lit}\PY{o}{.}\PY{n}{add\PYZus{}edges\PYZus{}from}\PY{p}{(}\PY{n}{lit}\PY{p}{)}
+\end{Verbatim}
+
+
+    \subsubsection{Punto a}\label{punto-a}
+
+    En primer lugar visualizamos las redes que hemos importado. Según nos
+indica la consigna, se trata de redes de interacción de proteínas
+relevadas para levadura, por lo cual podemos decir que las tres redes
+representan un mismo sistema físico.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}29}]:} \PY{n}{fig}\PY{p}{,} \PY{p}{(}\PY{n}{ax1}\PY{p}{,} \PY{n}{ax2}\PY{p}{,} \PY{n}{ax3}\PY{p}{)} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{16}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+         
+         \PY{n}{ax1}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y2h}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{g\PYZus{}y2h}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{10}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax1}\PY{p}{)}
+         
+         \PY{n}{ax2}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{APMS}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{g\PYZus{}apms}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{10}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax2}\PY{p}{)}
+         
+         \PY{n}{ax3}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Lit}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{g\PYZus{}lit}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{10}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax3}\PY{p}{)}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_12_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Podemos ver que se trata de redes grandes, que presentan una componente
+gigante. Graficando solo estas últimas:
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}28}]:} \PY{c+c1}{\PYZsh{} Construimos los subgrafos correspondientes a las componentes gigantes}
+         \PY{n}{gc\PYZus{}y2h} \PY{o}{=} \PY{n+nb}{max}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{connected\PYZus{}component\PYZus{}subgraphs}\PY{p}{(}\PY{n}{g\PYZus{}y2h}\PY{p}{)}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{n+nb}{len}\PY{p}{)}
+         \PY{n}{gc\PYZus{}apms} \PY{o}{=} \PY{n+nb}{max}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{connected\PYZus{}component\PYZus{}subgraphs}\PY{p}{(}\PY{n}{g\PYZus{}apms}\PY{p}{)}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{n+nb}{len}\PY{p}{)}
+         \PY{n}{gc\PYZus{}lit} \PY{o}{=} \PY{n+nb}{max}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{connected\PYZus{}component\PYZus{}subgraphs}\PY{p}{(}\PY{n}{g\PYZus{}lit}\PY{p}{)}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{n+nb}{len}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}30}]:} \PY{c+c1}{\PYZsh{} Los graficamos}
+         \PY{n}{fig}\PY{p}{,} \PY{p}{(}\PY{n}{ax1}\PY{p}{,} \PY{n}{ax2}\PY{p}{,} \PY{n}{ax3}\PY{p}{)} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{16}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+         
+         \PY{n}{ax1}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y2h}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{gc\PYZus{}y2h}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{10}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax1}\PY{p}{)}
+         
+         \PY{n}{ax2}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{APMS}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{gc\PYZus{}apms}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{10}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax2}\PY{p}{)}
+         
+         \PY{n}{ax3}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Lit}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{gc\PYZus{}lit}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{10}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax3}\PY{p}{)}
+         
+         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_15_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Vemos que el algoritmo de visualización por defecto de \texttt{networkx}
+(posicionamiento de nodos por resortes) grafica las 3 redes de maneras
+bastante diferentes, con lo cual podemos suponer que hay diferencias
+significativas en los datos aún si representan al mismo sistema físico.
+
+    \subsubsection{Punto b}\label{punto-b}
+
+    \paragraph{Sobre si las redes son o no son
+dirigidas}\label{sobre-si-las-redes-son-o-no-son-dirigidas}
+
+    En principio, al comenzar a trabajar con una red es esencial que se nos
+informe si la red es o no dirigida, dado que esta información no está
+contenida en la lista de enlaces, y cambia muchísimo la interpretación
+física de la red.
+
+Ante la ausencia de un metadato claro sobre si los enlaces importados
+deben ser considerados dirigidos o no dirigidos, se implementó la
+función \texttt{es\_dirigido} que permite evaluar un criterio posible
+para determinar, para cada red, de qué tipo de enlaces se trata. El
+criterio es simple, si bien falible: si un mismo par de nodos aparece
+dos veces en la lista de enlaces, una en cada orden posible, entonces la
+red debe ser dirigida, puesto que de lo contrario se nos estaría
+proveyendo información redundante. Puede fallar debido a que también es
+posible que los datos simplemente estén presentados de manera poco
+prolija.
+
+Aplicando la función, obtenemos lo siguiente.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}41}]:} \PY{k}{for} \PY{n}{nombre}\PY{p}{,} \PY{n}{datos} \PY{o+ow}{in} \PY{p}{[}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y2H}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y2h}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{AP\PYZhy{}MS}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{apms}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Lit}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{lit}\PY{p}{)}\PY{p}{]}\PY{p}{:}
+             \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Los datos de la red \PYZob{}\PYZcb{} tienen \PYZob{}\PYZcb{} pares de nodos repetidos.}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{nombre}\PY{p}{,} \PY{n}{es\PYZus{}dirigido}\PY{p}{(}\PY{n}{datos}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Los datos de la red Y2H tienen 112.5 pares de nodos repetidos.
+Los datos de la red AP-MS tienen 0.0 pares de nodos repetidos.
+Los datos de la red Lit tienen 40.5 pares de nodos repetidos.
+
+    \end{Verbatim}
+
+    Este criterio parecería indicar que las redes Y2H y Lit son dirigidas.
+Sin embargo, la cantidad de pares de nodos que aparecen repetidos es muy
+chica respecto del tamaño total de la red (ver la tabla más abajo), por
+lo cual también es factible que se trate de datos mal presentados.
+
+En última instancia, se recurrió al significado biológico de las redes
+para determinar su naturaleza: debido a que estamos hablando de
+interacciones entre proteínas, relacionadas con el posible acoplamiento
+mecánico entre las mismas, no tiene mucho sentido considerar que dichas
+interacciones puedan ser dirigidas.
+
+De esta manera, se trabajó con las redes considerándolas no dirigidas,
+salvo que se diga lo contrario.
+
+    Presentamos entonces una tabla con todos los datos pedidos, y luego
+procedemos a mostrar cómo calculamos cada uno de ellos.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}27}]:} \PY{n}{data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Nombre de la red}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y2H}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{AP\PYZhy{}MS}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Lit}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{N}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{2018}\PY{p}{,}\PY{l+m+mi}{1622}\PY{p}{,}\PY{l+m+mi}{1536}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{L}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{2930}\PY{p}{,}\PY{l+m+mi}{9070}\PY{p}{,}\PY{l+m+mi}{2925}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Dirigida?}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{No}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{No}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{No}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}\PYZdl{}}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{overline\PYZob{}K\PYZcb{}\PYZdl{}\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mf}{2.9038652130822595}\PY{p}{,}\PY{l+m+mf}{11.183723797780518}\PY{p}{,}\PY{l+m+mf}{3.80859375}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}\PYZdl{}}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{overline\PYZob{}K\PYZus{}\PYZob{}in\PYZcb{}\PYZcb{}\PYZdl{}\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mf}{1.4519326065411298}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+m+mf}{1.904296875}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}\PYZdl{}}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{overline\PYZob{}K\PYZus{}\PYZob{}out\PYZcb{}\PYZcb{}\PYZdl{}\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mf}{1.4519326065411298}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+m+mf}{1.904296875}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}\PYZdl{}K\PYZus{}\PYZob{}min\PYZcb{}\PYZdl{}\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}\PYZdl{}K\PYZus{}\PYZob{}max\PYZcb{}\PYZdl{}\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{91}\PY{p}{,}\PY{l+m+mi}{127}\PY{p}{,}\PY{l+m+mi}{40}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Densidad}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mf}{0.0014396951973635397}\PY{p}{,}\PY{l+m+mf}{0.006899274397150227}\PY{p}{,}\PY{l+m+mf}{0.002481168566775244}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}\PYZdl{}\PYZlt{}C\PYZus{}\PYZob{}i\PYZcb{}\PYZgt{}\PYZdl{}\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mf}{0.046194001297365124}\PY{p}{,}\PY{l+m+mf}{0.5546360657013015}\PY{p}{,}\PY{l+m+mf}{0.2924923005815713}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdl{}\PYZdl{}C\PYZus{}\PYZob{}}\PY{l+s+s2}{\PYZbs{}}\PY{l+s+s2}{Delta\PYZcb{}\PYZdl{}\PYZdl{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mf}{0.02361415364051535}\PY{p}{,} \PY{l+m+mf}{0.6185901626483971}\PY{p}{,} \PY{l+m+mf}{0.3461926495315878}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Diametro (para la componente gigante)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{l+m+mi}{14}\PY{p}{,}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{19}\PY{p}{]}\PY{p}{,}
+                             \PY{p}{\PYZcb{}}\PY{p}{)}\PY{c+c1}{\PYZsh{}empty dataframe}
+         \PY{n}{data}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}27}]:}   Nombre de la red     N     L Dirigida?  \$\$\textbackslash{}overline\{K\}\$\$  \textbackslash{}
+         0              Y2H  2018  2930        No          2.903865   
+         1            AP-MS  1622  9070        No         11.183724   
+         2              Lit  1536  2925        No          3.808594   
+         
+           \$\$\textbackslash{}overline\{K\_\{in\}\}\$\$ \$\$\textbackslash{}overline\{K\_\{out\}\}\$\$  \$\$K\_\{min\}\$\$  \$\$K\_\{max\}\$\$  \textbackslash{}
+         0               1.45193                1.45193            1           91   
+         1                     -                      -            1          127   
+         2                1.9043                 1.9043            1           40   
+         
+            Densidad  \$\$<C\_\{i\}>\$\$  \$\$C\_\{\textbackslash{}Delta\}\$\$  \textbackslash{}
+         0  0.001440     0.046194        0.023614   
+         1  0.006899     0.554636        0.618590   
+         2  0.002481     0.292492        0.346193   
+         
+            Diametro (para la componente gigante)  
+         0                                     14  
+         1                                     15  
+         2                                     19  
+\end{Verbatim}
+            
+    Para calcular cuantos nodos hay:
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{El número de nodos de cada grafo es}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+              \PY{n}{g\PYZus{}y2h}\PY{o}{.}\PY{n}{order}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{g\PYZus{}apms}\PY{o}{.}\PY{n}{order}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{g\PYZus{}lit}\PY{o}{.}\PY{n}{order}\PY{p}{(}\PY{p}{)}\PY{p}{)} 
+\end{Verbatim}
+
+
+    Para calcular cuantos enlaces hay:
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{El número de enlaces para cada grafo es}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+              \PY{n}{g\PYZus{}y2h}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{g\PYZus{}apms}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{g\PYZus{}lit}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    Para calcular el grado medio, lo hacemos considerando a las redes Y2H y
+Lit como no dirigidas y también como dirigidas, tal como habría sugerido
+el criterio considerado inicialmente. De esta manera, calculamos el
+grado medio (sin tener en cuenta la dirección de los enlaces) para las 3
+redes, y además el grado medio de entrada \(\overline{K_{in}}\) y de
+salida \(\overline{K_{out}}\) para esas dos redes dirigidas.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}55}]:} \PY{c+c1}{\PYZsh{} Creamos versiones dirigidas de las redes Y2H y Lit}
+         \PY{n}{g\PYZus{}lit\PYZus{}Di} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{DiGraph}\PY{p}{(}\PY{p}{)}
+         \PY{n}{g\PYZus{}lit\PYZus{}Di}\PY{o}{.}\PY{n}{add\PYZus{}edges\PYZus{}from}\PY{p}{(}\PY{n}{lit}\PY{p}{)}
+         
+         \PY{n}{g\PYZus{}y2h\PYZus{}Di} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{DiGraph}\PY{p}{(}\PY{p}{)}
+         \PY{n}{g\PYZus{}y2h\PYZus{}Di}\PY{o}{.}\PY{n}{add\PYZus{}edges\PYZus{}from}\PY{p}{(}\PY{n}{y2h}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}56}]:} \PY{n}{kin\PYZus{}medio\PYZus{}lit}\PY{p}{,} \PY{n}{kout\PYZus{}medio\PYZus{}lit}\PY{p}{,} \PY{n}{k\PYZus{}medio\PYZus{}lit} \PY{o}{=} \PY{n}{k\PYZus{}medio}\PY{p}{(}\PY{n}{g\PYZus{}lit\PYZus{}Di}\PY{p}{)}
+         \PY{n}{kin\PYZus{}medio\PYZus{}y2h}\PY{p}{,} \PY{n}{kout\PYZus{}medio\PYZus{}y2h}\PY{p}{,} \PY{n}{k\PYZus{}medio\PYZus{}y2h} \PY{o}{=} \PY{n}{k\PYZus{}medio}\PY{p}{(}\PY{n}{g\PYZus{}y2h\PYZus{}Di}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Grados medios calculados usando grafos dirigidos (Y2h y Lit)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Grados medios}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{n}{k\PYZus{}medio\PYZus{}y2h}\PY{p}{,} \PY{n}{k\PYZus{}medio\PYZus{}lit}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Grados medios in}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{n}{kin\PYZus{}medio\PYZus{}y2h}\PY{p}{,} \PY{n}{kin\PYZus{}medio\PYZus{}lit}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Grados medios out}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{n}{kout\PYZus{}medio\PYZus{}y2h}\PY{p}{,} \PY{n}{kout\PYZus{}medio\PYZus{}lit}\PY{p}{)}
+         
+         \PY{k}{print}\PY{p}{(}\PY{p}{)}
+         \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{k\PYZus{}medio\PYZus{}apms} \PY{o}{=} \PY{n}{k\PYZus{}medio}\PY{p}{(}\PY{n}{g\PYZus{}apms}\PY{p}{)}
+         \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{k\PYZus{}medio\PYZus{}lit} \PY{o}{=} \PY{n}{k\PYZus{}medio}\PY{p}{(}\PY{n}{g\PYZus{}lit}\PY{p}{)}
+         \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{k\PYZus{}medio\PYZus{}y2h} \PY{o}{=} \PY{n}{k\PYZus{}medio}\PY{p}{(}\PY{n}{g\PYZus{}y2h}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Grados medios calculados usando grafos no dirigidos:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Y2H, AP\PYZhy{}MS, Lit}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{n}{k\PYZus{}medio\PYZus{}y2h}\PY{p}{,} \PY{n}{k\PYZus{}medio\PYZus{}apms}\PY{p}{,} \PY{n}{k\PYZus{}medio\PYZus{}lit}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Grados medios calculados usando grafos dirigidos (Y2h y Lit)
+Grados medios
+2.9038652130822595 3.80859375
+Grados medios in
+1.4519326065411298 1.904296875
+Grados medios out
+1.4519326065411298 1.904296875
+
+Grados medios calculados usando grafos no dirigidos:
+Y2H, AP-MS, Lit
+2.9038652130822595 11.183723797780518 3.80859375
+
+    \end{Verbatim}
+
+    Comparando los valores para redes dirigidas y no dirigidas, vemos que -
+Para las redes dirigidas, \(\overline{K_{in}}\) y \(\overline{K_{out}}\)
+son iguales. Esto es cierto un poco trivialmente, dado que cada enlace
+dirigido es un enlace de salida de un nodo y un enlace de entrada para
+otro. Se puede entender también así: si pensamos en una red en donde
+existen 2 nodos que no estan conectados entre sí, y ahora tendemos un
+enlace dirigido entre ambos, tanto \(\overline{K_{in}}\) como
+\(\overline{K_{out}}\) aumentaran. - La
+\(\overline{K_{in}} + \overline{K_{out}} = \overline{K}\) donde
+\(\overline{K}\) es el grado medio de la red no dirigida
+correspondiente.
+
+    Para calcular los grados máximo y el grado mínimo:
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}57}]:} \PY{n}{k\PYZus{}min\PYZus{}apms}\PY{p}{,} \PY{n}{k\PYZus{}max\PYZus{}apms} \PY{o}{=} \PY{n}{k\PYZus{}extremos}\PY{p}{(}\PY{n}{g\PYZus{}apms}\PY{p}{)}
+         \PY{n}{k\PYZus{}min\PYZus{}lit}\PY{p}{,} \PY{n}{k\PYZus{}max\PYZus{}lit} \PY{o}{=} \PY{n}{k\PYZus{}extremos}\PY{p}{(}\PY{n}{g\PYZus{}lit}\PY{p}{)}
+         \PY{n}{k\PYZus{}min\PYZus{}y2h}\PY{p}{,} \PY{n}{k\PYZus{}max\PYZus{}y2h} \PY{o}{=} \PY{n}{k\PYZus{}extremos}\PY{p}{(}\PY{n}{g\PYZus{}y2h}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Grados extremos}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{K\PYZus{}min:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{k\PYZus{}min\PYZus{}y2h}\PY{p}{,}  \PY{n}{k\PYZus{}min\PYZus{}apms}\PY{p}{,} \PY{n}{k\PYZus{}min\PYZus{}lit}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{K\PYZus{}max:}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{k\PYZus{}max\PYZus{}y2h}\PY{p}{,}  \PY{n}{k\PYZus{}max\PYZus{}apms}\PY{p}{,} \PY{n}{k\PYZus{}max\PYZus{}lit}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Grados extremos
+K\_min: 1 1 1
+K\_max: 91 127 40
+
+    \end{Verbatim}
+
+    Para calcular la densidad de la red, usamos la función nx.density.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}58}]:} \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{La densidad de las redes es}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{density}\PY{p}{(}\PY{n}{g\PYZus{}y2h}\PY{p}{)}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{density}\PY{p}{(}\PY{n}{g\PYZus{}apms}\PY{p}{)}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{density}\PY{p}{(}\PY{n}{g\PYZus{}lit}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+La densidad de las redes es 0.0014396951973635397 0.006899274397150227 0.002481168566775244
+
+    \end{Verbatim}
+
+    En relación al clustering, vamos a calcular dos coeficientes diferentes.
+El primero (\(\left<C_i\right>\)) es un promedio entre los coeficientes
+de cluesting local de cada nodo de la red. El segundo (\(C_\Delta\)) es
+un coeficiente de clustering global que mide la proporción de triganulo
+formados en la red sobre el número de triadas de la misma.
+
+\begin{itemize}
+\tightlist
+\item
+  \(\left<C_i\right>\) responde a la pregunta: ``¿En qué medida pares de
+  vecinos de un nodo tomado al azar en la red son vecinos entre sí?''
+\item
+  \(C_\Delta\) responde a la pregunta: ``¿Qué tan probable es encontrar
+  triangulos (a.k.a. clausura transitiva) en la red?''
+\end{itemize}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}59}]:} \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C\PYZus{}Δ}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{k}{print} \PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{transitivity}\PY{p}{(}\PY{n}{g\PYZus{}y2h}\PY{p}{)}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{transitivity}\PY{p}{(}\PY{n}{g\PYZus{}apms}\PY{p}{)}\PY{p}{,}
+                \PY{n}{nx}\PY{o}{.}\PY{n}{transitivity}\PY{p}{(}\PY{n}{g\PYZus{}lit}\PY{p}{)}\PY{p}{)}
+         
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZlt{}C\PYZus{}i\PYZgt{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{n}{clustering\PYZus{}medio}\PY{p}{(}\PY{n}{g\PYZus{}y2h}\PY{p}{)}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{n}{clustering\PYZus{}medio}\PY{p}{(}\PY{n}{g\PYZus{}apms}\PY{p}{)}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{n}{clustering\PYZus{}medio}\PY{p}{(}\PY{n}{g\PYZus{}lit}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C\_Δ
+0.02361415364051535 0.6185901626483971 0.3461926495315878
+<C\_i>
+0.046194001297365124
+0.5546360657013015
+0.2924923005815713
+
+    \end{Verbatim}
+
+    Observación: El método \(C_\Delta\) no diferencia entre enlaces
+entrantes y salientes en redes dirigidas. El método \(\left<C_i\right>\)
+no está definido para redes dirigidas.
+
+    Para calcular el diámetro de la red, utilizamos la función nx.diameter.
+Dado que los 3 grafos son no conexos, como se puede ver en las
+visualizaciones del principio, su diámetro es convencionalmente definido
+como infinito. Para obtener un resultado más informativo, consideramos
+únicamente sus componentes gigantes, las cuales ya fueron construidas
+más arriba.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}61}]:} \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Diámetro para la red Y2H}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{diameter}\PY{p}{(}\PY{n}{gc\PYZus{}y2h}\PY{p}{)}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Diámetro para la red AP\PYZhy{}MS}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{diameter}\PY{p}{(}\PY{n}{gc\PYZus{}apms}\PY{p}{)}\PY{p}{)}
+         \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Diámetro para la red Lit}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{nx}\PY{o}{.}\PY{n}{diameter}\PY{p}{(}\PY{n}{gc\PYZus{}lit}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Diámetro para la red Y2H 14
+Diámetro para la red AP-MS 15
+Diámetro para la red Lit 19
+
+    \end{Verbatim}
+
+    \paragraph{Discusión}\label{discusiuxf3n}
+
+\begin{itemize}
+\tightlist
+\item
+  La red Y2H tiene casi un 25\% más de nodos que las otras dos.
+\item
+  La red AP-MS tiene muchísimos más enlaces que las otras dos, lo cual
+  queda cuantificado por su densidad, la cual es aproximadamente 3 veces
+  más grande que las demás. Esto se refleja en su grado medio, así como
+  en sus coeficientes de clustering y el grado máximo alcanzado.
+\item
+  La red Lit es la red más "larga", en el sentido de que tiene un mayor
+  diámetro que las otras dos.
+\end{itemize}
+
+    \subsubsection{Puntos c y d}\label{puntos-c-y-d}
+
+    Según lo hablado en la práctica, en vez de encarar estos puntos tal como
+están descritos en la guía, nos proponemos decidir entre dos métodos
+posibles que podrían haber sido implementados a la hora de construir la
+red AP-MS.
+
+    El aspecto relevante del método experimental para generar una red como
+nuestra red AP-MS es el siguiente. Se introducen en la célula
+anticuerpos que se "enganchan" a una determinada proteína A, y al
+hacerlo se terminan acoplando a todo un complejo de proteínas (e.g.
+ABCD). Luego se extrae de la célula lo que sea que el anticuerpo
+"atrapó", y se identifican las proteínas presentes en el complejo
+extraído (A, B, C y D por separado).
+
+La ambigüedad se encuentra en que una red codifica interacciones
+binarias, mientras que este método permite relevar acoplamiento mecánico
+entre múltiples proteínas sin identificar realmente cuál se acopla con
+cuál. Dos maneras para meter esta interacción simultánea entre múltiples
+proteínas dentro de un contexto de relaciones binarias:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\item
+  \(G=\{A\leftrightarrow B,A\leftrightarrow C,A\leftrightarrow D\}\)
+\item
+  \(G=GrafoCompleto(A,B,C,D)\).
+\end{enumerate}
+
+El primer método posiblemente subestima la cantidad real de
+interacciones mecánicas, mientras que el segundo la sobreestima.
+
+    Nos preguntamos entonces cuál de estos dos es el que se aplicó para
+obtener la red AP-MS bajo consideración.
+
+En primer lugar, se observa que los coeficientes de clustering y la
+densidad de la red AP-MS es mayor que la de la red Y2H y la red Lit, que
+a su vez poseen densidad y clusterizacion similar.
+
+Por otro lado, visualizando distintos sectores de la red,
+cualitativamente se observa que los enlaces presentes parecerían ser
+consistentes con haber sido generados mediante una superposición de
+cliques, i.e. se observan grupos de tamaño del orden de 10 nodos
+conectados completamente entre sí, y adicionalmente conectados mediante
+uno o dos nodos al resto de la red.
+
+Estas dos observaciones sugieren fuertemente que el método adoptado en
+este caso fue el segundo, sobreestimando la cantidad de enlaces
+presentes en la red.
+
+    \subsection{Ejercicio 2}\label{ejercicio-2}
+
+    Importamos las librerías.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}65}]:} \PY{k+kn}{from} \PY{n+nn}{\PYZus{}\PYZus{}future\PYZus{}\PYZus{}} \PY{k+kn}{import} \PY{n}{division}
+         \PY{k+kn}{import} \PY{n+nn}{networkx} \PY{k+kn}{as} \PY{n+nn}{nx}
+         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k+kn}{as} \PY{n+nn}{np}
+         \PY{k+kn}{import} \PY{n+nn}{matplotlib.pyplot} \PY{k+kn}{as} \PY{n+nn}{plt}
+         \PY{k+kn}{from} \PY{n+nn}{networkx.readwrite.gml} \PY{k+kn}{import} \PY{n}{read\PYZus{}gml}
+         \PY{k+kn}{from} \PY{n+nn}{random} \PY{k+kn}{import} \PY{n}{sample}
+         
+         \PY{k+kn}{from} \PY{n+nn}{lectura} \PY{k+kn}{import} \PY{n}{ldata}
+         \PY{k+kn}{from} \PY{n+nn}{histograma} \PY{k+kn}{import} \PY{n}{histograma}
+         \PY{k+kn}{from} \PY{n+nn}{graficar\PYZus{}multipartito} \PY{k+kn}{import} \PY{o}{*}
+         
+         \PY{k+kn}{from} \PY{n+nn}{collections} \PY{k+kn}{import} \PY{n}{Counter}
+\end{Verbatim}
+
+
+    Definimos las funciones que vamos a utilizar. Algunas funciones de
+visualización empleadas las importamos de archivos de código separados,
+para no congestionar el notebook.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}73}]:} \PY{c+c1}{\PYZsh{}Para graficar}
+         \PY{k}{def} \PY{n+nf}{genero\PYZus{}a\PYZus{}color}\PY{p}{(}\PY{n}{gender}\PY{p}{)}\PY{p}{:}
+             \PY{k}{if} \PY{n}{gender}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+                 \PY{k}{return} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}
+             \PY{k}{elif} \PY{n}{gender}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+                 \PY{k}{return} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dodgerblue}\PY{l+s+s1}{\PYZsq{}}
+             \PY{k}{else}\PY{p}{:}
+                 \PY{k}{return} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{green}\PY{l+s+s1}{\PYZsq{}}
+             
+         \PY{k}{def} \PY{n+nf}{particionar\PYZus{}por\PYZus{}genero}\PY{p}{(}\PY{n}{G}\PY{p}{,} \PY{n}{orden}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{NA}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+m+mi}{2}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{p}{:}
+             \PY{n}{particiones} \PY{o}{=} \PY{p}{[}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}\PY{p}{]}
+             \PY{k}{for} \PY{n}{key} \PY{o+ow}{in} \PY{n+nb}{dict}\PY{p}{(}\PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{p}{)}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{gender} \PY{o}{=} \PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{p}{[}\PY{n}{key}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+                 \PY{k}{if} \PY{n}{gender}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+                     \PY{n}{particiones}\PY{p}{[}\PY{n}{orden}\PY{p}{[}\PY{n}{gender}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{key}\PY{p}{)}
+                 \PY{k}{elif} \PY{n}{gender}\PY{o}{==}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+                     \PY{n}{particiones}\PY{p}{[}\PY{n}{orden}\PY{p}{[}\PY{n}{gender}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{key}\PY{p}{)}
+                 \PY{k}{else}\PY{p}{:}
+                     \PY{n}{particiones}\PY{p}{[}\PY{n}{orden}\PY{p}{[}\PY{n}{gender}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{key}\PY{p}{)}
+             \PY{k}{return} \PY{n}{particiones}
+         
+         \PY{k}{def} \PY{n+nf}{crear\PYZus{}leyenda}\PY{p}{(}\PY{n}{ax}\PY{p}{)}\PY{p}{:}
+             \PY{n}{ax}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{p}{]}\PY{p}{,}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dodgerblue}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Hembras}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{p}{]}\PY{p}{,}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Machos}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{p}{]}\PY{p}{,}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{black}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{NA}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}66}]:} \PY{c+c1}{\PYZsh{}Para cuantificar homofilia.}
+         \PY{k}{def} \PY{n+nf}{contar\PYZus{}clases}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{atributo}\PY{p}{,} \PY{n}{valores\PYZus{}posibles}\PY{p}{)}\PY{p}{:}
+             \PY{n}{ns} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+             \PY{k}{for} \PY{n}{valor} \PY{o+ow}{in} \PY{n}{valores\PYZus{}posibles}\PY{p}{:}
+                 \PY{n}{n} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{p}{[}\PY{n}{n} \PY{k}{for} \PY{n}{n}\PY{p}{,} \PY{n}{attrdict} \PY{o+ow}{in} \PY{n+nb}{dict}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{)}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)} \PY{k}{if} \PY{n}{attrdict}\PY{p}{[}\PY{n}{atributo}\PY{p}{]}\PY{o}{==}\PY{n}{valor}\PY{p}{]}\PY{p}{)}
+                 \PY{n}{ns}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{n}\PY{p}{)}
+                 \PY{k}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Hay \PYZob{}\PYZcb{} nodos con \PYZob{}\PYZcb{}=\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{n}\PY{p}{,} \PY{n}{atributo}\PY{p}{,} \PY{n}{valor}\PY{p}{)}\PY{p}{)}
+             \PY{k}{return} \PY{n}{ns}
+         
+         \PY{k}{def} \PY{n+nf}{contar\PYZus{}enlaces\PYZus{}internos}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{atributo}\PY{p}{,} \PY{n}{valor}\PY{p}{)}\PY{p}{:}
+             \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Cuenta los enlaces internos en el grupo de nodos que tienen}
+         \PY{l+s+sd}{    atributo=valor. g debe ser objeto Graph de NetworkX.}
+         \PY{l+s+sd}{    Ejemplo con delfines: atributo=\PYZsq{}gender\PYZsq{}, valor puede ser \PYZsq{}f\PYZsq{}, \PYZsq{}m\PYZsq{} o \PYZsq{}NA\PYZsq{}}
+         \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+             \PY{n}{nodos} \PY{o}{=} \PY{p}{[}\PY{n}{n} \PY{k}{for} \PY{n}{n}\PY{p}{,} \PY{n}{attrdict} \PY{o+ow}{in} \PY{n+nb}{dict}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{)}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)} \PY{k}{if} \PY{n}{attrdict}\PY{p}{[}\PY{n}{atributo}\PY{p}{]}\PY{o}{==}\PY{n}{valor}\PY{p}{]}
+             \PY{n}{grupo} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{subgraph}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{nodos}\PY{p}{)}
+             \PY{k}{return} \PY{n}{grupo}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}
+         
+         \PY{k}{def} \PY{n+nf}{contar\PYZus{}enlaces\PYZus{}entre\PYZus{}grupos}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{atributo}\PY{p}{)}\PY{p}{:}
+             \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Cuenta los enlaces que conectan grupos con valores distintos de}
+         \PY{l+s+sd}{    atributo. g debe ser objeto Graph de NetworkX.}
+         \PY{l+s+sd}{    Ejemplo con delfines: atributo=\PYZsq{}gender\PYZsq{}.}
+         \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+             \PY{n}{n} \PY{o}{=} \PY{l+m+mi}{0}
+             \PY{k}{for} \PY{n}{edge} \PY{o+ow}{in} \PY{n}{g}\PY{o}{.}\PY{n}{edges}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{a}\PY{p}{,} \PY{n}{b} \PY{o}{=} \PY{n}{edge}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{edge}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+                 \PY{k}{if} \PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{a}\PY{p}{]}\PY{p}{[}\PY{n}{atributo}\PY{p}{]} \PY{o}{!=} \PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{b}\PY{p}{]}\PY{p}{[}\PY{n}{atributo}\PY{p}{]}\PY{p}{:}
+                     \PY{n}{n} \PY{o}{=} \PY{n}{n} \PY{o}{+} \PY{l+m+mi}{1}
+             \PY{k}{return} \PY{n}{n}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}68}]:} \PY{c+c1}{\PYZsh{}Para el calculo de la modularidad}
+         \PY{k}{def} \PY{n+nf}{modularidad}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{atributo}\PY{p}{)}\PY{p}{:}
+             \PY{n}{A} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{adjacency\PYZus{}matrix}\PY{p}{(}\PY{n}{g}\PY{p}{)}
+             \PY{n}{B} \PY{o}{=} \PY{l+m+mi}{0}
+             \PY{n}{m} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{edges}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+             \PY{n}{k} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+             \PY{n}{name} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+             \PY{k}{for} \PY{n}{key}\PY{p}{,} \PY{n}{value} \PY{o+ow}{in} \PY{n}{g}\PY{o}{.}\PY{n}{degree}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{k}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{value}\PY{p}{)}
+                 \PY{n}{name}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{key}\PY{p}{)}
+             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{k}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                 \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{k}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                     \PY{k}{if} \PY{n}{g}\PY{o}{.}\PY{n}{node}\PY{p}{[}\PY{n}{name}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{]}\PY{p}{[}\PY{n}{atributo}\PY{p}{]} \PY{o}{==} \PY{n}{g}\PY{o}{.}\PY{n}{node}\PY{p}{[}\PY{n}{name}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{]}\PY{p}{[}\PY{n}{atributo}\PY{p}{]}\PY{p}{:}
+                         \PY{n}{B} \PY{o}{+}\PY{o}{=} \PY{n}{A}\PY{p}{[}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{k}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{*}\PY{n}{k}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{m}\PY{p}{)}
+             \PY{k}{return} \PY{n+nb}{float}\PY{p}{(}\PY{n}{B}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{m}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}128}]:} \PY{c+c1}{\PYZsh{} Para calcular el p\PYZhy{}value del número de enlaces entre delfines de distinto}
+          \PY{c+c1}{\PYZsh{} género, y de la modularidad de la red, bajo la hipótesis nula.}
+          
+          \PY{c+c1}{\PYZsh{}def p\PYZus{}value(datos, valor\PYZus{}observado):}
+          \PY{c+c1}{\PYZsh{}    enlace = list(Counter(datos).keys())}
+          \PY{c+c1}{\PYZsh{}    cuantos = list(Counter(datos).values())}
+          \PY{c+c1}{\PYZsh{}    indices = np.where(np.array(enlace)\PYZlt{}= valor\PYZus{}real)[0] }
+          \PY{c+c1}{\PYZsh{}    a = [cuantos[i] for i in indices]}
+          \PY{c+c1}{\PYZsh{}    return 2 * len(a)/len(datos)}
+          
+          \PY{k}{def} \PY{n+nf}{p\PYZus{}value}\PY{p}{(}\PY{n}{datos}\PY{p}{,} \PY{n}{valor\PYZus{}observado}\PY{p}{,} \PY{n}{cola}\PY{p}{,} \PY{n}{doscolas}\PY{o}{=}\PY{n+nb+bp}{False}\PY{p}{)}\PY{p}{:}
+              \PY{k}{assert} \PY{n}{cola} \PY{o+ow}{in} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{izq}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{der}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+              \PY{k}{if} \PY{n}{cola} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{izq}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}
+                  \PY{n}{frac} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{datos} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{valor\PYZus{}observado}\PY{p}{)} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{datos}\PY{p}{)}
+              \PY{k}{else}\PY{p}{:}
+                  \PY{n}{frac} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{datos} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{valor\PYZus{}observado}\PY{p}{)} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{datos}\PY{p}{)}
+              \PY{k}{if} \PY{n}{doscolas}\PY{p}{:}
+                  \PY{k}{return} \PY{n}{frac} \PY{o}{*} \PY{l+m+mi}{2}
+              \PY{k}{else}\PY{p}{:}
+                  \PY{k}{return} \PY{n}{frac}
+\end{Verbatim}
+
+
+    Importamos la red de delfines y a cada uno le asignamos su género.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}129}]:} \PY{n}{dolph} \PY{o}{=} \PY{n}{read\PYZus{}gml}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tc01\PYZus{}data/new\PYZus{}dolphins.gml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          \PY{n}{genders} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{n}{ldata}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tc01\PYZus{}data/dolphinsGender.txt}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{)}
+          
+          \PY{c+c1}{\PYZsh{} Agregamos los géneros a los dicts de cada delfín}
+          \PY{k}{for} \PY{n}{nodo}\PY{p}{,} \PY{n}{dict\PYZus{}nodo} \PY{o+ow}{in} \PY{n+nb}{dict}\PY{p}{(}\PY{n}{dolph}\PY{o}{.}\PY{n}{nodes}\PY{p}{)}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+              \PY{n}{dict\PYZus{}nodo}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{genders}\PY{p}{[}\PY{n}{nodo}\PY{p}{]} \PY{c+c1}{\PYZsh{} agrego el género del delfín a su dict}
+          \PY{c+c1}{\PYZsh{}    print(\PYZsq{}Key = \PYZob{}\PYZcb{}, Value = \PYZob{}\PYZcb{}\PYZsq{}.format(nodo, dict\PYZus{}nodo)) \PYZsh{} para chequear que anda}
+          
+          \PY{n}{particiones} \PY{o}{=} \PY{n}{particionar\PYZus{}por\PYZus{}genero}\PY{p}{(}\PY{n}{dolph}\PY{p}{)}
+          \PY{n}{colores} \PY{o}{=} \PY{p}{[}\PY{n}{genero\PYZus{}a\PYZus{}color}\PY{p}{(}\PY{n}{g}\PY{p}{)} \PY{k}{for} \PY{n}{g} \PY{o+ow}{in} \PY{n}{nx}\PY{o}{.}\PY{n}{get\PYZus{}node\PYZus{}attributes}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{gender}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{]}    
+\end{Verbatim}
+
+
+    Hay 34 delfines macho, 24 delfines hembra y 4 delfines sin información.
+
+    \subsubsection{Punto a}\label{punto-a}
+
+    Exploramos distintos tipos de visualizaciones, intentando que las mismas
+nos permitan observar cómo es el conexionado entre los delfines de
+distinto género, así como el conexionado interno de cada grupo. Para
+esto graficamos de 9 maneras diferentes.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}130}]:} \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{16}\PY{p}{,} \PY{l+m+mi}{16}\PY{p}{)}\PY{p}{)}
+          \PY{n}{axes} \PY{o}{=} \PY{n}{axes}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}
+          \PY{n}{ns} \PY{o}{=} \PY{l+m+mi}{25} \PY{c+c1}{\PYZsh{} Node size}
+          
+          \PY{c+c1}{\PYZsh{} Posicionamiento multipartito (es engañoso: no se ven los links homofílicos)}
+          \PY{n}{multipartite\PYZus{}pos} \PY{o}{=} \PY{n}{position\PYZus{}multipartito}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{NA}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{n}{ns}\PY{p}{,} \PY{n}{node\PYZus{}color}\PY{o}{=}\PY{n}{colores}\PY{p}{,}
+                  \PY{n}{pos}\PY{o}{=}\PY{n}{multipartite\PYZus{}pos}\PY{p}{)}
+          \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Posicionamiento multipartito}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          
+          \PY{c+c1}{\PYZsh{} Posicionamiento en un círculo}
+          \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}circular}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{n}{ns}\PY{p}{,} \PY{n}{node\PYZus{}color}\PY{o}{=}\PY{n}{colores}\PY{p}{)}
+          \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Posicionamiento en un círculo}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          
+          \PY{c+c1}{\PYZsh{} Posicionamiento en círculos concéntricos}
+          \PY{n}{shell\PYZus{}pos} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{drawing}\PY{o}{.}\PY{n}{layout}\PY{o}{.}\PY{n}{shell\PYZus{}layout}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{particiones}\PY{p}{)}
+          \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{n}{ns}\PY{p}{,} \PY{n}{node\PYZus{}color}\PY{o}{=}\PY{n}{colores}\PY{p}{,}
+                  \PY{n}{pos}\PY{o}{=}\PY{n}{shell\PYZus{}pos}\PY{p}{)}
+          \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Posicionamiento en círculos concéntricos}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          
+          \PY{c+c1}{\PYZsh{} Posicionamiento al azar}
+          \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}random}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{n}{ns}\PY{p}{,} \PY{n}{node\PYZus{}color}\PY{o}{=}\PY{n}{colores}\PY{p}{)}
+          \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Posicionamiento al azar}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          
+          \PY{c+c1}{\PYZsh{} Posicionamiento espectral}
+          \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}spectral}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{,}
+                           \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{n}{ns}\PY{p}{,} \PY{n}{node\PYZus{}color}\PY{o}{=}\PY{n}{colores}\PY{p}{)}
+          \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Posicionamiento espectral}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          
+          \PY{c+c1}{\PYZsh{} Posicionamiento por resortes}
+          \PY{n}{nx}\PY{o}{.}\PY{n}{draw\PYZus{}spring}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{5}\PY{p}{]}\PY{p}{,}
+                           \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{n}{ns}\PY{p}{,} \PY{n}{with\PYZus{}labels}\PY{o}{=}\PY{n+nb+bp}{False}\PY{p}{,} \PY{n}{node\PYZus{}color}\PY{o}{=}\PY{n}{colores}\PY{p}{)}
+          \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{5}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Posicionamiento por resortes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          
+          \PY{c+c1}{\PYZsh{} Posicionamiento multipartito al azar. Posiciono al azar y}
+          \PY{c+c1}{\PYZsh{} luego desplazo lateralmente según género}
+          
+          \PY{n}{multi\PYZus{}random\PYZus{}pos} \PY{o}{=} \PY{n}{position\PYZus{}multipartito\PYZus{}random}\PY{p}{(}\PY{n}{dolph}\PY{p}{,}
+                                                          \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{NA}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{6}\PY{p}{]}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{n}{ns}\PY{p}{,} \PY{n}{node\PYZus{}color}\PY{o}{=}\PY{n}{colores}\PY{p}{,}
+                  \PY{n}{pos}\PY{o}{=}\PY{n}{multi\PYZus{}random\PYZus{}pos}\PY{p}{)}
+          \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{6}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Posicionamiento multipartito al azar}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          
+          
+          \PY{c+c1}{\PYZsh{} Posicionamiento multipartito espectral. Posiciono por espectro y}
+          \PY{c+c1}{\PYZsh{} luego desplazo lateralmente según género}
+          \PY{n}{multi\PYZus{}spectral\PYZus{}pos} \PY{o}{=} \PY{n}{position\PYZus{}multipartito\PYZus{}spectral}\PY{p}{(}\PY{n}{dolph}\PY{p}{,}
+                                                              \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{NA}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{dhorizontal}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{)}
+          \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{7}\PY{p}{]}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{n}{ns}\PY{p}{,} \PY{n}{node\PYZus{}color}\PY{o}{=}\PY{n}{colores}\PY{p}{,}
+                  \PY{n}{pos}\PY{o}{=}\PY{n}{multi\PYZus{}spectral\PYZus{}pos}\PY{p}{)}
+          \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{7}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Posicionamiento multipartito espectral}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          
+          \PY{c+c1}{\PYZsh{} Posicionamiento multipartito por resortes. Posiciono por resortes y}
+          \PY{c+c1}{\PYZsh{} luego desplazo lateralmente según género}
+          \PY{n}{multi\PYZus{}spring\PYZus{}pos} \PY{o}{=} \PY{n}{position\PYZus{}multipartito\PYZus{}spring}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{NA}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+                                                          \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{dhorizontal}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}
+          \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{8}\PY{p}{]}\PY{p}{,} \PY{n}{node\PYZus{}size} \PY{o}{=} \PY{n}{ns}\PY{p}{,} \PY{n}{node\PYZus{}color}\PY{o}{=}\PY{n}{colores}\PY{p}{,}
+                  \PY{n}{pos}\PY{o}{=}\PY{n}{multi\PYZus{}spring\PYZus{}pos}\PY{p}{)}
+          \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{8}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Posicionamiento multipartito por resortes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          
+          \PY{n}{fig}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+          \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_59_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    En todas las visualizaciones, el color celeste indica delfín hembra y el
+colón rojo indica delfín macho. El color verde indica ausencia de
+información.
+
+\begin{itemize}
+\tightlist
+\item
+  La visualización 1 ("layout multipartito") no es para nada adecuada en
+  nuestro caso debido a que nuestra red no es multipartita, y no es
+  posible ver claramente los links entre nodos de un mismo grupo.
+\item
+  Las visualizaciones circulares tampoco resultan particularmente
+  informativas, a pesar de que en los círculos concéntricos se
+  distinguen claramente los diferentes grupos. Pasa algo parecido a lo
+  que ocurre con el "layout multipartito".
+\item
+  Entre las visualizaciones al azar, espectral y por resortes, la
+  visualización por resortes parece ser la más clara para observar qué
+  subgrupos de nodos se conectan más con cuáles. La visualización
+  espectral se ve interesante pero no sabemos interpretarla.
+\item
+  En la visualización por resortes, se observa que existen dos grupos de
+  delfines que interactuan mayormente entre sí, uno de los cuales es
+  transversal a la división por género.
+\item
+  En las últimas 3 visualizaciones, realizamos un desplazamiento lateral
+  de los nodos según su información de género (ver archivo
+  \texttt{graficar\_multipartito.py}). En el caso de la visualización
+  por resortes, esto permite observar mejor lo dicho anteriormente:
+  puede notarse que un cluster tiene aproximadamente la misma cantidad
+  de delfines hembras que machos, mientras que el otro está compuesto
+  principalmente por machos.
+\end{itemize}
+
+    \subsection{Punto b}\label{punto-b}
+
+    Primero vamos a quedarnos con un subgrafo del original, en donde
+elminamos los nodos con genero no definido.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}131}]:} \PY{n}{delfines\PYZus{}con\PYZus{}info} \PY{o}{=} \PY{p}{[}\PY{n}{d} \PY{k}{for} \PY{n}{d} \PY{o+ow}{in} \PY{n}{dolph}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)} \PY{k}{if} \PY{n}{d} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{particiones}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}
+          \PY{n}{dolph2} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{subgraph}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{delfines\PYZus{}con\PYZus{}info}\PY{p}{)}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    Lo que hacemos en este punto es generar mediante Monte Carlo una
+aproximación a la distribución de probabilidad del número de enlaces
+entre delfines de distinto género bajo la hipótesis nula de que la
+topología y la información de género son independientes. Para ello
+generamos 100.000 variantes de la red observada, redistribuyendo
+aleatoriamente los géneros de los nodos según una distribución uniforme.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}142}]:} \PY{n}{n\PYZus{}simulaciones} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{l+m+mf}{1e5}\PY{p}{)}
+          \PY{n}{enlaces\PYZus{}entre\PYZus{}grupos} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{n\PYZus{}simulaciones}\PY{p}{)}\PY{p}{)}
+          \PY{n}{grafo\PYZus{}h0} \PY{o}{=} \PY{n}{dolph2}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+          \PY{c+c1}{\PYZsh{} Vamos a ir modificando este grafo \PYZdq{}in place\PYZdq{} (no lo clonamos n veces)}
+          \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n\PYZus{}simulaciones}\PY{p}{)}\PY{p}{:}
+              \PY{c+c1}{\PYZsh{} Mezclamos la lista de nombres de delfines.}
+              \PY{c+c1}{\PYZsh{} A los primeros 24 delfines les reasignamos género hembra}
+              \PY{c+c1}{\PYZsh{} El resto van a ser macho.}
+              \PY{n}{hembras} \PY{o}{=} \PY{n}{sample}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{grafo\PYZus{}h0}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{24}\PY{p}{)}
+              \PY{k}{for} \PY{n}{nombre} \PY{o+ow}{in} \PY{n}{grafo\PYZus{}h0}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                  \PY{k}{if} \PY{n}{nombre} \PY{o+ow}{in} \PY{n}{hembras}\PY{p}{:}
+                      \PY{n}{grafo\PYZus{}h0}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{nombre}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}
+                  \PY{k}{else}\PY{p}{:}
+                      \PY{n}{grafo\PYZus{}h0}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{nombre}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}
+              \PY{n}{enlaces\PYZus{}entre\PYZus{}grupos}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{contar\PYZus{}enlaces\PYZus{}entre\PYZus{}grupos}\PY{p}{(}\PY{n}{grafo\PYZus{}h0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    Visualizamos la distribución de enlaces para las redes simuladas,
+marcando el numero total de enlaces de la red original.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}143}]:} \PY{n}{valor\PYZus{}observado} \PY{o}{=} \PY{n}{contar\PYZus{}enlaces\PYZus{}entre\PYZus{}grupos}\PY{p}{(}\PY{n}{dolph2}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          \PY{n}{fig}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+          \PY{n}{ax}\PY{o}{.}\PY{n}{axvline}\PY{p}{(}\PY{n}{valor\PYZus{}observado}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deeppink}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                     \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Valor observado = \PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{valor\PYZus{}observado}\PY{p}{)}\PY{p}{)}
+          \PY{n}{ax}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{18}\PY{p}{)}
+          \PY{n}{histograma}\PY{p}{(}\PY{n}{enlaces\PYZus{}entre\PYZus{}grupos}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{l+m+mi}{54}\PY{p}{,} \PY{n}{density}\PY{o}{=}\PY{n+nb+bp}{True}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{,}
+                     \PY{n}{titulo}\PY{o}{=}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Distribución de enlaces entre delfines de géneros distintos bajo \PYZdl{}H\PYZus{}0\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                     \PY{n}{xlabel}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{} de enlaces}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_67_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Vamos a calcular el p-value. Para eso, integramos el histograma a partir
+del valor real hasta menos infinito. Como la distribucion es acampanada,
+duplicamos el valor obtenido para contemplar los valores que se
+encuentran del otro lado de la distribucion con probabilidad menor que
+la de del valor real del numero de enlaces.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}144}]:} \PY{n}{p\PYZus{}value}\PY{p}{(}\PY{n}{enlaces\PYZus{}entre\PYZus{}grupos}\PY{p}{,} \PY{l+m+mi}{52}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{izq}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}144}]:} 0.00107
+\end{Verbatim}
+            
+    Esto quiere decir que, si \(H_0\) fuera correcta, la probabilidad de
+haber observado lo que observamos es del 0,1\% aproximadamente. Por lo
+tanto podemos concluir que la topología y los géneros sí están
+relacionadas.
+
+    Finalmente, si bien esto no añade realmente más información, construimos
+también la distribución de modularidades bajo \(H_0\) y la visualizamos.
+Como calcular modularidades toma más tiempo, para esto realizamos una
+simulación con menos historias.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}145}]:} \PY{n}{n\PYZus{}simulaciones} \PY{o}{=} \PY{l+m+mi}{1000}
+          \PY{n}{modularidades} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{n\PYZus{}simulaciones}\PY{p}{)}\PY{p}{)}
+          \PY{n}{grafo\PYZus{}h0} \PY{o}{=} \PY{n}{dolph2}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+          \PY{c+c1}{\PYZsh{} Vamos a ir modificando este grafo \PYZdq{}in place\PYZdq{} (no lo clonamos n veces)}
+          \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n\PYZus{}simulaciones}\PY{p}{)}\PY{p}{:}
+              \PY{c+c1}{\PYZsh{} Mezclamos la lista de nombres de delfines.}
+              \PY{c+c1}{\PYZsh{} A los primeros 24 delfines les reasignamos género hembra}
+              \PY{c+c1}{\PYZsh{} El resto van a ser macho.}
+              \PY{n}{hembras} \PY{o}{=} \PY{n}{sample}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{grafo\PYZus{}h0}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{24}\PY{p}{)}
+              \PY{k}{for} \PY{n}{nombre} \PY{o+ow}{in} \PY{n}{grafo\PYZus{}h0}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                  \PY{k}{if} \PY{n}{nombre} \PY{o+ow}{in} \PY{n}{hembras}\PY{p}{:}
+                      \PY{n}{grafo\PYZus{}h0}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{nombre}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{f}\PY{l+s+s1}{\PYZsq{}}
+                  \PY{k}{else}\PY{p}{:}
+                      \PY{n}{grafo\PYZus{}h0}\PY{o}{.}\PY{n}{nodes}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{nombre}\PY{p}{]}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{m}\PY{l+s+s1}{\PYZsq{}}
+              \PY{n}{modularidades}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{modularidad}\PY{p}{(}\PY{n}{grafo\PYZus{}h0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}147}]:} \PY{n}{modularidad\PYZus{}observada} \PY{o}{=} \PY{n}{modularidad}\PY{p}{(}\PY{n}{dolph2}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gender}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          \PY{n}{fig}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+          \PY{n}{ax}\PY{o}{.}\PY{n}{axvline}\PY{p}{(}\PY{n}{modularidad\PYZus{}observada}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deeppink}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                     \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Valor observado = \PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{modularidad\PYZus{}observada}\PY{p}{)}\PY{p}{)}
+          \PY{n}{ax}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{18}\PY{p}{)}
+          \PY{n}{histograma}\PY{p}{(}\PY{n}{modularidades}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{,} \PY{n}{density}\PY{o}{=}\PY{n+nb+bp}{True}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{,}
+                     \PY{n}{titulo}\PY{o}{=}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Distribución de modularidad bajo \PYZdl{}H\PYZus{}0\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                     \PY{n}{xlabel}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Modularidad}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_73_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \subsubsection{Punto c)}\label{punto-c}
+
+    Primero defino funciones que me sacan porcentajes de nodos de la red
+siguiendo un criterio especifico, con el objetivo de desarmar la red de
+la forma mas eficiente. El criterio es el siguiente: la mejor forma de
+desarmar una componente gigante es empezando por remover los puentes.
+Por otro lado, los puentes son aquellos nodos que unen secciones del
+grafo que no estan conectadas entre si (por lo menos por algun camino de
+largo del orden del camino del puente). Es decir, los nodos puentes
+tienen coeficiente de clustering chico comparado con otros nodos del
+grafo, ya que sus vecinos no estan conectados entre si. Por lo tanto, la
+funcion desarme\_de\_red() saca un porcentaje de nodos x\% que tienen el
+menor coeficiente de clustering.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} \PY{k}{def} \PY{n+nf}{desarme}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{porcentaje\PYZus{}nodos\PYZus{}sacados}\PY{p}{)}\PY{p}{:}
+            \PY{n}{n}\PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{g}\PY{o}{.}\PY{n}{nodes}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{*} \PY{n}{porcentaje\PYZus{}nodos\PYZus{}sacados}\PY{p}{)}
+            \PY{n}{G} \PY{o}{=} \PY{n}{g}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+            \PY{n}{nodes} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{n}{clustering} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{a} \PY{o+ow}{in} \PY{n}{G}\PY{o}{.}\PY{n}{nodes}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                \PY{k}{if} \PY{n}{G}\PY{o}{.}\PY{n}{degree}\PY{p}{(}\PY{n}{a}\PY{p}{)}\PY{o}{\PYZgt{}}\PY{l+m+mi}{1}\PY{p}{:}
+                    \PY{n}{nodes}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{a}\PY{p}{)}
+                    \PY{n}{clustering}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{clustering}\PY{p}{(}\PY{n}{G}\PY{p}{)}\PY{p}{[}\PY{n}{a}\PY{p}{]}\PY{p}{)}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n}\PY{p}{)}\PY{p}{:}
+                \PY{n}{j} \PY{o}{=} \PY{n}{clustering}\PY{o}{.}\PY{n}{index}\PY{p}{(}\PY{n+nb}{min}\PY{p}{(}\PY{n}{clustering}\PY{p}{)}\PY{p}{)}
+                \PY{n}{G}\PY{o}{.}\PY{n}{remove\PYZus{}node}\PY{p}{(}\PY{n}{nodes}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{)}
+                \PY{n}{clustering}\PY{o}{.}\PY{n}{pop}\PY{p}{(}\PY{n}{j}\PY{p}{)}
+                \PY{n}{nodes}\PY{o}{.}\PY{n}{pop}\PY{p}{(}\PY{n}{j}\PY{p}{)}
+            \PY{k}{return} \PY{n}{G}
+        
+        
+        \PY{k}{def} \PY{n+nf}{cociente}\PY{p}{(}\PY{n}{g}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Agarra una red G y va sacando una cierta proporcion de nodos hasta que}
+        \PY{l+s+sd}{    el cociente entre la cant de nodos de la componente gigante y la segunda }
+        \PY{l+s+sd}{    comoponente sea cercano a 1.\PYZdq{}\PYZdq{}\PYZdq{}}
+            \PY{n}{rango\PYZus{}porcentajes} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mf}{0.85}\PY{p}{,} \PY{l+m+mi}{1}\PY{o}{/}\PY{n}{g}\PY{o}{.}\PY{n}{order}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+            \PY{n}{d} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{rango\PYZus{}porcentajes}\PY{p}{:}
+                \PY{n}{g\PYZus{}desarmado} \PY{o}{=} \PY{n}{desarme}\PY{p}{(}\PY{n}{g}\PY{p}{,} \PY{n}{i}\PY{p}{)}
+                \PY{n}{lengths} \PY{o}{=} \PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{j}\PY{p}{)} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{sorted}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{connected\PYZus{}components}\PY{p}{(}\PY{n}{g\PYZus{}desarmado}\PY{p}{)}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{n+nb}{len}\PY{p}{,} \PY{n}{reverse}\PY{o}{=}\PY{n+nb+bp}{True}\PY{p}{)}\PY{p}{]}
+                \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{lengths}\PY{p}{)}\PY{o}{\PYZgt{}}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{:}
+                    \PY{n}{d}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{lengths}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{/}\PY{n}{lengths}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+            \PY{n}{d2} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{asarray}\PY{p}{(}\PY{n}{d}\PY{p}{)}
+            \PY{n}{d2} \PY{o}{=} \PY{n+nb}{abs}\PY{p}{(}\PY{n}{d2}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
+            \PY{n}{d2} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{d2}\PY{p}{)}
+            \PY{n}{index} \PY{o}{=} \PY{n}{d2}\PY{o}{.}\PY{n}{index}\PY{p}{(}\PY{n+nb}{min}\PY{p}{(}\PY{n}{d2}\PY{p}{)}\PY{p}{)}
+            \PY{n}{porcentaje} \PY{o}{=} \PY{n}{rango\PYZus{}porcentajes}\PY{p}{[}\PY{n}{index}\PY{p}{]}
+            \PY{k}{return} \PY{n}{porcentaje}\PY{p}{,} \PY{n+nb}{min}\PY{p}{(}\PY{n}{d}\PY{p}{)}
+        
+        \PY{n}{porcentaje} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mf}{0.8}\PY{p}{,} \PY{l+m+mi}{9}\PY{p}{)}
+            
+        \PY{n}{f}\PY{p}{,} \PY{p}{(}\PY{p}{[}\PY{n}{ax1}\PY{p}{,} \PY{n}{ax2}\PY{p}{,} \PY{n}{ax3}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{n}{ax4}\PY{p}{,} \PY{n}{ax5}\PY{p}{,} \PY{n}{ax6}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{n}{ax7}\PY{p}{,} \PY{n}{ax8}\PY{p}{,} \PY{n}{ax9}\PY{p}{]}\PY{p}{)} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{}f.tight\PYZus{}layout()}
+        \PY{n}{f}\PY{o}{.}\PY{n}{suptitle}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Desarme de la red en funcion de }\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{ nodos sacados.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax1}\PY{p}{)}
+        \PY{n}{ax1}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{0}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{desarme}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{porcentaje}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{node\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax2}\PY{p}{)}
+        \PY{n}{ax2}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{10}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{desarme}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{porcentaje}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{node\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax3}\PY{p}{)}
+        \PY{n}{ax3}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{20}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{desarme}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{porcentaje}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{node\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax4}\PY{p}{)}
+        \PY{n}{ax4}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{30}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{desarme}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{porcentaje}\PY{p}{[}\PY{l+m+mi}{3}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{node\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax5}\PY{p}{)}
+        \PY{n}{ax5}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{40}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{desarme}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{porcentaje}\PY{p}{[}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{node\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax6}\PY{p}{)}
+        \PY{n}{ax6}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{50}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{desarme}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{porcentaje}\PY{p}{[}\PY{l+m+mi}{5}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{node\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax7}\PY{p}{)}
+        \PY{n}{ax7}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{60}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{desarme}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{porcentaje}\PY{p}{[}\PY{l+m+mi}{6}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{node\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax8}\PY{p}{)}
+        \PY{n}{ax8}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{70}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{desarme}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{porcentaje}\PY{p}{[}\PY{l+m+mi}{7}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{node\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax9}\PY{p}{)}
+        \PY{n}{ax9}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{80}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{nx}\PY{o}{.}\PY{n}{draw}\PY{p}{(}\PY{n}{desarme}\PY{p}{(}\PY{n}{dolph}\PY{p}{,} \PY{n}{porcentaje}\PY{p}{[}\PY{l+m+mi}{8}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{node\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:desarme_red_funcion_porcentaje.png}
+\caption{desarme\_red\_funcion\_porcentaje.png}
+\end{figure}
+
+    En la imagen que devuelve el codigo se puede observar como se desarma la
+red, en funcion del porcentaje de nodos removidos. Se puede observar que
+existe un porcentaje critico a partir del cual la componente gigante
+queda desarmada casi en su totalidad.
+
+Si se quiere dividir la componente original en 2 componentes de tamaño
+similar, se debe utilizar la función desarme\_de\_red() hasta que la
+cantidad de nodos de una componente sea parecida a la cantidad de nodos
+en la otra, con algún criterio para definir \(parecida\). Observando el
+gráfico, se puede observar que dicho porcentaje se encuentre entre el
+60\% y el 70\%.
+
+    \section{Ejercicio 3}\label{ejercicio-3}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}156}]:} \PY{k+kn}{import} \PY{n+nn}{networkx} \PY{k+kn}{as} \PY{n+nn}{nx}
+          \PY{k+kn}{import} \PY{n+nn}{matplotlib.pyplot} \PY{k+kn}{as} \PY{n+nn}{plt}
+          \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k+kn}{as} \PY{n+nn}{np}
+          \PY{k+kn}{from} \PY{n+nn}{networkx.readwrite.gml} \PY{k+kn}{import} \PY{n}{read\PYZus{}gml}
+          \PY{k+kn}{from} \PY{n+nn}{\PYZus{}\PYZus{}future\PYZus{}\PYZus{}} \PY{k+kn}{import} \PY{n}{division}
+          \PY{k+kn}{import} \PY{n+nn}{rpy2.robjects} \PY{k+kn}{as} \PY{n+nn}{ro} \PY{c+c1}{\PYZsh{} Al hacer esto se inicializa un subproceso de R}
+          \PY{k+kn}{from} \PY{n+nn}{rpy2.robjects.packages} \PY{k+kn}{import} \PY{n}{importr}
+          \PY{k+kn}{from} \PY{n+nn}{histograma} \PY{k+kn}{import} \PY{n}{histograma}
+          \PY{c+c1}{\PYZsh{} Usando importr, importamos paquetes de R que van a funcionar algo }
+          \PY{c+c1}{\PYZsh{} así como módulos de Python}
+          
+          \PY{n}{internet} \PY{o}{=} \PY{n}{read\PYZus{}gml}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tc01\PYZus{}data/as\PYZhy{}22july06.gml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          \PY{n}{nodes} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+          \PY{n}{degrees} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+          \PY{k}{for} \PY{n}{a}\PY{p}{,} \PY{n}{b} \PY{o+ow}{in} \PY{n}{internet}\PY{o}{.}\PY{n}{degree}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+              \PY{n}{nodes}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{a}\PY{p}{)}
+              \PY{n}{degrees}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{b}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}157}]:} \PY{c+c1}{\PYZsh{}\PYZpc{}\PYZpc{} PUNTO A: Comparación de visualizaciones}
+          
+          \PY{c+c1}{\PYZsh{} Para comparar los bineados logarítmicos y no logarítmicos, lo justo es}
+          \PY{c+c1}{\PYZsh{} excluir a los nodos de grado 0 en ambos }
+          
+          \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
+          \PY{n}{axes} \PY{o}{=} \PY{n}{axes}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}
+          \PY{n}{logbinss} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}
+          \PY{n}{logxs}    \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}
+          \PY{n}{logys}    \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}
+          
+          \PY{n}{t} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bines lineales}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Bines logarítmicos}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+          \PY{n}{titulos}  \PY{o}{=} \PY{p}{[}\PY{n}{t}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{logbinss}\PY{p}{]}
+          \PY{n}{xlabels} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Grado (adim.)}\PY{l+s+s1}{\PYZsq{}} \PY{k}{if} \PY{n}{i} \PY{o+ow}{in} \PY{p}{[}\PY{l+m+mi}{6}\PY{p}{,}\PY{l+m+mi}{7}\PY{p}{]} \PY{k}{else} \PY{n+nb+bp}{None}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{]}
+          \PY{n}{ylabels} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{n+nb+bp}{True} \PY{k}{if} \PY{n}{i} \PY{o}{\PYZpc{}} \PY{l+m+mi}{2} \PY{o}{==} \PY{l+m+mi}{0} \PY{k}{else} \PY{n+nb+bp}{False}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{]}
+          
+          \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{:}
+              \PY{n}{histograma}\PY{p}{(}\PY{n}{degrees}\PY{p}{,}
+                         \PY{n}{logbins}\PY{o}{=}\PY{n}{logbinss}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{logx}\PY{o}{=}\PY{n}{logxs}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{logy}\PY{o}{=}\PY{n}{logys}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}
+                         \PY{n}{titulo}\PY{o}{=}\PY{n}{titulos}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{xlabel}\PY{o}{=}\PY{n}{xlabels}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{ylabel}\PY{o}{=}\PY{n}{ylabels}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}
+                         \PY{n}{ecolor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{errbars}\PY{o}{=}\PY{n+nb+bp}{False}\PY{p}{,} 
+                         \PY{n}{labelsize}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{,} \PY{n}{ticksize}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{,}
+                         \PY{n}{bins}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n+nb}{max}\PY{p}{(}\PY{n}{degrees}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_81_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    Por alguna razón este código no está haciendo lo que queremos en el
+notebook, por lo tanto copiamos abajo la imagen con los histogramas
+pre-generados (con ese mismo código).
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:Ej3.png}
+\caption{Ej3.png}
+\end{figure}
+
+    La visualización más adecuada es con bines logarítmicos y escala
+log-log.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}158}]:} \PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}Algo interesante de ver es que el 98\PYZpc{} de los degrees estan entre los }
+          \PY{l+s+sd}{degrees 0 y 20:\PYZsq{}\PYZsq{}\PYZsq{}}
+          \PY{n}{frac} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{[}\PY{n}{d} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mi}{20} \PY{k}{for} \PY{n}{d} \PY{o+ow}{in} \PY{n}{degrees}\PY{p}{]}\PY{p}{)} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{degrees}\PY{p}{)}
+          \PY{k}{print}\PY{p}{(}\PY{n}{frac}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+0.9805339023646736
+
+    \end{Verbatim}
+
+    \subsubsection{AJUSTE DE LEY DE POTENCIAS VIA MÉTODO
+CLAUSET-SHALIZI-NEWMAN}\label{ajuste-de-ley-de-potencias-via-muxe9todo-clauset-shalizi-newman}
+
+    Vamos a llamar a R desde Python usando la librería rpy2
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}4}]:} \PY{c+c1}{\PYZsh{}\PYZsh{} EJECUTAR ESTO si no tienen instalado el paquete igraph (para instalarlo)}
+        \PY{c+c1}{\PYZsh{}\PYZsh{} import rpy2\PYZsq{}s package module}
+        \PY{c+c1}{\PYZsh{}\PYZsh{} select a mirror for R packages}
+        \PY{c+c1}{\PYZsh{}utils = importr(\PYZsq{}utils\PYZsq{})}
+        \PY{c+c1}{\PYZsh{}utils.chooseCRANmirror(ind=2) \PYZsh{} elijo de dónde descargar el paquete}
+        \PY{c+c1}{\PYZsh{}\PYZsh{} Instalo}
+        \PY{c+c1}{\PYZsh{}from rpy2.robjects.vectors import StrVector}
+        \PY{c+c1}{\PYZsh{}utils.install\PYZus{}packages(StrVector([\PYZsq{}igraph\PYZsq{}]))}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}5}]:} \PY{c+c1}{\PYZsh{} Realizo el ajuste de la powerlaw}
+        \PY{n}{igraph} \PY{o}{=} \PY{n}{importr}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{igraph}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{} Creamos un vector de R pasándole los degrees}
+        \PY{n}{degrees\PYZus{}r} \PY{o}{=} \PY{n}{ro}\PY{o}{.}\PY{n}{FloatVector}\PY{p}{(}\PY{n}{degrees}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{} Documentación de fit\PYZus{}power\PYZus{}law:}
+        \PY{c+c1}{\PYZsh{} https://rdrr.io/cran/igraph/man/fit\PYZus{}power\PYZus{}law.html}
+        \PY{n}{resultado} \PY{o}{=} \PY{n}{igraph}\PY{o}{.}\PY{n}{fit\PYZus{}power\PYZus{}law}\PY{p}{(}\PY{n}{degrees\PYZus{}r}\PY{p}{,} \PY{n}{implementation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{plfit}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{k}{print}\PY{p}{(}\PY{n}{resultado}\PY{o}{.}\PY{n}{r\PYZus{}repr}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+list(continuous = FALSE, alpha = 2.08715666887787, xmin = 5, 
+    logLik = -7690.8859032442, KS.stat = 0.0102570630609345, 
+    KS.p = 0.969070170897117)
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}7}]:} \PY{c+c1}{\PYZsh{} Graficamos histograma + ajuste}
+        \PY{n}{kmin} \PY{o}{=} \PY{n}{resultado}\PY{o}{.}\PY{n}{rx2}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{xmin}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+        \PY{n}{gamma} \PY{o}{=} \PY{n}{resultado}\PY{o}{.}\PY{n}{rx2}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{alpha}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+        \PY{n}{ksp} \PY{o}{=} \PY{n}{resultado}\PY{o}{.}\PY{n}{rx2}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{KS.p}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+        
+        \PY{k+kn}{from} \PY{n+nn}{scipy.special} \PY{k+kn}{import} \PY{n}{zeta}
+        \PY{k}{def} \PY{n+nf}{powerlaw}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{gamma}\PY{p}{,} \PY{n}{kmin}\PY{p}{)}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} Como nuestro ajuste fue sobre una distribución de probabilidad discreta,}
+            \PY{c+c1}{\PYZsh{} la cte de normalización es 1 sobre la función zeta de Riemann generalizada}
+            \PY{k}{return} \PY{n}{x}\PY{o}{*}\PY{o}{*}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{gamma}\PY{p}{)} \PY{o}{/} \PY{n}{zeta}\PY{p}{(}\PY{n}{gamma}\PY{p}{,} \PY{n}{kmin}\PY{p}{)}
+        
+        \PY{c+c1}{\PYZsh{} ACLARACION IMPORTANTE}
+        \PY{c+c1}{\PYZsh{} Para que se grafique bien la ley de potencias, es necesario llamar}
+        \PY{c+c1}{\PYZsh{} a la función powerlaw poniendo kmin=1. Esto se debe a que el histograma}
+        \PY{c+c1}{\PYZsh{} de grados está normalizado arrancando desde k=1, y no desde el kmin que}
+        \PY{c+c1}{\PYZsh{} elige la función fit\PYZus{}power\PYZus{}law.}
+        
+        \PY{n}{fig}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+        \PY{n}{titulo} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Histograma de grados con ajuste por ley de potencias}\PY{l+s+s1}{\PYZsq{}}
+        \PY{n}{xs} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n+nb}{max}\PY{p}{(}\PY{n}{degrees}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{1000}\PY{p}{)}
+        \PY{n}{ax}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{xs}\PY{p}{,} \PY{n}{powerlaw}\PY{p}{(}\PY{n}{xs}\PY{p}{,} \PY{n}{gamma}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{}\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{deeppink}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                \PY{n}{label}\PY{o}{=}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}p(k) }\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{propto k\PYZca{}\PYZob{}\PYZhy{}}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{gamma\PYZcb{}\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{}xs = np.arange(1, max(degrees) + 2)}
+        \PY{c+c1}{\PYZsh{}ax.plot(xs, powerlaw(xs, gamma, kmin), \PYZsq{}o\PYZsq{}, color=\PYZsq{}deeppink\PYZsq{},}
+        \PY{c+c1}{\PYZsh{}        label=r\PYZsq{}\PYZdl{}\PYZbs{}gamma = \PYZdl{}\PYZsq{} + \PYZsq{}\PYZob{}:.4g\PYZcb{}\PYZsq{}.format(gamma))}
+        \PY{n}{ax}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{gamma = \PYZdl{}}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZob{}:.4g\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{gamma}\PY{p}{)}\PY{p}{)}
+        \PY{n}{ax}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}K\PYZus{}\PYZob{}min\PYZcb{} = \PYZdl{}}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZob{}:.0f\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{kmin}\PY{p}{)}\PY{p}{)}
+        \PY{n}{ax}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{p\PYZhy{}value (KS) = \PYZob{}:.2g\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{ksp}\PY{p}{)}\PY{p}{)}
+        \PY{n}{ax}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+        
+        \PY{n}{histograma}\PY{p}{(}\PY{n}{degrees}\PY{p}{,} \PY{n}{logbins}\PY{o}{=}\PY{n+nb+bp}{True}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{,} \PY{n}{titulo}\PY{o}{=}\PY{n}{titulo}\PY{p}{,}
+                   \PY{n}{logx}\PY{o}{=}\PY{n+nb+bp}{True}\PY{p}{,} \PY{n}{logy}\PY{o}{=}\PY{n+nb+bp}{True}\PY{p}{,}
+                   \PY{n}{xlabel}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k (adim.)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ylabel}\PY{o}{=}\PY{n+nb+bp}{True}\PY{p}{,} \PY{n}{ecolor}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{errbars}\PY{o}{=}\PY{n+nb+bp}{False}\PY{p}{,} 
+                   \PY{n}{labelsize}\PY{o}{=}\PY{l+m+mi}{18}\PY{p}{,} \PY{n}{ticksize}\PY{o}{=}\PY{l+m+mi}{16}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n+nb}{max}\PY{p}{(}\PY{n}{degrees}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{50}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_90_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}7}]:} (<Figure size 576x432 with 1 Axes>,
+         <matplotlib.axes.\_subplots.AxesSubplot at 0x7f31c2252da0>)
+\end{Verbatim}
+            
+    El ajuste es excelente dado que el p-value del test Kolmogorov-Smirnov
+es 0.97.
+
+    \section{Ejercicio 4}\label{ejercicio-4}
+
+    \subsubsection{Punto a}\label{punto-a}
+
+\subsubsection{i)}\label{i}
+
+    Primero importamos las librerías que necesitamos, e importamos las redes
+sobre las cuales vamos a trabajar.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}8}]:} \PY{k+kn}{from} \PY{n+nn}{\PYZus{}\PYZus{}future\PYZus{}\PYZus{}} \PY{k+kn}{import} \PY{n}{division}
+        \PY{k+kn}{import} \PY{n+nn}{networkx} \PY{k+kn}{as} \PY{n+nn}{nx}
+        \PY{k+kn}{import} \PY{n+nn}{matplotlib.pyplot} \PY{k+kn}{as} \PY{n+nn}{plt}
+        \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k+kn}{as} \PY{n+nn}{np}
+        \PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k+kn}{as} \PY{n+nn}{pd}
+        \PY{k+kn}{from} \PY{n+nn}{networkx.readwrite.gml} \PY{k+kn}{import} \PY{n}{read\PYZus{}gml}
+        
+        \PY{k+kn}{from} \PY{n+nn}{scipy.odr} \PY{k+kn}{import} \PY{n}{Model}\PY{p}{,} \PY{n}{RealData}\PY{p}{,} \PY{n}{ODR}
+        \PY{k+kn}{from} \PY{n+nn}{scipy} \PY{k+kn}{import} \PY{n}{stats}
+        
+        \PY{k+kn}{from} \PY{n+nn}{histograma} \PY{k+kn}{import} \PY{n}{histograma}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{net\PYZus{}science} \PY{o}{=} \PY{n}{read\PYZus{}gml}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tc01\PYZus{}data/netscience.gml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{july} \PY{o}{=} \PY{n}{read\PYZus{}gml}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tc01\PYZus{}data/as\PYZhy{}22july06.gml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    Para calcular el promedio del grado medio de los vecinos de nodos de
+grado k (\(k_{nn}\)), utilizamos la funcion \(annd\)(). Dada una red,
+esta función genera 2 listas: una lista con el grado de cada nodo, y una
+lista con el grado medio de los vecinos (\(annd\)) de dicho nodo,
+calculada con nx.average\_neighbor\_degree(). Notar que estas listas
+están ordenadas de la misma forma, es decir, la componente i-ésima de
+ambas listas corresponden al mismo nodo. Luego, la función itera sobre
+todos los nodos con la condición de que promedie los \(annd\) de todos
+los nodos con igual grado y lo guarde en una lista. Finalmente la
+función devuelve la lista de grados, y la lista de los promedios de
+\(annd\) por grado.
+
+La funcion nan\_delete() remueve los nan y los inf de la lista de los
+promedios de \(annd\)s que aparecen por promediar listas vacías.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}10}]:} \PY{k}{def} \PY{n+nf}{nan\PYZus{}delete}\PY{p}{(}\PY{n}{k\PYZus{}nn}\PY{p}{)}\PY{p}{:}
+             \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Remueve los inf y los nan de la lista manteniendo su k especifico.}
+         \PY{l+s+sd}{    .}
+         \PY{l+s+sd}{    .}
+         \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+             \PY{n}{k} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{k\PYZus{}nn}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+             \PY{n}{k\PYZus{}nn\PYZus{}temp} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+             \PY{n}{k\PYZus{}temp} \PY{o}{=} \PY{p}{[}\PY{p}{]}    
+             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{k\PYZus{}nn}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                 \PY{k}{if} \PY{o+ow}{not} \PY{n}{np}\PY{o}{.}\PY{n}{isinf}\PY{p}{(}\PY{n}{k\PYZus{}nn}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)} \PY{o+ow}{and} \PY{o+ow}{not} \PY{n}{np}\PY{o}{.}\PY{n}{isnan}\PY{p}{(}\PY{n}{k\PYZus{}nn}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)} \PY{o+ow}{and} \PY{o+ow}{not} \PY{n}{np}\PY{o}{.}\PY{n}{isinf}\PY{p}{(}\PY{n}{k}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}\PY{p}{:}
+                     \PY{n}{k\PYZus{}nn\PYZus{}temp}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{k\PYZus{}nn}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}
+                     \PY{n}{k\PYZus{}temp}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{k}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}
+             \PY{k}{return} \PY{n}{k\PYZus{}temp}\PY{p}{,} \PY{n}{k\PYZus{}nn\PYZus{}temp}
+         
+         \PY{k}{def} \PY{n+nf}{annd}\PY{p}{(}\PY{n}{red}\PY{p}{)}\PY{p}{:}
+             \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{} annd (average neighbouhr degree distribution) devuelve el annd en orden}
+         \PY{l+s+sd}{    de los grados del nodo.}
+         \PY{l+s+sd}{    }
+         \PY{l+s+sd}{    Returns: k, k\PYZus{}nn}
+         \PY{l+s+sd}{    }
+         \PY{l+s+sd}{    k: array con los grados de la red (eje X)}
+         \PY{l+s+sd}{    k\PYZus{}nn: array con los annd promediados por grado (eje Y)}
+         \PY{l+s+sd}{    .}
+         \PY{l+s+sd}{    .}
+         \PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+             \PY{n}{nombres} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{red}\PY{o}{.}\PY{n}{nodes}\PY{p}{)}
+             \PY{n}{avnedeg} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{average\PYZus{}neighbor\PYZus{}degree}\PY{p}{(}\PY{n}{red}\PY{p}{)}
+             \PY{n}{grados} \PY{o}{=} \PY{n}{nx}\PY{o}{.}\PY{n}{degree}\PY{p}{(}\PY{n}{red}\PY{p}{)}
+             \PY{n}{a} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{max}\PY{p}{(}\PY{n+nb}{dict}\PY{p}{(}\PY{n}{nx}\PY{o}{.}\PY{n}{degree}\PY{p}{(}\PY{n}{red}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{values}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{b} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+                 \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{nombres}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                     \PY{k}{if} \PY{n}{i} \PY{o}{==} \PY{n}{grados}\PY{p}{[}\PY{n}{nombres}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{]}\PY{p}{:}
+                         \PY{n}{b}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{avnedeg}\PY{p}{[}\PY{n}{nombres}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+                 \PY{n}{a}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{b}\PY{p}{)}\PY{p}{)}
+             \PY{n}{k}\PY{p}{,} \PY{n}{k\PYZus{}nn} \PY{o}{=} \PY{n}{nan\PYZus{}delete}\PY{p}{(}\PY{n}{a}\PY{p}{)}
+             \PY{k}{return} \PY{n}{k}\PY{p}{,} \PY{n}{k\PYZus{}nn}
+         
+         \PY{n}{degree\PYZus{}2}\PY{p}{,} \PY{n}{annd\PYZus{}2} \PY{o}{=} \PY{n}{annd}\PY{p}{(}\PY{n}{net\PYZus{}science}\PY{p}{)}
+         \PY{n}{degree\PYZus{}1}\PY{p}{,} \PY{n}{annd\PYZus{}1} \PY{o}{=} \PY{n}{annd}\PY{p}{(}\PY{n}{july}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{}OBS: si correr esta celda devuelve un error de Mean of empty slice, o similar, no pasa nada.}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/home/gabo/anaconda3/lib/python3.6/site-packages/numpy/core/fromnumeric.py:2957: RuntimeWarning: Mean of empty slice.
+  out=out, **kwargs)
+/home/gabo/anaconda3/lib/python3.6/site-packages/numpy/core/\_methods.py:80: RuntimeWarning: invalid value encountered in double\_scalars
+  ret = ret.dtype.type(ret / rcount)
+
+    \end{Verbatim}
+
+    \subsubsection{ii)}\label{ii}
+
+    Para observar la tendencia de los \(k_{nn}\) graficamos, para cada red,
+4 formas distintas de observar los gráficos: la escala lineal, la escala
+log-log, la cumulativa en escala log-log, y un histograma de los
+\(k_{nn}\). Ambos gráficos fueron generados con la funcón
+gráficos\_multiples(), pasando degree\_i como el eje x y annd\_i como el
+eje y.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}11}]:} \PY{k}{def} \PY{n+nf}{graficos\PYZus{}multiples}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{network\PYZus{}name}\PY{p}{)}\PY{p}{:}
+             \PY{n}{f}\PY{p}{,} \PY{p}{(}\PY{p}{[}\PY{n}{ax1}\PY{p}{,} \PY{n}{ax2}\PY{p}{]}\PY{p}{,} \PY{p}{[}\PY{n}{ax3}\PY{p}{,} \PY{n}{ax4}\PY{p}{]}\PY{p}{)} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}
+             \PY{n}{f}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+             \PY{n}{f}\PY{o}{.}\PY{n}{suptitle}\PY{p}{(}\PY{n}{network\PYZus{}name}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+m+mf}{0.53}\PY{p}{,} \PY{n}{y} \PY{o}{=} \PY{l+m+mf}{0.99} \PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}12}]:}     \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax1}\PY{p}{)}
+             \PY{n}{ax1}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(a)  Lineal}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax1}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax1}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}k\PYZus{}\PYZob{}nn\PYZcb{}\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax1}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             
+             \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax2}\PY{p}{)}
+             \PY{n}{ax2}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(b)  Log Log}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax2}\PY{o}{.}\PY{n}{loglog}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax2}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}k\PYZus{}\PYZob{}nn\PYZcb{}\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax2}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{c+c1}{\PYZsh{}ax2.yscale(\PYZsq{}log\PYZsq{})}
+             \PY{c+c1}{\PYZsh{}ax2.xscale(\PYZsq{}log\PYZsq{})}
+             
+             \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax3}\PY{p}{)}
+             \PY{n}{coefs\PYZus{}reversed} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{flip}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{)}
+             \PY{n}{cumulative} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{cumsum}\PY{p}{(}\PY{n}{coefs\PYZus{}reversed}\PY{p}{)}
+             \PY{n}{cumulative} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{flip}\PY{p}{(}\PY{n}{cumulative}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{)}
+             \PY{n}{ax3}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(c)  Cumulative}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax3}\PY{o}{.}\PY{n}{loglog}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{cumulative}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{ax3}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}k\PYZus{}\PYZob{}nn\PYZcb{}\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             
+             \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax4}\PY{p}{)}
+             \PY{n}{ax4}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(d)  Log binned histogram}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+             \PY{n}{histograma}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax4}\PY{p}{,} \PY{n}{xlabel}\PY{o}{=}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}k\PYZus{}\PYZob{}nn\PYZcb{}\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{labelsize}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{,} \PY{n}{ticksize}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{)}
+         
+         \PY{n}{graficos\PYZus{}multiples}\PY{p}{(}\PY{n}{degree\PYZus{}1}\PY{p}{,} \PY{n}{annd\PYZus{}1}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{July}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n}{graficos\PYZus{}multiples}\PY{p}{(}\PY{n}{degree\PYZus{}2}\PY{p}{,} \PY{n}{annd\PYZus{}2}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Net\PYZus{}science}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+        ---------------------------------------------------------------------------
+
+        NameError                                 Traceback (most recent call last)
+
+        <ipython-input-12-305ea6ce618f> in <module>()
+    ----> 1 plt.sca(ax1)
+          2 ax1.set\_title('(a)  Lineal')
+          3 ax1.plot(x, y, '.')
+          4 ax1.set\_ylabel(r'\$k\_\{nn\}\$')
+          5 ax1.set\_xlabel('k')
+
+
+        NameError: name 'ax1' is not defined
+
+    \end{Verbatim}
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:multiples\%20graphics.png}
+\caption{multiples\%20graphics.png}
+\end{figure}
+
+    En la red de July se puede observar que decrece el \(annd\) promedio a
+medida que aumenta el grado del nodo. Por otro lado, en la red
+Net\_science el \(annd\) promedio aumenta con el grado de los nodos. El
+análisis de este comportamiento se vera en el punto iv).
+
+    \subsubsection{iii)}\label{iii}
+
+    Se ajustó una recta al logaritmo de \(k_{nn}\) en función del logaritmo
+de k.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} \PY{k}{def} \PY{n+nf}{linear}\PY{p}{(}\PY{n}{M}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{:}
+            \PY{n}{m}\PY{p}{,} \PY{n}{b} \PY{o}{=} \PY{n}{M}
+            \PY{k}{return} \PY{n}{x}\PY{o}{*}\PY{n}{m} \PY{o}{+} \PY{n}{b}
+        
+        \PY{k}{def} \PY{n+nf}{ajuste\PYZus{}lineal}\PY{p}{(}\PY{n}{degree}\PY{p}{,} \PY{n}{annd}\PY{p}{)}\PY{p}{:}
+            \PY{k}{if} \PY{n}{degree}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{==} \PY{l+m+mf}{0.}\PY{p}{:}
+                \PY{n}{log\PYZus{}k\PYZus{}nn} \PY{o}{=} \PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{i}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{annd}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}\PY{p}{]}
+                \PY{n}{log\PYZus{}k} \PY{o}{=} \PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{i}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{degree}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}\PY{p}{]}
+            \PY{k}{else}\PY{p}{:}
+                \PY{n}{log\PYZus{}k\PYZus{}nn} \PY{o}{=} \PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{i}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{annd}\PY{p}{]}
+                \PY{n}{log\PYZus{}k} \PY{o}{=} \PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{i}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{degree}\PY{p}{]}        
+            \PY{n}{linear\PYZus{}model} \PY{o}{=} \PY{n}{Model}\PY{p}{(}\PY{n}{linear}\PY{p}{)}
+            \PY{n}{data} \PY{o}{=} \PY{n}{RealData}\PY{p}{(}\PY{n}{log\PYZus{}k}\PY{p}{,} \PY{n}{log\PYZus{}k\PYZus{}nn}\PY{p}{)}
+            \PY{n}{odr} \PY{o}{=} \PY{n}{ODR}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{linear\PYZus{}model}\PY{p}{,} \PY{n}{beta0}\PY{o}{=}\PY{p}{[}\PY{l+m+mf}{0.}\PY{p}{,} \PY{l+m+mf}{1.}\PY{p}{]}\PY{p}{)}
+            \PY{n}{out} \PY{o}{=} \PY{n}{odr}\PY{o}{.}\PY{n}{run}\PY{p}{(}\PY{p}{)}
+            \PY{n}{log\PYZus{}modelo} \PY{o}{=} \PY{p}{[}\PY{n}{j}\PY{o}{*}\PY{n}{out}\PY{o}{.}\PY{n}{beta}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{+}\PY{n}{out}\PY{o}{.}\PY{n}{beta}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n}{log\PYZus{}k}\PY{p}{]}
+            \PY{k}{return} \PY{n}{log\PYZus{}k}\PY{p}{,} \PY{n}{log\PYZus{}modelo}\PY{p}{,} \PY{n}{out}\PY{o}{.}\PY{n}{beta}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+        
+        \PY{n}{f}\PY{p}{,} \PY{p}{(}\PY{n}{ax1}\PY{p}{,} \PY{n}{ax2}\PY{p}{)} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}
+        \PY{n}{f}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+        \PY{n}{f}\PY{o}{.}\PY{n}{suptitle}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Ajustes lineales}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+m+mf}{0.53}\PY{p}{,} \PY{n}{y} \PY{o}{=} \PY{l+m+mf}{0.99} \PY{p}{,}\PY{n}{fontsize}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{)}
+        
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax1}\PY{p}{)}
+        \PY{n}{ax1}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{July}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{ax1}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{degree\PYZus{}1}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{annd\PYZus{}1}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{ax1}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{ajuste\PYZus{}lineal}\PY{p}{(}\PY{n}{degree\PYZus{}1}\PY{p}{,} \PY{n}{annd\PYZus{}1}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{ajuste\PYZus{}lineal}\PY{p}{(}\PY{n}{degree\PYZus{}1}\PY{p}{,} \PY{n}{annd\PYZus{}1}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+        \PY{n}{ax1}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}k\PYZus{}\PYZob{}nn\PYZcb{}\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{ax1}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{ax1}\PY{o}{.}\PY{n}{text}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mf}{6.5}\PY{p}{,} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{mu\PYZdl{} = }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{ajuste\PYZus{}lineal}\PY{p}{(}\PY{n}{degree\PYZus{}1}\PY{p}{,} \PY{n}{annd\PYZus{}1}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+        
+        \PY{n}{plt}\PY{o}{.}\PY{n}{sca}\PY{p}{(}\PY{n}{ax2}\PY{p}{)}
+        \PY{n}{ax2}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Net Science}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{ax2}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{degree\PYZus{}2}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{annd\PYZus{}2}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{.}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{ax2}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{ajuste\PYZus{}lineal}\PY{p}{(}\PY{n}{degree\PYZus{}2}\PY{p}{,} \PY{n}{annd\PYZus{}2}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{ajuste\PYZus{}lineal}\PY{p}{(}\PY{n}{degree\PYZus{}2}\PY{p}{,} \PY{n}{annd\PYZus{}2}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+        \PY{n}{ax2}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}k\PYZus{}\PYZob{}nn\PYZcb{}\PYZdl{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{ax2}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{ax2}\PY{o}{.}\PY{n}{text}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mf}{2.5}\PY{p}{,} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZdl{}}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{mu\PYZdl{} = }\PY{l+s+si}{\PYZpc{}s}\PY{l+s+s1}{\PYZsq{}} \PY{o}{\PYZpc{}} \PY{n+nb}{round}\PY{p}{(}\PY{n}{ajuste\PYZus{}lineal}\PY{p}{(}\PY{n}{degree\PYZus{}2}\PY{p}{,} \PY{n}{annd\PYZus{}2}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:Ajustes_lineales.png}
+\caption{Ajustes\_lineales.png}
+\end{figure}
+
+    Se puede observar que el exponente de correlación resultó negativo para
+la red July, mientras que para la red Net science resultó positivo.
+
+    \subsubsection{iv)}\label{iv}
+
+    Finalmente se calculo el coeficiente de asortatividad de Newmann para
+ambas redes utilizando la funcion de networkx
+nx.degree\_assortativity\_coefficient(), como se puede observar en la
+siguiente tabla.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}13}]:} \PY{n}{data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Red}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{July}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Net Science}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Newmann}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mf}{0.198}\PY{p}{,}\PY{l+m+mf}{0.46}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Barabasi}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mf}{0.56} \PY{p}{,}\PY{l+m+mf}{0.34}\PY{p}{]}\PY{p}{,}
+                             \PY{p}{\PYZcb{}}\PY{p}{)}\PY{c+c1}{\PYZsh{}empty dataframe}
+         \PY{n}{data}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}13}]:}            Red  Newmann  Barabasi
+         0         July   -0.198     -0.56
+         1  Net Science    0.460      0.34
+\end{Verbatim}
+            
+    Para las dos redes, ambos estimadores no solo resultaron del mismo
+orden, sino que también tienen el mismo signo. El hecho de que el
+estimador de Newmann dé negativo indica que la red es disortativa,
+mientras que si resulta positivo la red es asortativa.
+
+En este caso, la propiedad de la red que se esta estudiando es el
+promedio del \(annd\) por grado (\(k_{nn}\)). Por lo tanto, que la red
+sea asortativa en este aspecto indica que los nodos con alto grado se
+van a relacionar con nodos de alto grado, mientras que los nodos con
+grado bajo se van a relacionar con nodos de grado bajo. Es decir, en
+general los vecinos de los nodos de alto grado van a tener a su vez un
+grado alto, por lo que su \(annd\) va a ser elevado; y los nodos de
+grado bajo van a tener vecinos con grado bajo, por lo que su \(annd\) va
+a ser pequeño en comparación a los anteriores.
+
+Este estimador es a su vez consistente con el estimador de Barabási, que
+indica una pendiente positiva en el \(k_{nn}\) por grado, para redes
+asortativas. Es decir, a medida que aumento el grado, también voy a
+aumentar el \(k_{nn}\).
+
+Por el contrario, para redes disortativas va a ocurrir lo contrario. Los
+nodos con alto grado se van a relacionar en general con nodos de grado
+bajo, y viceversa. Por lo tanto, el \(annd\) de los nodos de grado alto
+va a ser pequeño, ya que sus vecinos van a tener grado bajo, mientras
+que el \(annd\) de los nodos de grado bajo va a ser grande en general,
+ya que van a estar relacionados con nodos de grado alto resultando en un
+elevado \(annd\).
+
+De nuevo, este estimador es consistente con el estimador de barabási.
+Para estas redes indica una pendiente negativa en el \(k_{nn}\) por
+grado. Es decir, a medida que aumento el grado del nodo, en promedio el
+\(annd\) va a decrecer.
+
+    \subsubsection{Punto b}\label{punto-b}
+
+    En este punto corremos los mismos codigos que en el Punto a, pero para
+las redes de proteínas g\_y2h y g\_apms.
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:multiples\%20graphics\%202.png}
+\caption{multiples\%20graphics\%202.png}
+\end{figure}
+
+    Luego, si se ajustan los graficos log-log por rectas, se observa que la
+red g\_y2h tiene una pendiente negativa, mientras que la red g\_apms
+tiene una pendiente positiva.
+
+    \begin{figure}
+\centering
+\includegraphics{attachment:Ajustes_lineales_2.png}
+\caption{Ajustes\_lineales\_2.png}
+\end{figure}
+
+    Por otro lado, si se calcula el coeficiente de asortatividad de Newmann
+para ambas redes, resulta
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}14}]:} \PY{n}{data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Red}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{g\PYZus{}y2h}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{g\PYZus{}apms}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Newmann}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mf}{0.06}\PY{p}{,}\PY{l+m+mf}{0.61}\PY{p}{]}\PY{p}{,}
+                              \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Barabasi}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mf}{0.19} \PY{p}{,}\PY{l+m+mf}{0.61}\PY{p}{]}\PY{p}{,}
+                             \PY{p}{\PYZcb{}}\PY{p}{)}\PY{c+c1}{\PYZsh{}empty dataframe}
+         \PY{n}{data}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}14}]:}       Red  Newmann  Barabasi
+         0   g\_y2h    -0.06     -0.19
+         1  g\_apms     0.61      0.61
+\end{Verbatim}
+            
+    Nuevamente, los coeficientes resultan del mismo orden y del mismo signo
+para los dos métodos. Luego, se puede concluir que la red g\_apms es una
+red asortativa, donde en promedio los nodos con alto \(annd\) se
+relacionan con nodos de alto \(annd\), mientras que los nodos de bajo
+\(annd\) se relacionan con nodos de bajo \(annd\). Por otro lado, la red
+g\_y2h es una red disortativa en la cual los nodos de bajo grado tienden
+a relacionarse con nodos de alto \(annd\) en promedio, y los nodos de
+grado alto tienden a relacionarse con nodos de bajo \(annd\) en
+promedio.
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+    \end{document}
