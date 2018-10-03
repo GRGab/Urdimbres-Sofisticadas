@@ -18,7 +18,7 @@ sys.path.append('./Tp1/')
 from dolphins_funciones import (genero_a_color, particionar_por_genero,
                                 crear_leyenda, contar_enlaces_internos,
                                 contar_enlaces_entre_grupos,
-                                contar_clases,p_value)
+                                contar_clases,p_value, cociente, desarme)
 from modularidad import modularidad
 from histograma import histograma
 from graficar_multipartito import *
@@ -152,8 +152,8 @@ for i in range(n_simulaciones):
             grafo_h0.nodes()[nombre]['gender'] = 'm'
     enlaces_entre_grupos[i] = contar_enlaces_entre_grupos(grafo_h0, 'gender')
     modularidades[i] = modularidad(grafo_h0, 'gender')
-    # Generar visualización para cada grafo (solo descomentar si
-    # n_simulaciones es menor a 10!!!!))
+#     Generar visualización para cada grafo (solo descomentar si
+#     n_simulaciones es menor a 10!!!!))
 #    fig, ax = plt.subplots()
 #    colores = [genero_a_color(g) for g in nx.get_node_attributes(grafo_h0, "gender").values()]    
 #    multi_spring_pos = position_multipartito_spring(grafo_h0, ['f', 'm'],
@@ -183,41 +183,18 @@ fig, ax = histograma(modularidades, bins=15, density=True,
                      xlabel='Modularidad')
 ax.axvline(modularidad_real, color='deeppink',
            label='Valor real = {}'.format(valor_real))
-     
-#%%
-#Intentos de Mati de hacer esto sin haber cursado estadistica. Riansenn.
-#def p_value_1(datos, valor_real=52):     
-#    a=[]
-#    #Creo 2 listas una con los numeros de enlaces que aparecen y otra
-#    # con cuantas veces se repiten cada numero enlace ("la altura de cada bin").
-#    enlace = list(Counter(datos).keys())
-#    cuantos = list(Counter(datos).values())
-#    #Creo una lista comparador, cada componente sera la "altura del hist" si el
-#    #valor medido se encuentra en mi histograma y sino un 1
-#    comparador = []
-#    for j in range (0,len(enlace)):
-#        if enlace[j] == valor_real:
-#            comparador.append(cuantos[j])
-#        else:
-#            comparador.append(1)
-#    #Componente a componente, voy a comparar cada valor de "altura" con el comparador.
-#    #Si es menor o igual al mismo, lo appendeo a una lista.
-#    for i in range (0,len(enlace)):
-#        if cuantos[i] <= comparador[i]:
-#            a.append(cuantos[i])
-#    #Finalemente, el P-value sera el largo de esta lista dividido el numero
-#    #total de eventos
-#    return len(a)/len(datos)
+
+#%%PUNTO C
+
+dolph = read_gml('Tp1/tc01_data/new_dolphins.gml')
+print(cociente(dolph))
+
+#Esto de aca abajo es una forma de ver como se destruye la red dolphin para distintos
+#valores de porcentaje_nodos_sacados.
+plt.figure(1)
+nx.draw(dolph, node_size=30)
 #
-#def p_value_2(datos, bin1=0, bin2=1, nbins = 150, valor_real=52):
-#    # use _ to assign the patches to a dummy variable since we don't need them
-#    conteos, bins, _ = plt.hist(datos, nbins)    
-#    # get the width of each bin
-#    bin_width = bins[1] - bins[0]
-#    cnorm = conteos / (np.sum(conteos) * bin_width)
-#    conteos = cnorm    
-#    # sum over number in each bin and mult by bin width, which can be factored out
-#    integral = bin_width * sum(conteos[bin1:bin2])    
-#    return integral
-
-
+for i in np.arange(0, 0.8, 0.1):
+    grafo = desarme(dolph, i)
+    plt.figure(i*10 + 1)
+    nx.draw(grafo, node_size=30)
