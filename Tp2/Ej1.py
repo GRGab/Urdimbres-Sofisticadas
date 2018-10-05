@@ -53,6 +53,7 @@ def agregar_importancia(G):
                     break
     return g, value
 
+#{x:y for x,y in zip(children,colors)}
 
 
 def ess_vs_k(g):
@@ -119,7 +120,7 @@ def desarme(g):
     for a, b in g.degree():
         nodos.append(a)
         k.append(b)
-    threshold = np.arange(0, max(k), 1)
+    threshold = np.arange(0, max(k)+1, 1)
     y = []
     x = []
     for j in threshold:
@@ -168,3 +169,22 @@ plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'r-')
 
 plt.ylabel('log(1-P)')
 plt.xlabel('Protein connectivity (k)')
+
+
+#Ej D-2
+
+redes = ['AP', 'LIT', 'Y2H']
+n_enlaces = [len(g_ap.edges()), len(g_lit.edges()), len(g_y2h.edges())]
+n_enlaces_auto = [len(g_ap.edges()), len(g_lit.edges()), len(g_y2h.edges())]
+def autoenlace():
+    for i in list(g_ap.enlaces()):
+        iflist(g_ap.enlaces())[i][1]
+k_medio = [np.mean(dict(g_ap.degree).values()), np.mean(dict(g_lit.degree).values()), 
+           np.mean(dict(g_y2h.degree).values())]
+clustering_medio = [nx.average_clustering(g_ap), nx.average_clustering(g_lit), nx.average_clustering(g_y2h)]
+
+d = {'Redes':redes, 'Nodos':n_nodos, 'Enlaces':n_enlaces, 'Grado medio':k_medio, 'Coef clustering medio': clustering_medio}
+df = pd.DataFrame(data=d)
+
+#%%
+
