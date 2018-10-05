@@ -11,16 +11,17 @@ import networkx as nx
 import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
+from agregar_esencialidad import agregar_esencialidad
 
 #%%
-apms = ldata('tc02Data/yeast_AP-MS.txt')
+apms = ldata('Tp2/tc02Data/yeast_AP-MS.txt')
 
-y2h = ldata('tc02Data/yeast_Y2H.txt')
+y2h = ldata('Tp2/tc02Data/yeast_Y2H.txt')
 
-lit = ldata('tc02Data/yeast_LIT.txt')
+lit = ldata('Tp2/tc02Data/yeast_LIT.txt')
 
-lit_r = ldata('tc02Data/yeast_LIT_Reguly.txt')
-
+lit_r = ldata('Tp2/tc02Data/yeast_LIT_Reguly.txt')
+lit_r = [fila[:2] for fila in lit_r]
 
 g_apms = nx.Graph()
 g_apms.add_edges_from(apms)
@@ -28,25 +29,23 @@ g_apms.add_edges_from(apms)
 g_lit = nx.Graph()
 g_lit.add_edges_from(lit)
 #
-#g_lit_reg = nx.Graph()
-#g_lit_reg.add_edges_from(lit_r)
+g_lit_reg = nx.Graph()
+g_lit_reg.add_edges_from(lit_r)
 
 g_y2h = nx.Graph()
 g_y2h.add_edges_from(y2h)
 
-ess = ldata('tc02Data/Essential_ORFs_paperHe.txt')
-
-
-
-
-#%%
+ess = ldata('Tp2/tc02Data/Essential_ORFs_paperHe.txt')
 
 def k_medio(G):
     N = G.order()
     k_med = sum(k for (nodo, k) in G.degree) / N
     return k_med
 
+#%%
+################ Punto B:
 
+######## Tabla 1 de Zotenko: propiedades de las bases de datos
 
 def tabla_1(red):
     red = max(nx.connected_component_subgraphs(red), key=len)
@@ -62,9 +61,9 @@ data = pd.DataFrame({"Nombre de la red": ['Y2H','AP-MS','Lit'],
                      "$$<C_{i}>$$":[tabla_1(g_y2h)[2],tabla_1(g_lit)[2],tabla_1(g_apms)[2]],
                     })#empty dataframe
 data
+
 #%%
-#Punto b
-#Comparamos las listas de enlaces
+######## Tabla 2 de Zotenko: overlap entre bases de datos
 
 def comparten_enlaces(data1,data2):
     """data1 y data2 son listas de enlaces (tuplas) que voy a comparar. Por 
@@ -81,22 +80,43 @@ def comparten_enlaces(data1,data2):
     return n/g.size()
 
 comparten_enlaces(apms,apms)
+
 #%%
-def lectura(archive):
-    f = open(archive)
-    data = []
-    for line in f:
-        line = line.strip()
-        col = line.split()
-#        import pdb; pdb.set_trace()
-        data.append(col)	
-    return data
+##### Figura 1.a de Zotenko
 
-ess = lectura('tc02Data/Essential_ORFs_paperHe.txt')
+def ess_vs_k(g, ess):
+    nodos, values = agregar_esencialidad(g, ess)
+    nodos = []
+    k = []
+    for a, b in g.degree():
+        nodos.append(a)
+        k.append(b)
+    k_norm = [i/max(k) for i in k]
+    threshold = np.arange(0.01, 1, 0.001)
+    y = []
+    x = []
+    for j in threshold:
+        y_i = 0
+        x_i = 0
+        for i in range(len(nodos)):
+            if k_norm[i]>j:
+                if values[i] == 1:
+                    y_i += 1
+                x_i += 1
+        if x_i != 0:
+            y.append(y_i/x_i)
+            x.append(x_i/len(nodos))
+    return y, x
 
 
+y_0, x_0 = ess_vs_k(g_apms, ess)
+y_1, x_1 = ess_vs_k(g_lit, ess)
+y_2, x_2 = ess_vs_k(g_y2h, ess)
 
-
+plt.plot(x_0, y_0, label = 'Ap')
+plt.plot(x_1, y_1, label = 'Lit')
+plt.plot(x_2, y_2, label = 'Y2H')
+plt.legend()
 
 
 
