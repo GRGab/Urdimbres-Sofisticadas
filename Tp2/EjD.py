@@ -122,6 +122,7 @@ data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'b-')
+params_lit = out
 
 k, y_0 = desarme(g_apms, ess)
 y_1 = [np.log(1-i) for i in y_0]
@@ -132,6 +133,7 @@ data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'g-')
+params_apms = out
 
 k, y_0 = desarme(g_y2h, ess)
 y_1 = [np.log(1-i) for i in y_0]
@@ -142,6 +144,7 @@ data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'r-')
+params_y2h = out
 
 k, y_0 = desarme(g_lit_reg, ess)
 y_1 = [np.log(1-i) for i in y_0]
@@ -152,6 +155,7 @@ data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'k-')
+params_lit_reg = out
 
 plt.ylabel('log(1-P)')
 plt.xlabel('Protein connectivity (k)')
@@ -180,24 +184,6 @@ from agregar_esencialidad import agregar_esencialidad_dict
 for g in [g_lit, g_apms, g_y2h, g_lit_reg]:
     agregar_esencialidad_dict(g, ess)
 #%%
-def calcular_pares_mala(G, numvecinos):
-    acc = 0
-    n = G.order()
-    A = nx.adj_matrix(G)
-    for i in range(n):
-        for j in range(n_nodos):
-            vecinos_comunes = A[i].multiply(A[j]) # and lógico element-wise
-            num_vec_com = vecinos_comunes.sum()
-#            import pdb; pdb.set_trace(); 
-            if A[i,j] != 0 and num_vec_com >= numvecinos:
-                acc += 1
-                if 
-    return acc/2
-
-# Tarda muchísimo
-# calcular_pares(g_lit, 3) -> 1085.5
-# Está funcionando mal porque debería dar un número entero
-#%%
 
 def vecinos_comunes(G, nodo1, nodo2):
     vecinos1 = set(G[nodo1])
@@ -205,40 +191,27 @@ def vecinos_comunes(G, nodo1, nodo2):
     return len(vecinos1.intersection(vecinos2))
 
 def calcular_pares(G, numvecinos):
-    acc1 = 0
-    acc2 = 0
-    n = G.order()
-    for n1, d1 in dict(G.nodes).items(): # nodo 1, dict 1
-        for n2, d2 in dict(G.nodes).items(): # nodo 2, dict 2
-            if (n2 not in G[n1] and
-                vecinos_comunes(G, n1, n2) >= numvecinos):
-                acc1 += 1
-#                import pdb; pdb.set_trace(); 
-                if d1['esencialidad'] == d2['esencialidad']:
-                    acc2 += 1
-    num_pares = acc1 / 2
-    num_pares_mismotipo = acc2 / 2
+    num_pares = 0
+    num_pares_mismotipo = 0
+    for n1, n2 in nx.non_edges(G):
+        assert n1 not in G[n2]
+        if vecinos_comunes(G, n1, n2) >= numvecinos:
+            num_pares += 1
+            if G.nodes()[n1]['esencialidad'] == G.nodes()[n2]['esencialidad']:
+                num_pares_mismotipo += 1
     return num_pares, num_pares_mismotipo
 
-# Tarda menos y sí da entero!
-# calcular_pares(g_lit, 3) -> (1020.0, 685.0)
-
+#%%
 # Para las 4 redes:
 for nom, g, numvec in zip(['AP', 'LIT', 'Y2H', 'LIT_REG'],
                           [g_lit, g_apms, g_y2h, g_lit_reg],
                           [3, 3, 1, 3]):
     print('{}: '.format(nom), calcular_pares(g, numvec))
     
-# AP:  (1020.0, 685.0)
-# LIT:  (11982.5, 6288.5)
-# Y2H:  (23754.5, 15786.5)
-# LIT_REG:  (11514.0, 6924.0)
+#AP:  (718, 383)
+#LIT:  (11569, 5875)
+#Y2H:  (23013, 15045)
+#LIT_REG:  (10777, 6187)
 
-# Posibles problemas
-#-------------------
-    
-# 1) LIT y Y2H no dan un número entero, hay que revisasr por qué.
-# 2) Los números no son nada que ver con los del paper! Igual me parece que
-# ninguna de nuestras redes es igual a ninguna de las del paper, con lo cual
-# esto no sería un problema en sí mismo
-    
+# La red LIT_REG da casi lo mismo que en el paper (en el cual da
+# 10777, 6143).
