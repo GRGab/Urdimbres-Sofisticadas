@@ -12,8 +12,11 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
 import random
-from agregar_esencialidad import agregar_esencialidad
 from histograma import histograma
+
+import sys
+sys.path.append('./Tp2/')
+from agregar_esencialidad import agregar_esencialidad
 #%%
 apms = ldata('Tp2/tc02Data/yeast_AP-MS.txt')
 
@@ -37,7 +40,8 @@ g_y2h = nx.Graph()
 g_y2h.add_edges_from(y2h)
 
 ess = ldata('Tp2/tc02Data/Essential_ORFs_paperHe.txt')
-
+ess = [fila for fila in ess if (fila != [] and fila[0] != 'updated')]
+ess = [fila[1] for fila in ess]
 #%%
 #    Ejercico c
     
@@ -215,7 +219,7 @@ def desarme_por_grados_random(g, limite = 1, criterio='random',parada=2):
 #    
 #%%
 #Punto II
-def desarme_esenciales(g,ess=ess):
+def desarme_esenciales(g,ess):
     '''
     Toma una red y una lista de nodos esenciales. Primero, elimina los nodos
     esenciales. Luego, elimina nodos al azar pero con el mismo grado
@@ -230,33 +234,28 @@ def desarme_esenciales(g,ess=ess):
     
     #Copio la red para hacerla bolsa
     G = g.copy()
-    nodos, _ = agregar_esencialidad(g, ess)
-    G.remove_nodes_from(nodos)
+    G.remove_nodes_from(ess)
     #calculo la componente gigante y su tamaño
     cg = max(nx.connected_component_subgraphs(G), key=len)
     maxcomp = cg.order()
 ##########
     #Ahora calculamos la fraccion sacando proteinas random con el mismo grado.
     GG = g.copy()
-    for i in range(len(nodos)): #itero sobre los nodos esenciales
-        nodito=nodos[i]
+    for nodito in ess: #itero sobre los nodos esenciales
         nodes = list(GG.nodes()) #lista de nodos de la red
         if nodito in list(GG.nodes()):
-            ind = nodes.index(nodito) #busco su indice en la red original
-            degree = list(dict(nx.degree(GG)).values()) 
-            gradito = degree[ind] #busco el grado que le compete a ese nodo esencial
-            degree = np.array(degree)
-            j = np.where(degree==gradito) #j son los indices de los nodos con igual grado
+            grados = nx.degree(GG)
+            gradito = grados[nodito]
+            
+            grados = np.array(grados)
+            j = np.where(grados==gradito)[0] #j son los indices de los nodos con igual grado
                                           #que los nodos esenciales 
-            j = j[0]
             lista_de_nodos = []
-            if len(j)>1:
-                for k in j:
-                    lista_de_nodos.append(nodes[k])
-                value=random.choice(lista_de_nodos)
-                GG.remove_node(value)
-            else:
-                pass
+            for k in j:
+                lista_de_nodos.append(nodes[k])
+            value=random.choice(lista_de_nodos)
+            GG.remove_node(value)
+    
     cg_1 = max(nx.connected_component_subgraphs(GG), key=len)
     maxcomp_1 = cg_1.order()
     
@@ -272,49 +271,18 @@ def analisis_desarme_esenciales(g, ess):
         lista.append(b)
     return lista
 #%%
-    
-    valor_real = 0.3237051792828685
-    fig, ax = histograma(lista, bins=20, density=True, errbars=False, 
-                         titulo=r'Distribución de la fraccion de la cg que sobrevive bajo $H_0$',
-                         xlabel='Fraccion de la componente gigante')
-    ax.axvline(valor_real, color='deeppink',
-               label='Valor real = {}'.format(valor_real))
-    ax.legend()
-    plt.show()
+import time; ti = time.time()
+lista = analisis_desarme_esenciales(g_apms, ess)
+tf = time.time(); print(tf-ti, 'segundos')
+#%%
+valor_real = 0.3237051792828685
+fig, ax = histograma(lista, bins=20, density=True, errbars=False, 
+                     titulo=r'Distribución de la fraccion de la cg que sobrevive bajo $H_0$',
+                     xlabel='Fraccion de la componente gigante')
+ax.axvline(valor_real, color='deeppink',
+           label='Valor real = {}'.format(valor_real))
+ax.legend()
+plt.show()
 #La esencialidad de los nodos de la red no tienen que ver con el grado que tienen.
 
 
-#%% No darle bola a esto
-#ess = ldata('Tp2/tc02Data/Essential_ORFs_paperHe.txt')
-#
-#ess_1 = []
-#
-#
-#for i in range(2,1158):
-#    ess_1.append(ess[i][1]) 
-#def asociar_esenciabilidad(red):
-#    #Probar esto
-#    #lista_de_esenciales = [ list(red.nodes.keys()) for i, j 
-#    #                       in list(red.nodes.keys())[j] if 
-#    #                       ess_1[i]==list(red.nodes.keys())[j]]
-#    lista_de_esenciales = []
-#    for i in range(0,len(ess_1)):    
-#        for j in range(0,len(list(red.nodes.keys()))):
-#            if (ess_1[i]==list(red.nodes.keys())[j]):
-#              lista_de_esenciales.append(list(red.nodes.keys())[j])
-#    return lista_de_esenciales
-#def agregar_importancia(G):
-#    g = list(G.nodes())
-#    value = np.zeros([len(g)])
-#    for h in range(len(g)):
-#        for i in range(len(ess)):
-#            for j in range(len(ess[i])):
-#                if g[h] == ess[i][j]:
-#                    value[h] = 1
-#                    break
-#    return g, value, len(value)
-    
-    
-    
-    
-    
