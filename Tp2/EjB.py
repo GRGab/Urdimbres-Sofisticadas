@@ -28,7 +28,7 @@ g_apms.add_edges_from(apms)
 
 g_lit = nx.Graph()
 g_lit.add_edges_from(lit)
-#
+
 g_lit_reg = nx.Graph()
 g_lit_reg.add_edges_from(lit_r)
 
@@ -36,6 +36,8 @@ g_y2h = nx.Graph()
 g_y2h.add_edges_from(y2h)
 
 ess = ldata('Tp2/tc02Data/Essential_ORFs_paperHe.txt')
+ess = [fila for fila in ess if (fila != [] and fila[0] != 'updated')]
+ess = [fila[1] for fila in ess]
 
 def k_medio(G):
     N = G.order()

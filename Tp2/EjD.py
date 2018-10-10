@@ -10,9 +10,13 @@ import pandas as pd
 from scipy.odr import Model, RealData, ODR
 
 ess = ldata('Tp2/tc02Data/Essential_ORFs_paperHe.txt')
+ess = [fila for fila in ess if (fila != [] and fila[0] != 'updated')]
+ess = [fila[1] for fila in ess]
+
 apms = ldata('Tp2/tc02Data/yeast_AP-MS.txt')
 lit = ldata('Tp2/tc02Data/yeast_LIT.txt')
 lit_r = ldata('Tp2/tc02Data/yeast_LIT_Reguly.txt')
+lit_r = [fila[:2] for fila in lit_r]
 y2h = ldata('Tp2/tc02Data/yeast_Y2H.txt')
 
 g_apms = nx.Graph()
@@ -27,13 +31,27 @@ g_y2h = nx.Graph()
 g_y2h.add_edges_from(y2h)
 g_y2h = max(nx.connected_component_subgraphs(g_y2h), key=len)
 
-redes = ['AP', 'LIT', 'Y2H']
-n_nodos = [len(g_apms.nodes()), len(g_lit.nodes()), len(g_y2h.nodes())]
-n_enlaces = [len(g_apms.edges()), len(g_lit.edges()), len(g_y2h.edges())]
+g_lit_reg = nx.Graph()
+g_lit_reg.add_edges_from(lit_r)
+g_lit_reg = max(nx.connected_component_subgraphs(g_lit_reg), key=len)
+
+redes = ['AP', 'LIT', 'Y2H', 'LIT_REG']
+n_nodos = [len(g_apms.nodes()),
+           len(g_lit.nodes()),
+           len(g_y2h.nodes()),
+           len(g_lit_reg.nodes())]
+n_enlaces = [len(g_apms.edges()),
+             len(g_lit.edges()),
+             len(g_y2h.edges()),
+             len(g_lit_reg.edges())]
 k_medio = [np.mean(list(dict(g_apms.degree).values())),
            np.mean(list(dict(g_lit.degree).values())), 
-           np.mean(list(dict(g_y2h.degree).values()))]
-clustering_medio = [nx.average_clustering(g_apms), nx.average_clustering(g_lit), nx.average_clustering(g_y2h)]
+           np.mean(list(dict(g_y2h.degree).values())),
+           np.mean(list(dict(g_lit_reg.degree).values()))]
+clustering_medio = [nx.average_clustering(g_apms),
+                    nx.average_clustering(g_lit),
+                    nx.average_clustering(g_y2h),
+                    nx.average_clustering(g_lit_reg)]
 
 d = {'Redes':redes,
      'Nodos':n_nodos,
@@ -93,16 +111,18 @@ def desarme(g, ess):
             x.append(j)
     return x, y
 #%%
+fig, ax = plt.subplots()
 
 k, y_0 = desarme(g_lit, ess)
 y_1 = [np.log(1-i) for i in y_0]
-plt.plot(k[:10], y_1[:10], 'o', label = 'Lit')
+plt.plot(k[:10], y_1[:10], 'bo', label = 'Lit')
 plt.legend()
 linear_model = Model(Linear)
 data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'b-')
+params_lit = out
 
 k, y_0 = desarme(g_apms, ess)
 y_1 = [np.log(1-i) for i in y_0]
@@ -113,6 +133,7 @@ data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'g-')
+params_apms = out
 
 k, y_0 = desarme(g_y2h, ess)
 y_1 = [np.log(1-i) for i in y_0]
@@ -123,25 +144,76 @@ data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'r-')
+params_y2h = out
+
+k, y_0 = desarme(g_lit_reg, ess)
+y_1 = [np.log(1-i) for i in y_0]
+plt.plot(k[:10], y_1[:10], 'k.', label = 'Lit_reg')
+plt.legend()
+linear_model = Model(Linear)
+data = RealData(k[:10], y_1[:10])
+odr = ODR(data, linear_model, beta0=[0., 1.])
+out = odr.run()
+plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'k-')
+params_lit_reg = out
 
 plt.ylabel('log(1-P)')
 plt.xlabel('Protein connectivity (k)')
 
 
-#Ej D-2
+# =============================================================================
+# # El fit de g_lit_reg está dando horrible, revisar
+# =============================================================================
 
-redes = ['AP', 'LIT', 'Y2H']
-n_enlaces = [len(g_ap.edges()), len(g_lit.edges()), len(g_y2h.edges())]
-n_enlaces_auto = [len(g_ap.edges()), len(g_lit.edges()), len(g_y2h.edges())]
-def autoenlace():
-    for i in list(g_ap.enlaces()):
-        iflist(g_ap.enlaces())[i][1]
-k_medio = [np.mean(dict(g_ap.degree).values()), np.mean(dict(g_lit.degree).values()), 
-           np.mean(dict(g_y2h.degree).values())]
-clustering_medio = [nx.average_clustering(g_ap), nx.average_clustering(g_lit), nx.average_clustering(g_y2h)]
-
-d = {'Redes':redes, 'Nodos':n_nodos, 'Enlaces':n_enlaces, 'Grado medio':k_medio, 'Coef clustering medio': clustering_medio}
-df = pd.DataFrame(data=d)
+# Faltaría implementar un chi cuadrado para ver bondad de ajuste
 
 #%%
+##### 2: Tabla 5 de Zotenko
+##### Difference between the observed and expected number of pairs where
+##### both proteins are either essential or nonessential.
+
+"""Epígrafe de la tabla:
+
+The total number of pairs refers to the number of nonadjacent protein pairs
+with three or more common neighbors in the network. (Due to the sparsity of
+the Y2H network, the statistics are calculated for nonadjacent pairs having
+one or more neighbors in common.) The nodes in the pair are of ‘‘the same
+type’’ if they are both essential or both nonessential."""
+
+from agregar_esencialidad import agregar_esencialidad_dict
+
+for g in [g_lit, g_apms, g_y2h, g_lit_reg]:
+    agregar_esencialidad_dict(g, ess)
+#%%
+
+def vecinos_comunes(G, nodo1, nodo2):
+    vecinos1 = set(G[nodo1])
+    vecinos2 = set(G[nodo2])
+    return len(vecinos1.intersection(vecinos2))
+
+def calcular_pares(G, numvecinos):
+    num_pares = 0
+    num_pares_mismotipo = 0
+    for n1, n2 in nx.non_edges(G):
+        assert n1 not in G[n2]
+        if vecinos_comunes(G, n1, n2) >= numvecinos:
+            num_pares += 1
+            if G.nodes()[n1]['esencialidad'] == G.nodes()[n2]['esencialidad']:
+                num_pares_mismotipo += 1
+    return num_pares, num_pares_mismotipo
+
+#%%
+# Para las 4 redes:
+for nom, g, numvec in zip(['AP', 'LIT', 'Y2H', 'LIT_REG'],
+                          [g_lit, g_apms, g_y2h, g_lit_reg],
+                          [3, 3, 1, 3]):
+    print('{}: '.format(nom), calcular_pares(g, numvec))
+    
+#AP:  (718, 383)
+#LIT:  (11569, 5875)
+#Y2H:  (23013, 15045)
+#LIT_REG:  (10777, 6187)
+
+# La red LIT_REG da casi lo mismo que en el paper (en el cual da
+# 10777, 6143).
 
