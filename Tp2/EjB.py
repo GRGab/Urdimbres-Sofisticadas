@@ -36,8 +36,9 @@ g_y2h = nx.Graph()
 g_y2h.add_edges_from(y2h)
 
 ess = ldata('Tp2/tc02Data/Essential_ORFs_paperHe.txt')
-ess = [fila for fila in ess if (fila != [] and fila[0] != 'updated')]
+ess =  ess[2:-4]
 ess = [fila[1] for fila in ess]
+ess = np.unique(ess)
 
 def k_medio(G):
     N = G.order()
