@@ -96,7 +96,7 @@ def desarme(g, ess):
     for a, b in g.degree():
         nodos.append(a)
         k.append(b)
-    threshold = np.arange(0, max(k), 1)
+    threshold = np.arange(0, max(k)+1, 1)
     y = []
     x = []
     for j in threshold:
@@ -122,6 +122,7 @@ linear_model = Model(Linear)
 data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
+alpha_lit_recta = 1 - np.exp(out.beta[0])
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'b-')
 params_lit = out
 
@@ -133,6 +134,7 @@ linear_model = Model(Linear)
 data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
+alpha_apms_recta = 1 - np.exp(out.beta[0])
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'g-')
 params_apms = out
 
@@ -144,6 +146,7 @@ linear_model = Model(Linear)
 data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
+alpha_y2h_recta = 1 - np.exp(out.beta[0]) 
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'r-')
 params_y2h = out
 
@@ -155,11 +158,13 @@ linear_model = Model(Linear)
 data = RealData(k[:10], y_1[:10])
 odr = ODR(data, linear_model, beta0=[0., 1.])
 out = odr.run()
+alpha_lit_reg_recta = 1 - np.exp(out.beta[0])
 plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'k-')
 params_lit_reg = out
 
 plt.ylabel('log(1-P)')
 plt.xlabel('Protein connectivity (k)')
+
 
 # =============================================================================
 # # El fit de g_lit_reg está dando horrible, revisar
@@ -216,3 +221,4 @@ for nom, g, numvec in zip(['AP', 'LIT', 'Y2H', 'LIT_REG'],
 
 # La red LIT_REG da casi lo mismo que en el paper (en el cual da
 # 10777, 6143).
+
