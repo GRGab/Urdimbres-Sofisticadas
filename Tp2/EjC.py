@@ -75,7 +75,8 @@ def desarme_esenciales(g,ess):
     ##Primero calculamos la fraccion sacando proteinas esenciales
    
     #Parametros para la normalizacion
-#    nodos_totales = g.order()
+    nodos_totales = list(g.nodes()) #lista de nodos de la red
+    grados_totales = nx.degree(g) #Dicconario con grados de los nodos de la red
     cg_original = max(nx.connected_component_subgraphs(g), key=len).order()
     
     #Copio la red para hacerla bolsa
@@ -86,26 +87,29 @@ def desarme_esenciales(g,ess):
     maxcomp = cg.order()
 ##########
     #Ahora calculamos la fraccion sacando proteinas random con el mismo grado.
-    nodes_totales = list(g.nodes()) #lista de nodos de la red
-    grados_totales = nx.degree(g) #Dicconario con grados de los nodos de la red
     
     GG = g.copy()
     GG.remove_nodes_from(ess) ##Extraigo los nodos esenciales
     nodes = list(GG.nodes()) #lista de nodos de la red no esenciales
     grados = nx.degree(GG) #Diccionario con grados de los nodos no esenciales
     
+    lista_para_eliminar = []
     for nodito in ess: #itero sobre los nodos esenciales
-        if nodito in nodes_totales:
-            gradito = grados_totales[nodito]            
+        if nodito in nodos_totales: #si el nodo esencial esta en la red original
+            gradito = grados_totales[nodito]      
+            grados = list(dict(nx.degree(GG)).values())
             grados = np.array(grados)
             j = np.where(grados==gradito)[0] #j son los indices de los nodos con igual grado
                                              #que los nodos esenciales 
-            if len(j)>2:
+            if len(j)>0:
+                #poner un print para ver cuando paso eso
+                # no puedo agarrar este pruebo el grado de al lado
                 lista_de_nodos = []
                 for k in j:
                     lista_de_nodos.append(nodes[k])
                     value=random.choice(lista_de_nodos)
-                    GG.remove_node(value)
+                    lista_para_eliminar.append(value)
+    GG.remove_nodes_from(lista_para_eliminar)
     cg_1 = max(nx.connected_component_subgraphs(GG), key=len)
     maxcomp_1 = cg_1.order()
     
@@ -122,11 +126,9 @@ def analisis_desarme_esenciales(g, ess, numero_de_tiradas):
     return lista
 #%%
 import time; ti = time.time()
-lista = analisis_desarme_esenciales(g_apms, ess, 10)
-print(lista)
+lista = analisis_desarme_esenciales(g_y2h, ess, int(1e2))
+#print(lista)
 tf = time.time(); print(tf-ti, 'segundos')
-#%%
-desarme_esenciales(g_apms,ess)
 
 #%%
 valor_real = 0.3237051792828685
@@ -138,5 +140,8 @@ ax.axvline(valor_real, color='deeppink',
 ax.legend()
 plt.show()
 #La esencialidad de los nodos de la red no tienen que ver con el grado que tienen.
-
+#%% Guardar archivo
+thefile = open('Ej c punto 2 (1000 tiradas).txt', 'w')
+for item in lista:
+  thefile.write("%s\n" % item)
 
