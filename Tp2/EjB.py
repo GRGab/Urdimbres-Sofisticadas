@@ -21,7 +21,7 @@ y2h = ldata('Tp2/tc02Data/yeast_Y2H.txt')
 lit = ldata('Tp2/tc02Data/yeast_LIT.txt')
 
 lit_r = ldata('Tp2/tc02Data/yeast_LIT_Reguly.txt')
-lit_r = [fila[:2] for fila in lit_r]
+lit_r = [fila[:2] for fila in lit_r[1:]]
 
 g_apms = nx.Graph()
 g_apms.add_edges_from(apms)
