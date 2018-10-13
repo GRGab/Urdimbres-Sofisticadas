@@ -12,14 +12,15 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
 import random
+import time
 
 from histograma import histograma
-from funciones_de_desarme_ejc import (ordenar_por_centralidad, 
-                                        desarme_por_grados,
-                                        desarme_por_grados_flow,
-                                        desarme_por_grados_random)
 import sys
 sys.path.append('./Tp2/')
+from funciones_de_desarme_ejc import (agregar_centralidad, 
+                                        desarme_por_centralidad,
+                                        desarme_por_centralidad_flow,
+                                        desarme_por_centralidad_random)
 from agregar_esencialidad import agregar_esencialidad
 #%%
 apms = ldata('Tp2/tc02Data/yeast_AP-MS.txt')
@@ -28,17 +29,18 @@ y2h = ldata('Tp2/tc02Data/yeast_Y2H.txt')
 
 lit = ldata('Tp2/tc02Data/yeast_LIT.txt')
 
-#lit_r = ldata('Tp2/tc02Data/yeast_LIT_Reguly.txt')
+lit_r = ldata('Tp2/tc02Data/yeast_LIT_Reguly.txt')
+lit_r = [fila[:2] for fila in lit_r[1:]]
 
 
 g_apms = nx.Graph()
 g_apms.add_edges_from(apms)
-#
+
 g_lit = nx.Graph()
 g_lit.add_edges_from(lit)
 
-#g_lit_reg = nx.Graph()
-#g_lit_reg.add_edges_from(lit_r)
+g_lit_reg = nx.Graph()
+g_lit_reg.add_edges_from(lit_r)
 
 g_y2h = nx.Graph()
 g_y2h.add_edges_from(y2h)
@@ -50,19 +52,55 @@ ess = np.unique(ess)
 #%%
 #    Ejercico c
 #Punto I
-
-cant_nodos_red, cant_nodos_cg = desarme_por_grados(g_apms, limite = 1,criterio = 'eigen', parada=1200)
+ti = time.time()
+cant_nodos_red, cant_nodos_cg = desarme_por_centralidad(g_apms,
+                                                        criterio = 'eigen',
+                                                        parada=2)
+tf = time.time(); print(tf-ti, 'segundos') 
 plt.plot(cant_nodos_red, cant_nodos_cg)
+#%% Por SUBGRAPH
 
-cant_nodos_red, cant_nodos_cg = desarme_por_grados(g_apms, criterio = 'sub')
+### APMS
+ti = time.time() 
+cant_nodos_red, cant_nodos_cg = desarme_por_centralidad(g_apms,
+                                                        criterio = 'sub')
+tf = time.time(); print(tf-ti, 'segundos') 
 plt.plot(cant_nodos_red, cant_nodos_cg)
-###    
-cant_nodos_red, cant_nodos_cg = desarme_por_grados(g_apms, criterio = 'degree',parada=1000)
-plt.plot(cant_nodos_red, cant_nodos_cg)
+np.savez('curva_desarme_apms_sub.npz', cant_nodos_red=cant_nodos_red,
+         cant_nodos_cg=cant_nodos_cg)
 
-cant_nodos_red, cant_nodos_cg = desarme_por_grados_flow(g_apms,parada=800)
+### LIT
+ti = time.time() 
+cant_nodos_red, cant_nodos_cg = desarme_por_centralidad(g_lit,
+                                                        criterio = 'sub')
+tf = time.time(); print(tf-ti, 'segundos')
 plt.plot(cant_nodos_red, cant_nodos_cg)
-
+np.savez('curva_desarme_lit_sub.npz', cant_nodos_red=cant_nodos_red,
+         cant_nodos_cg=cant_nodos_cg)
+#%%
+### Por grado
+ti = time.time()
+cant_nodos_red, cant_nodos_cg = desarme_por_centralidad(g_apms,
+                                                        criterio = 'degree')
+tf = time.time(); print(tf-ti, 'segundos') 
+plt.figure(); plt.plot(cant_nodos_red, cant_nodos_cg)
+#np.savez('curva_desarme_apms_deg.npz', cant_nodos_red=cant_nodos_red,
+#         cant_nodos_cg=cant_nodos_cg)
+#%% flow
+ti = time.time()
+cant_nodos_red, cant_nodos_cg = desarme_por_centralidad_flow(g_apms)
+plt.plot(cant_nodos_red, cant_nodos_cg)
+tf = time.time(); print(tf-ti, 'segundos')
+# 793 segundos
+np.savez('curva_desarme_apms_flow.npz', cant_nodos_red=cant_nodos_red,
+         cant_nodos_cg=cant_nodos_cg)
+#%% betweenness
+ti = time.time()
+cant_nodos_red, cant_nodos_cg = desarme_por_centralidad_flow(g_apms)
+plt.plot(cant_nodos_red, cant_nodos_cg)
+tf = time.time(); print(tf-ti, 'segundos')
+np.savez('curva_desarme_apms_bet.npz', cant_nodos_red=cant_nodos_red,
+         cant_nodos_cg=cant_nodos_cg)
 #%%
 #Punto II
 def desarme_esenciales(g,ess):
