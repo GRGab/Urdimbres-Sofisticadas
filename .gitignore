@@ -108,3 +108,5 @@ venv.bak/
 
 # Varios
 .directory
+.goutputstream-LC3IPZ
+notebook.tex
