@@ -11,6 +11,10 @@ import networkx as nx
 import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
+
+
+import sys
+sys.path.append('./Tp2/')
 from agregar_esencialidad import agregar_esencialidad, agregar_esencialidad_dict
 
 #%%
@@ -61,10 +65,13 @@ def tabla_1(red):
     Ci = np.average(list(nx.clustering(red).values()))
     return [N,L,K,Ci]
 
-data = pd.DataFrame({"Nombre de la red": ['Y2H','AP-MS','Lit'],
-                     "N":[tabla_1(g_y2h)[0],tabla_1(g_lit)[0],tabla_1(g_apms)[0]],
-                     "L":[tabla_1(g_y2h)[1],tabla_1(g_lit)[1],tabla_1(g_apms)[1]],
-                     "$$<C_{i}>$$":[tabla_1(g_y2h)[2],tabla_1(g_lit)[2],tabla_1(g_apms)[2]],
+data = pd.DataFrame({"Nombre de la red": ['Y2H','AP-MS','Lit', 'Lit_reg'],
+                     "N":[tabla_1(g_y2h)[0],tabla_1(g_lit)[0],tabla_1(g_apms)[0],
+                          tabla_1(g_lit_reg)[0]],
+                     "L":[tabla_1(g_y2h)[1],tabla_1(g_lit)[1],tabla_1(g_apms)[1],
+                          tabla_1(g_lit_reg)[1]],
+                     "$$<C_{i}>$$":[tabla_1(g_y2h)[2],tabla_1(g_lit)[2],tabla_1(g_apms)[2],
+                           tabla_1(g_lit_reg)[2]],
                     })#empty dataframe
 data
 
@@ -91,56 +98,87 @@ comparten_enlaces(apms,apms)
 #%%
 ##### Figura 1.a de Zotenko
 
-def ess_vs_k(g, ess):
-    _, values = agregar_esencialidad(g, ess)
-    nodos = []
-    k = []
-    for a, b in g.degree():
-        nodos.append(a)
-        k.append(b)
-    k_norm = [i/max(k) for i in k]
-    threshold = np.arange(0.01, 1, 0.001)
-    y = []
-    x = []
-    for j in threshold:
-        y_i = 0 # Núm. de hubs que son esenciales
-        x_i = 0 # Núm. de nodos que son considerados hubs
-        for i in range(len(nodos)):
-            if k_norm[i]>j:
-                if values[i] == 1:
-                    y_i += 1
-                x_i += 1
-        if x_i != 0:
-            y.append(y_i/x_i)
-            x.append(x_i/len(nodos))
-    return y, x
-
 def essfrac_vs_hubfrac(g):
     """Toma grafo que ya tiene incorporada la información de esencialidad"""
+    
     kmax = max(dict(g.degree).values())
-    frac_hub, frac_esen = np.zeros((2, kmax+1))
+#    thresholds = np.arange(kmax+1)[::-1] # el k considerado como umbral en cada caso
+    num_hubs, num_hubs_esens = np.zeros((2, kmax+1))
     for node, degree in g.degree():
-        for i in range(degree, kmax+1):
-            frac_hub[i] += 1
-            frac_esen[i] += g.nodes[node]['esencialidad']
-    frac_esen = frac_esen / frac_hub
-    frac_hub = frac_hub / g.order()
-    return frac_esen, frac_hub
+        num_hubs[:degree+1] += np.ones((degree+1))
+        if g.nodes[node]['esencialidad'] == 1:
+            num_hubs_esens[:degree+1] += np.ones((degree+1))
+#        for i in range(degree, kmax+1):
+#            frac_hubs[i] += 1
+#            frac_esens[i] += g.nodes[node]['esencialidad']
+    frac_hubs_sonesens = num_hubs_esens / num_hubs
+    frac_sonhubs = num_hubs / g.order()
+    return frac_sonhubs, frac_hubs_sonesens
 
 
 #%%
         
 x_0, y_0 = essfrac_vs_hubfrac(g_apms)
-plt.figure(); plt.plot(x_0, y_0, label = 'Ap')
-#%%
-y_0, x_0 = ess_vs_k(g_apms, ess)
-y_1, x_1 = ess_vs_k(g_lit, ess)
-y_2, x_2 = ess_vs_k(g_y2h, ess)
-y_3, x_3 = ess_vs_k(g_lit_reg, ess)
+x_1, y_1 = essfrac_vs_hubfrac(g_lit)
+x_2, y_2 = essfrac_vs_hubfrac(g_y2h)
+x_3, y_3 = essfrac_vs_hubfrac(g_lit_reg)
 
-#plt.figure()
-plt.plot(x_0, y_0, label = 'Ap')
-plt.plot(x_1, y_1, label = 'Lit')
-plt.plot(x_2, y_2, label = 'Y2H')
-plt.plot(x_3, y_3, label = 'Lit_r')
-plt.legend()
+#%%
+fontsize = 18
+ticksize = 16
+with plt.style.context(('seaborn')):
+    fig, ax = plt.subplots(figsize=(12,8))
+ax.plot(x_0, y_0, '-o', label = 'APMS')
+ax.plot(x_1, y_1, '-o', label = 'Lit')
+ax.plot(x_2, y_2, '-o', label = 'Y2H')
+ax.plot(x_3, y_3, '-o', label = 'Lit_r')
+ax.legend(fontsize=fontsize)
+ax.tick_params(labelsize=ticksize)
+ax.set_xlabel('Fracción de nodos considerados como hubs',
+              fontsize=fontsize)
+ax.set_ylabel('Fracción de hubs que son esenciales',
+              fontsize=fontsize)
+fig.tight_layout()
+
+#%% Versión vieja  de la figura 1.a Zotenko (Tomi)
+
+# =============================================================================
+# def ess_vs_k(g, ess):
+#     _, values = agregar_esencialidad(g, ess)
+#     nodos = []
+#     k = []
+#     for a, b in g.degree():
+#         nodos.append(a)
+#         k.append(b)
+#     k_norm = [i/max(k) for i in k]
+#     threshold = np.arange(0.01, 1, 0.001)
+#     y = []
+#     x = []
+#     for j in threshold:
+#         y_i = 0 # Núm. de hubs que son esenciales
+#         x_i = 0 # Núm. de nodos que son considerados hubs
+#         for i in range(len(nodos)):
+#             if k_norm[i]>j:
+#                 if values[i] == 1:
+#                     y_i += 1
+#                 x_i += 1
+#         if x_i != 0:
+#             y.append(y_i/x_i)
+#             x.append(x_i/len(nodos))
+#     return y, x
+# =============================================================================
+
+# =============================================================================
+# y_0, x_0 = ess_vs_k(g_apms, ess)
+# y_1, x_1 = ess_vs_k(g_lit, ess)
+# y_2, x_2 = ess_vs_k(g_y2h, ess)
+# y_3, x_3 = ess_vs_k(g_lit_reg, ess)
+# 
+# plt.figure()
+# plt.plot(x_0, y_0, label = 'Ap')
+# plt.plot(x_1, y_1, label = 'Lit')
+# plt.plot(x_2, y_2, label = 'Y2H')
+# plt.plot(x_3, y_3, label = 'Lit_r')
+# plt.legend()
+# 
+# =============================================================================
