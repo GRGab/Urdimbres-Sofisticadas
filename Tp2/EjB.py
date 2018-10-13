@@ -128,10 +128,10 @@ fontsize = 18
 ticksize = 16
 with plt.style.context(('seaborn')):
     fig, ax = plt.subplots(figsize=(12,8))
-ax.plot(x_0, y_0, '-o', label = 'APMS')
 ax.plot(x_1, y_1, '-o', label = 'Lit')
+ax.plot(x_3, y_3, '-o', label = 'Lit_reg')
+ax.plot(x_0, y_0, '-o', label = 'APMS')
 ax.plot(x_2, y_2, '-o', label = 'Y2H')
-ax.plot(x_3, y_3, '-o', label = 'Lit_r')
 ax.legend(fontsize=fontsize)
 ax.tick_params(labelsize=ticksize)
 ax.set_xlabel('Fracción de nodos considerados como hubs',

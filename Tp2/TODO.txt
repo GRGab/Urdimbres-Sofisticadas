@@ -1,11 +1,7 @@
 - Ejercicio B:
     - Hacer permutaciones en tabla 2 Zotenko
-    - Por qué tabla 1 zotenko no llega hasta 1
 
 - Ejercicio C:
-    - Curva de desarme random promediada (tarda mucho)
-    - Desarme por Betweenness ver si se puede optimizar o algo
-    - Eigenvalue: modificar la tolerancia desde la llamada a la función
     - Comparar remover esenciales con no esenciales igual grado
 
 - Ejercicio D:
@@ -16,7 +12,7 @@
     
 Generar figuras:
 B
-Tabla 1 de Zotenko et. al. (2008)
+Tabla 1 de Zotenko et. al. (2008) (listo, pero quizá haya que cambiar el orden de las redes)
 Tabla 2 de Zotenko et. al. (2008)
 Figura 1.a de Zotenko et. al. (2008)
 C
