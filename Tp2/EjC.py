@@ -22,7 +22,6 @@ from funciones_de_desarme_ejc import (agregar_centralidad,
                                         desarme_por_centralidad,
                                         desarme_por_centralidad_flow,
                                         desarme_por_centralidad_random)
-from agregar_esencialidad import agregar_esencialidad
 #%%
 apms = ldata('Tp2/tc02Data/yeast_AP-MS.txt')
 
@@ -102,6 +101,19 @@ plt.plot(cant_nodos_red, cant_nodos_cg)
 tf = time.time(); print(tf-ti, 'segundos')
 np.savez('curva_desarme_apms_bet.npz', cant_nodos_red=cant_nodos_red,
          cant_nodos_cg=cant_nodos_cg)
+
+#%% Random
+
+### APMS
+ti = time.time()
+cant_nodos_red, cant_nodos_cg = desarme_por_centralidad_random(g_apms,
+                                                               n_historias=1,
+                                                               parada=2)
+tf = time.time(); print(tf-ti, 'segundos')
+#np.savez('curva_desarme_apms_random.npz', cant_nodos_red=cant_nodos_red,
+#         cant_nodos_cg=cant_nodos_cg)
+plt.figure()
+plt.plot(np.average(cant_nodos_red, axis=0), np.average(cant_nodos_cg, axis=0))
 #%%
 #Punto II
 def desarme_esenciales(g,ess):

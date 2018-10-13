@@ -65,8 +65,8 @@ def desarme_por_centralidad(g, criterio, parada=2, max_iter=100, tol=1e-3):
     i = 0
     while maxcomp > parada:
         i += 1
-        if i % 10 == 0:
-            print(i, ' pasos')
+#        if i % 10 == 0:
+#            print(i, ' pasos')
         nodes, centralidades = agregar_centralidad(G, criterio, max_iter=max_iter)
         j = centralidades.index(max(centralidades))
         G.remove_node(nodes[j])
@@ -106,10 +106,12 @@ def desarme_por_centralidad_flow(g, limite = 1, criterio='flow',parada=2):
     cant_nodos_red.append(0)
     cant_nodos_cg.append(1)
     maxcomp = cg_original
+    i = 0
     while maxcomp > parada:
+        i += 1
         G= max(nx.connected_component_subgraphs(G), key=len)
         nodes, degree = agregar_centralidad(G, criterio)         
-        for i in range(1,limite+1): #voy a sacar un nodo por iterada
+        for _ in range(limite): #voy a sacar un nodo por iterada
             j = degree.index(max(degree))
             G.remove_node(nodes[j])
             degree.pop(j)
@@ -122,6 +124,7 @@ def desarme_por_centralidad_flow(g, limite = 1, criterio='flow',parada=2):
                 cant_nodos_cg.append(maxcomp/cg_original)
             else:
                 break
+    print(i)
     return cant_nodos_red, cant_nodos_cg
 
 def desarme_por_centralidad_aproximado(g, limite = 1, criterio='degree', parada=2):
@@ -166,7 +169,8 @@ def desarme_por_centralidad_aproximado(g, limite = 1, criterio='degree', parada=
     return cant_nodos_red, cant_nodos_cg
 
 #Ojo:Aun no esta probada!!
-def desarme_por_centralidad_random(g, limite = 1, criterio='random',parada=2):
+def desarme_por_centralidad_random(g, limite = 1, criterio='random',parada=2,
+                                   n_historias = 100):
     '''
     Toma una red, y utlizando la funcion desarme_por_grados_1_iteracion y bajo
     algun criterio, elimina nodos de la red. La variable cant_de_pasos cuenta
@@ -179,22 +183,22 @@ def desarme_por_centralidad_random(g, limite = 1, criterio='random',parada=2):
     #Parametros para la normalizacion
     nodos_totales = g.order()
     cg_original = max(nx.connected_component_subgraphs(g), key=len).order()
-    nodos_final = []
-    cg_final = []
-    for k in range(10):
+    nodos_final = np.tile(np.arange(nodos_totales) / nodos_totales, (n_historias, 1))
+    cg_final = np.zeros((n_historias, nodos_totales))
+    for k in range(n_historias):
         #Copio la red para hacerla bolsa
         G = g.copy()
         G = max(nx.connected_component_subgraphs(G), key=len)
         #Defino las listas que voy a plotear
-        cant_nodos_red = [] #cant de nodos que saque/cant de nodos totales
         cant_nodos_cg = [] #cant de nodos de la cg/cant de nodos de la cg original
-        cant_nodos_red.append(0)
         cant_nodos_cg.append(1)
         maxcomp = cg_original
+        i = 0
         while maxcomp > parada:
+            i += 1
             G= max(nx.connected_component_subgraphs(G), key=len)
             nodo_elegido, nodes = agregar_centralidad(G, criterio)         
-            for i in range(1,limite+1): #voy a sacar un nodo por iterada
+            for _ in range(limite): #voy a sacar un nodo por iterada
                 j = nodes.index(nodo_elegido)
                 G.remove_node(nodes[j])
                 nodes.pop(j) #Recorro la lista de nodos eligiendo los que tienen la centralidad máxima            
@@ -202,14 +206,10 @@ def desarme_por_centralidad_random(g, limite = 1, criterio='random',parada=2):
                 cg = max(nx.connected_component_subgraphs(G), key=len)
                 maxcomp = cg.order()
                 if maxcomp > parada:
-                    cant_nodos_red.append(cant_nodos_red[-1]+(1/nodos_totales))
                     cant_nodos_cg.append(maxcomp/cg_original)
                 else:
-                    nodos_final.append(cant_nodos_red)
-                    cg_final.append(cant_nodos_cg)
                     break
-    np.array(nodos_final)
-    nodos_final=np.sum(nodos_final,axis=1)/10
-    np.array(cg_final)        
-    cg_final=np.sum(cg_final,axis=1)/10
+        cg_final[k, :len(cant_nodos_cg)] = cant_nodos_cg
+    print(i)
+#    import pdb; pdb.set_trace()
     return nodos_final, cg_final
