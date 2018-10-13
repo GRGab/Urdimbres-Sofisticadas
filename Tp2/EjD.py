@@ -17,7 +17,7 @@ ess = np.unique(ess)
 apms = ldata('Tp2/tc02Data/yeast_AP-MS.txt')
 lit = ldata('Tp2/tc02Data/yeast_LIT.txt')
 lit_r = ldata('Tp2/tc02Data/yeast_LIT_Reguly.txt')
-lit_r = [fila[:2] for fila in lit_r]
+lit_r = [fila[:2] for fila in lit_r[1:]]
 y2h = ldata('Tp2/tc02Data/yeast_Y2H.txt')
 
 g_apms = nx.Graph()
@@ -209,13 +209,13 @@ def calcular_pares(G, numvecinos):
 
 #%%
 # Para las 4 redes:
-for nom, g, numvec in zip(['AP', 'LIT', 'Y2H', 'LIT_REG'],
+for nom, g, numvec in zip(['LIT', 'AP', 'Y2H', 'LIT_REG'],
                           [g_lit, g_apms, g_y2h, g_lit_reg],
                           [3, 3, 1, 3]):
     print('{}: '.format(nom), calcular_pares(g, numvec))
     
-#AP:  (718, 383)
-#LIT:  (11569, 5875)
+#AP:  (11569, 5875)
+#LIT:  (718, 383)
 #Y2H:  (23013, 15045)
 #LIT_REG:  (10777, 6187)
 
