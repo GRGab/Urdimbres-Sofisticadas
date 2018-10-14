@@ -88,3 +88,11 @@ Procesando g =  y2h , crit =  random
 2640.789014816284 segundos
 Guardado con éxito!
 Terminó el script.
+
+# Tercera corrida en máquina escritorio Gabo, aprox 4.5 hs
+
+Procesando g =  lit_reg , crit =  random
+2162
+16183.344639062881 segundos
+Guardado con éxito!
+Terminó el script.

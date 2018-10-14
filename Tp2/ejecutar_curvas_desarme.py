@@ -52,7 +52,6 @@ ess = np.unique(ess)
 
 nombres = {g_apms: "apms", g_lit: "lit", g_lit_reg: "lit_reg",
            g_y2h: "y2h"}
-#%%
 
 def log_traceback(ex, ex_traceback=None):
     if ex_traceback is None:
@@ -62,11 +61,11 @@ def log_traceback(ex, ex_traceback=None):
     for line in tb_lines:
         print(line)
 
-#for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
-for g in [g_y2h]:
+for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
     for criterio in ['degree', 'eigen', 'sub', 'bet', 'flow', 'random']:
-        if ((g is g_apms and criterio in ['degree', 'sub', 'flow']) or
-            (g is g_lit and criterio is 'sub')):
+        # Esto es por si ya fueron generadas estas curvas
+        # if ((g is g_apms and criterio in ['degree', 'sub', 'flow']) or
+        #    (g is g_lit and criterio is 'sub')):
             pass
         else:
             if criterio is 'flow':
