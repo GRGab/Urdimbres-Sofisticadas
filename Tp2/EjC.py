@@ -14,6 +14,7 @@ import pandas as pd
 import random
 import time
 
+from os.path import join as osjoin
 import sys
 sys.path.append('./Tp2/')
 from agregar_esencialidad import agregar_esencialidad
@@ -51,69 +52,43 @@ ess = np.unique(ess)
 #%%
 #    Ejercico c
 #Punto I
-ti = time.time()
-cant_nodos_red, cant_nodos_cg = desarme_por_centralidad(g_apms,
-                                                        criterio = 'eigen',
-                                                        parada=2)
-tf = time.time(); print(tf-ti, 'segundos') 
-plt.plot(cant_nodos_red, cant_nodos_cg)
-#%% Por SUBGRAPH
 
-### APMS
-ti = time.time() 
-cant_nodos_red, cant_nodos_cg = desarme_por_centralidad(g_apms,
-                                                        criterio = 'sub')
-tf = time.time(); print(tf-ti, 'segundos') 
+# Importar las curvas generadas y ordenar en un diccionario
 
-plt.plot(cant_nodos_red, cant_nodos_cg)
-np.savez('curva_desarme_apms_sub.npz', cant_nodos_red=cant_nodos_red,
-         cant_nodos_cg=cant_nodos_cg)
-
-### LIT
-ti = time.time() 
-cant_nodos_red, cant_nodos_cg = desarme_por_centralidad(g_lit,
-                                                        criterio = 'sub')
-tf = time.time(); print(tf-ti, 'segundos')
-plt.plot(cant_nodos_red, cant_nodos_cg)
-np.savez('curva_desarme_lit_sub.npz', cant_nodos_red=cant_nodos_red,
-         cant_nodos_cg=cant_nodos_cg)
-#%%
-### Por grado
-ti = time.time()
-cant_nodos_red, cant_nodos_cg = desarme_por_centralidad(g_apms,
-                                                        criterio = 'degree')
-tf = time.time(); print(tf-ti, 'segundos') 
-plt.figure(); plt.plot(cant_nodos_red, cant_nodos_cg)
-#np.savez('curva_desarme_apms_deg.npz', cant_nodos_red=cant_nodos_red,
-#         cant_nodos_cg=cant_nodos_cg)
-#%% flow
-ti = time.time()
-cant_nodos_red, cant_nodos_cg = desarme_por_centralidad_flow(g_apms)
-plt.plot(cant_nodos_red, cant_nodos_cg)
-tf = time.time(); print(tf-ti, 'segundos')
-# 793 segundos
-np.savez('curva_desarme_apms_flow.npz', cant_nodos_red=cant_nodos_red,
-         cant_nodos_cg=cant_nodos_cg)
-#%% betweenness
-ti = time.time()
-cant_nodos_red, cant_nodos_cg = desarme_por_centralidad_flow(g_apms)
-plt.plot(cant_nodos_red, cant_nodos_cg)
-tf = time.time(); print(tf-ti, 'segundos')
-np.savez('curva_desarme_apms_bet.npz', cant_nodos_red=cant_nodos_red,
-         cant_nodos_cg=cant_nodos_cg)
-
-#%% Random
-
-### APMS
-ti = time.time()
-cant_nodos_red, cant_nodos_cg = desarme_por_centralidad_random(g_apms,
-                                                               n_historias=1,
-                                                               parada=2)
-tf = time.time(); print(tf-ti, 'segundos')
-#np.savez('curva_desarme_apms_random.npz', cant_nodos_red=cant_nodos_red,
-#         cant_nodos_cg=cant_nodos_cg)
-plt.figure()
-plt.plot(np.average(cant_nodos_red, axis=0), np.average(cant_nodos_cg, axis=0))
+nombres = {g_apms: "apms", g_lit: "lit", g_lit_reg: "lit_reg",
+           g_y2h: "y2h"}
+curvas = {}
+for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
+    for criterio in ['degree', 'eigen', 'sub', 'bet', 'flow', 'random']:
+        filename = 'curva_desarme_{}_{}.npz'.format(nombres[g], criterio)
+        data = np.load(osjoin('Tp2', 'tc02Data', filename))
+        curvas['{}_{}'.format(nombres[g], criterio)] = [data['cant_nodos_red'],
+                                                        data['cant_nodos_cg']]
+        
+#%% Graficar para cada red por separado
+        
+fontsize = 18
+ticksize = 16
+        
+for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
+    with plt.style.context(('seaborn')):
+        fig, ax = plt.subplots(figsize=(12,8))
+    for criterio in ['degree', 'eigen', 'sub', 'bet', 'flow', 'random']:
+        xs = curvas['{}_{}'.format(nombres[g], criterio)][0]
+        ys = curvas['{}_{}'.format(nombres[g], criterio)][1]
+        if criterio is 'random': # Promedio las 100 historias
+            xs = np.average(xs, axis=0)
+            ys = np.average(ys, axis=0)
+        ax.plot(xs, ys, '.-', label=criterio)
+    # Acá falta plotear el puntito de remoción de esenciales
+    ax.tick_params(labelsize=ticksize)
+    ax.set_xlabel('Fracción de nodos remanentes',
+              fontsize=fontsize)
+    ax.set_ylabel('Tamaño relativo de la componente gigante',
+              fontsize=fontsize)
+    ax.legend(fontsize=fontsize)
+#    ax.set_xscale('log')
+    fig.tight_layout()
 #%%
 #Punto II
 def desarme_esenciales(g,ess):
