@@ -13,15 +13,18 @@ from matplotlib import pyplot as plt
 import pandas as pd
 import random
 import collections
+import time
 
+
+from os.path import join as osjoin
 import sys
 sys.path.append('./Tp2/')
 from agregar_esencialidad import agregar_esencialidad
 from histograma import histograma
-from funciones_de_desarme_ejc import (ordenar_por_centralidad, 
-                                        desarme_por_grados,
-                                        desarme_por_grados_flow,
-                                        desarme_por_grados_random)
+from funciones_de_desarme_ejc import (agregar_centralidad, 
+                                        desarme_por_centralidad,
+                                        desarme_por_centralidad_flow,
+                                        desarme_por_centralidad_random)
 #%%
 apms = ldata('Tp2/tc02Data/yeast_AP-MS.txt')
 
@@ -52,20 +55,43 @@ ess = np.unique(ess)
 #    Ejercico c
 #Punto I
 
-cant_nodos_red, cant_nodos_cg = desarme_por_grados(g_apms, limite = 1,criterio = 'eigen', parada=1000)
-plt.plot(cant_nodos_red, cant_nodos_cg)
-
-cant_nodos_red, cant_nodos_cg = desarme_por_grados(g_apms, criterio = 'sub')
-plt.plot(cant_nodos_red, cant_nodos_cg)
-###    
-cant_nodos_red, cant_nodos_cg = desarme_por_grados(g_apms, criterio = 'degree',parada=1000)
-plt.plot(cant_nodos_red, cant_nodos_cg)
-
-cant_nodos_red, cant_nodos_cg = desarme_por_grados_flow(g_apms,parada=800)
-plt.plot(cant_nodos_red, cant_nodos_cg)
-
-#%% 1015 vs 1179
+nombres = {g_apms: "apms", g_lit: "lit", g_lit_reg: "lit_reg",
+           g_y2h: "y2h"}
+curvas = {}
+for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
+    for criterio in ['degree', 'eigen', 'sub', 'bet', 'flow', 'random']:
+        filename = 'curva_desarme_{}_{}.npz'.format(nombres[g], criterio)
+        data = np.load(osjoin('Tp2', 'tc02Data', filename))
+        curvas['{}_{}'.format(nombres[g], criterio)] = [data['cant_nodos_red'],
+                                                        data['cant_nodos_cg']]
+        
+#%% Graficar para cada red por separado
+        
+fontsize = 18
+ticksize = 16
+        
+for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
+    with plt.style.context(('seaborn')):
+        fig, ax = plt.subplots(figsize=(12,8))
+    for criterio in ['degree', 'eigen', 'sub', 'bet', 'flow', 'random']:
+        xs = curvas['{}_{}'.format(nombres[g], criterio)][0]
+        ys = curvas['{}_{}'.format(nombres[g], criterio)][1]
+        if criterio is 'random': # Promedio las 100 historias
+            xs = np.average(xs, axis=0)
+            ys = np.average(ys, axis=0)
+        ax.plot(xs, ys, '.-', label=criterio)
+    # Acá falta plotear el puntito de remoción de esenciales
+    ax.tick_params(labelsize=ticksize)
+    ax.set_xlabel('Fracción de nodos remanentes',
+              fontsize=fontsize)
+    ax.set_ylabel('Tamaño relativo de la componente gigante',
+              fontsize=fontsize)
+    ax.legend(fontsize=fontsize)
+#    ax.set_xscale('log')
+    fig.tight_layout()
+#%%
 #Punto II
+#1015 vs 1179
 def desarme_esenciales_saco_ess(g,ess):
     '''
     Toma una red y una lista de nodos esenciales. Primero, elimina los nodos

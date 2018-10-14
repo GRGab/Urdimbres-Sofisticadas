@@ -1,0 +1,24 @@
+- Ejercicio B:
+    - Hacer permutaciones en tabla 2 Zotenko
+
+- Ejercicio C:
+    - Comparar remover esenciales con no esenciales igual grado
+
+- Ejercicio D:
+    - Recableado para obtener beta: a veces falla porque el # de nodos esenciales debidos a enlaces esenciales es mayor al # de nodos esenciales de la red original.
+        - Chequear con otras redes
+        - Revisar si está bien
+        - Concluir que el método de He no funciona con redes tan densas.
+    
+Generar figuras:
+B
+Tabla 1 de Zotenko et. al. (2008) (listo, pero quizá haya que cambiar el orden de las redes)
+Tabla 2 de Zotenko et. al. (2008)
+Figura 1.a de Zotenko et. al. (2008)
+C
+Figura 3 de Zotenko et. al. (2008)
+Tabla 3 de Zotenko et. al. (2008)
+D
+Figura 2.b de He et. al. (2006) - Para cada una de las redes obtener α y β.
+Tabla de comparación de α y β via recableado y via ajustes
+Tabla 5 de Zotenko et. al. (2008)

@@ -1,0 +1,98 @@
+# 13/10/18
+# Primera corrida en máquina escritorio Gabo, aprox 15 horas total:
+
+Procesando g =  apms , crit =  eigen
+749
+60.03004813194275 segundos
+Guardado con éxito!
+Procesando g =  apms , crit =  bet
+1499
+567.2666478157043 segundos
+Guardado con éxito!
+Procesando g =  apms , crit =  random
+585
+2582.864594936371 segundos
+Guardado con éxito!
+Terminó el script.
+Procesando g =  lit , crit =  degree
+500
+9.438057899475098 segundos
+Guardado con éxito!
+Procesando g =  lit , crit =  eigen
+483
+30.874112367630005 segundos
+Guardado con éxito!
+Procesando g =  lit , crit =  bet
+874
+412.3718662261963 segundos
+Guardado con éxito!
+Procesando g =  lit , crit =  flow
+90
+237.68626165390015 segundos
+Guardado con éxito!
+Procesando g =  lit , crit =  random
+565
+1107.2029888629913 segundos
+Guardado con éxito!
+Terminó el script.
+Procesando g =  lit_reg , crit =  degree
+1175
+51.084322452545166 segundos
+Guardado con éxito!
+Procesando g =  lit_reg , crit =  eigen
+1079
+156.99481058120728 segundos
+Guardado con éxito!
+Procesando g =  lit_reg , crit =  sub
+1172
+5467.389570236206 segundos
+Guardado con éxito!
+Procesando g =  lit_reg , crit =  bet
+3067
+10886.184318304062 segundos
+Guardado con éxito!
+Procesando g =  lit_reg , crit =  flow
+623
+25565.527879714966 segundos
+Guardado con éxito!
+Procesando g =  lit_reg , crit =  random
+
+# La interrumpí acá con Ctrl+C 
+
+# Segunda corrida en máquina escritorio Gabo, en paralelo
+# con la primera. Le pedí solo los de Y2H. Tardó un poco
+# menos de 2 horas.
+
+Procesando g =  y2h , crit =  degree
+533
+17.931522130966187 segundos
+Guardado con éxito!
+Procesando g =  y2h , crit =  eigen
+447
+50.32905101776123 segundos
+Guardado con éxito!
+Procesando g =  y2h , crit =  sub
+542
+986.0960538387299 segundos
+Guardado con éxito!
+Procesando g =  y2h , crit =  bet
+1225
+1661.29336476326 segundos
+Guardado con éxito!
+Procesando g =  y2h , crit =  flow
+162
+1095.4243457317352 segundos
+Guardado con éxito!
+Procesando g =  y2h , crit =  random
+813
+2640.789014816284 segundos
+Guardado con éxito!
+Terminó el script.
+
+# Tercera corrida en máquina escritorio Gabo, aprox 4.5 hs
+
+Procesando g =  lit_reg , crit =  random
+2162
+16183.344639062881 segundos
+Guardado con éxito!
+Terminó el script.
