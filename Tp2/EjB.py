@@ -59,7 +59,7 @@ def tabla_1(red):
     return [N,L,K,Ci]
 
 data = pd.DataFrame({"Nombre de la red": ['Y2H','AP-MS','Lit'],
-                     "N":[tabla_1(g_y2h)[0],tabla_1(g_lit)[0],tabla_1(g_apms)[0]],
+                     "N":[,tabla_1(g_lit)[0],tabla_1(g_y2h)[0],tabla_1(g_apms)[0]],
                      "L":[tabla_1(g_y2h)[1],tabla_1(g_lit)[1],tabla_1(g_apms)[1]],
                      "$$<C_{i}>$$":[tabla_1(g_y2h)[2],tabla_1(g_lit)[2],tabla_1(g_apms)[2]],
                     })#empty dataframe
