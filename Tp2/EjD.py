@@ -3,7 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
 from lectura import ldata
+
 import sys
+from time import time
 sys.path.append('./Tp2/')
 from agregar_esencialidad import agregar_esencialidad
 import pandas as pd
@@ -123,6 +125,7 @@ ax = np.ravel(ax)
 
 ms, bs = np.zeros((2, 4)) # 4 grafos, 2 parámetros a ajustar
 sigma_ms, sigma_bs = np.zeros((2, 4))
+rsquared_adj = np.zeros((4)) # R^2 corregidos
 
 grafos = [g_lit, g_lit_reg, g_apms, g_y2h]
 for i, g in enumerate(grafos):
@@ -136,8 +139,9 @@ for i, g in enumerate(grafos):
     sigma_bs[i] = results.bse[0]
     ms[i] = results.params[1]
     sigma_ms[i] = results.bse[1]
-    # print('Grafo: {}'.format(nombres[g]))
-    # print(results.summary())
+    rsquared_adj[i] = results.rsquared_adj
+    print('Grafo: {}'.format(nombres[g]))
+    print(results.summary())
     
     # Dibujamos
     xs = np.array(k_1)
@@ -155,7 +159,7 @@ for i, g in enumerate(grafos):
     ax[i].set_title(nombres[g], fontsize=fontsize)
     
 fig.tight_layout()
-fig.savefig('Tp2/Ej d/figura2b_He.png')
+#fig.savefig('Tp2/Ej d/figura2b_He.png')
 
 # Obtenemos alfas y betas
 alfas = 1 - np.exp(ms)
@@ -165,63 +169,86 @@ sigma_alfas = np.exp(ms) * sigma_ms
 sigma_betas = np.exp(bs) * sigma_bs
 
 #%%
-fig, ax = plt.subplots()
+# Generamos tabla de resultados
 
-k, y_0 = desarme(g_lit, ess)
-y_1 = [np.log(1-i) for i in y_0]
-plt.plot(k[:10], y_1[:10], 'bo', label = 'Lit')
-plt.legend()
-linear_model = Model(Linear)
-data = RealData(k[:10], y_1[:10])
-odr = ODR(data, linear_model, beta0=[0., 1.])
-out = odr.run()
-alpha_lit_recta = 1 - np.exp(out.beta[0])
-plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'b-')
-params_lit = out
+#ms_consigmas = ['{:.2f} +/- {:.2f}'.format(x, err) for x, err in zip(ms, sigma_ms)]
+#bs_consigmas = ['{:.2f} +/- {:.2f}'.format(x, err) for x, err in zip(bs, sigma_bs)]
+#alfas_consigmas = ['{:.2f} +/- {:.2f}'.format(x, err) for x, err in zip(alfas, sigma_alfas)]
+#betas_consigmas = ['{:.2f} +/- {:.2f}'.format(x, err) for x, err in zip(betas, sigma_betas)]
+#rsquared_prolijos = ['{:.2f}'.format(x) for x in rsquared_adj]
+ms_consigmas = ['{:.3f} +/- {:.3f}'.format(x, err) for x, err in zip(ms, sigma_ms)]
+bs_consigmas = ['{:.3f} +/- {:.3f}'.format(x, err) for x, err in zip(bs, sigma_bs)]
+alfas_consigmas = ['{:.3f} +/- {:.3f}'.format(x, err) for x, err in zip(alfas, sigma_alfas)]
+betas_consigmas = ['{:.3f} +/- {:.3f}'.format(x, err) for x, err in zip(betas, sigma_betas)]
+rsquared_prolijos = ['{:.3f}'.format(x) for x in rsquared_adj]
 
-k, y_0 = desarme(g_apms, ess)
-y_1 = [np.log(1-i) for i in y_0]
-plt.plot(k[:10], y_1[:10], 'g^', label = 'Ap')
-plt.legend()
-linear_model = Model(Linear)
-data = RealData(k[:10], y_1[:10])
-odr = ODR(data, linear_model, beta0=[0., 1.])
-out = odr.run()
-alpha_apms_recta = 1 - np.exp(out.beta[0])
-plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'g-')
-params_apms = out
+tabla_ajustes = pd.DataFrame(data = {'Pendiente': ms_consigmas,
+                                     'Ord. al or.': bs_consigmas,
+                                     r'$R^2$'+'adj.': rsquared_prolijos,
+                                     r'$\alpha$': alfas_consigmas,
+                                     r'$\beta$': betas_consigmas},
+                             index=['Lit', 'Lit_reg', 'APMS', 'Y2H'])
+tabla_ajustes
 
-k, y_0 = desarme(g_y2h, ess)
-y_1 = [np.log(1-i) for i in y_0]
-plt.plot(k[:10], y_1[:10], 'r*', label = 'Y2H')
-plt.legend()
-linear_model = Model(Linear)
-data = RealData(k[:10], y_1[:10])
-odr = ODR(data, linear_model, beta0=[0., 1.])
-out = odr.run()
-alpha_y2h_recta = 1 - np.exp(out.beta[0]) 
-plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'r-')
-params_y2h = out
+#%%
 
-k, y_0 = desarme(g_lit_reg, ess)
-y_1 = [np.log(1-i) for i in y_0]
-plt.plot(k[:10], y_1[:10], 'k.', label = 'Lit_reg')
-plt.legend()
-linear_model = Model(Linear)
-data = RealData(k[:10], y_1[:10])
-odr = ODR(data, linear_model, beta0=[0., 1.])
-out = odr.run()
-alpha_lit_reg_recta = 1 - np.exp(out.beta[0])
-plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'k-')
-params_lit_reg = out
-
-plt.ylabel('log(1-P)')
-plt.xlabel('Protein connectivity (k)')
-
+# Implementación de Tomi (viejo)
 
 # =============================================================================
-# # El fit de g_lit_reg está dando horrible, revisar
+# fig, ax = plt.subplots()
+# 
+# k, y_0 = desarme(g_lit, ess)
+# y_1 = [np.log(1-i) for i in y_0]
+# plt.plot(k[:10], y_1[:10], 'bo', label = 'Lit')
+# plt.legend()
+# linear_model = Model(Linear)
+# data = RealData(k[:10], y_1[:10])
+# odr = ODR(data, linear_model, beta0=[0., 1.])
+# out = odr.run()
+# alpha_lit_recta = 1 - np.exp(out.beta[0])
+# plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'b-')
+# params_lit = out
+# 
+# k, y_0 = desarme(g_apms, ess)
+# y_1 = [np.log(1-i) for i in y_0]
+# plt.plot(k[:10], y_1[:10], 'g^', label = 'Ap')
+# plt.legend()
+# linear_model = Model(Linear)
+# data = RealData(k[:10], y_1[:10])
+# odr = ODR(data, linear_model, beta0=[0., 1.])
+# out = odr.run()
+# alpha_apms_recta = 1 - np.exp(out.beta[0])
+# plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'g-')
+# params_apms = out
+# 
+# k, y_0 = desarme(g_y2h, ess)
+# y_1 = [np.log(1-i) for i in y_0]
+# plt.plot(k[:10], y_1[:10], 'r*', label = 'Y2H')
+# plt.legend()
+# linear_model = Model(Linear)
+# data = RealData(k[:10], y_1[:10])
+# odr = ODR(data, linear_model, beta0=[0., 1.])
+# out = odr.run()
+# alpha_y2h_recta = 1 - np.exp(out.beta[0]) 
+# plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'r-')
+# params_y2h = out
+# 
+# k, y_0 = desarme(g_lit_reg, ess)
+# y_1 = [np.log(1-i) for i in y_0]
+# plt.plot(k[:10], y_1[:10], 'k.', label = 'Lit_reg')
+# plt.legend()
+# linear_model = Model(Linear)
+# data = RealData(k[:10], y_1[:10])
+# odr = ODR(data, linear_model, beta0=[0., 1.])
+# out = odr.run()
+# alpha_lit_reg_recta = 1 - np.exp(out.beta[0])
+# plt.plot(k[:10], [out.beta[0]*k[i]+out.beta[1] for i in range(1,11)], 'k-')
+# params_lit_reg = out
+# 
+# plt.ylabel('log(1-P)')
+# plt.xlabel('Protein connectivity (k)')
 # =============================================================================
+
 
 # Faltaría implementar un chi cuadrado para ver bondad de ajuste
 
@@ -249,29 +276,144 @@ def vecinos_comunes(G, nodo1, nodo2):
     vecinos2 = set(G[nodo2])
     return len(vecinos1.intersection(vecinos2))
 
-def calcular_pares(G, numvecinos):
+def calcular_pares(G, numvecinos, guardar_grados=False):
     num_pares = 0
     num_pares_mismotipo = 0
+    if guardar_grados:
+        ks_pares = []
     for n1, n2 in nx.non_edges(G):
-        assert n1 not in G[n2]
         if vecinos_comunes(G, n1, n2) >= numvecinos:
             num_pares += 1
             if G.nodes()[n1]['esencialidad'] == G.nodes()[n2]['esencialidad']:
                 num_pares_mismotipo += 1
-    return num_pares, num_pares_mismotipo
-
+            if guardar_grados:
+                k1, k2 = g.degree(n1), g.degree(n2)
+                ks_pares.append([k1, k2])
+    if guardar_grados:
+        return num_pares, num_pares_mismotipo, ks_pares
+    else:
+        return num_pares, num_pares_mismotipo
 #%%
-# Para las 4 redes:
-for nom, g, numvec in zip(['LIT', 'AP', 'Y2H', 'LIT_REG'],
-                          [g_lit, g_apms, g_y2h, g_lit_reg],
-                          [3, 3, 1, 3]):
-    print('{}: '.format(nom), calcular_pares(g, numvec))
+grafos = [g_lit, g_lit_reg, g_apms, g_y2h] # Respetar este orden
+pares, pares_mismotipo = np.zeros((2, 4))
+grados_pares = []
+numvecinos = [1, 3, 3, 1]
+
+ti = time()
+for i, g in enumerate(grafos):
+    num_pares, num_pares_mismotipo, ks_pares = calcular_pares(g, numvecinos[i],
+                                                              guardar_grados=True)
+    pares[i] = num_pares
+    pares_mismotipo[i] = num_pares_mismotipo
+    grados_pares.append(np.array(ks_pares))
+tf = time()
+print(tf - ti, ' segundos')
+
+def num_pares_esperados(g, ks, alfa, beta):
+    """ks debe ser array de forma (n, 2) donde n es el número de pares de nodos
+    no vecinos con 'numvecinos' o más vecinos comunes (o más en general, el
+    conjunto de pares de nodos que satisface la condición deseada). Debe
+    contener los grados de todos los nodos en esos pares.
     
-#AP:  (11569, 5875)
-#LIT:  (718, 383)
-#Y2H:  (23013, 15045)
-#LIT_REG:  (10777, 6187)
+    Devuelve
+    --------
+    rs : array
+        probs de en un dado par, ambos nodos sean esenciales
+    ss : array
+        probs de en un dado par, ambos nodos sean no esenciales
+    num_esperado : float
+        el número de pares del mismo tipo esperado según el modelo de He"""
+    k1 = ks[:,0]
+    k2 = ks[:,1]
+    rs = (1 - (1 - beta) * (1 - alfa)**k1) * (1 - (1 - beta) * (1 - alfa)**k2)
+    ss = (1 - beta)**2 * (1 - alfa)**(k1 + k2)
+    
+    num_esperado = np.sum(rs) + np.sum(ss)
+    return rs, ss, num_esperado
+
+esperados = []
+for i, g in enumerate(grafos):
+    _, _, num_esperado = num_pares_esperados(g, grados_pares[i], alfas[i], betas[i])
+    esperados.append(num_esperado)
+
+#print('redes: g_lit, g_lit_reg, g_apms, g_y2h')
+#print('pares: {:.0f}, {:.0f}, {:.0f}, {:.0f}'.format(*pares))
+#print('pares_mismotipo: {:.0f}, {:.0f}, {:.0f}, {:.0f}'.format(*pares_mismotipo))
+#print('esperados: {:.0f}, {:.0f}, {:.0f}, {:.0f}'.format(*esperados))
+
+# Para tener incerteza en la estimación de los números esperados
+from scipy.stats import norm
+
+incertezas = []
+zscores = []
+n_historias = 1000
+for i, g in enumerate(grafos):
+    alfas_mc = norm.rvs(loc=alfas[i], scale=sigma_alfas[i], size=n_historias)
+    betas_mc = norm.rvs(loc=betas[i], scale=sigma_betas[i], size=n_historias)
+    resultados_mc = np.zeros((n_historias))
+    for j in range(n_historias):
+        _, _, num_esperado = num_pares_esperados(g, grados_pares[i],
+                                                 alfas_mc[j], betas_mc[j])
+        resultados_mc[j] = num_esperado
+    incertezas.append(np.std(resultados_mc))
+    zscores.append((pares_mismotipo[i] - esperados[i]) / incertezas[i])
+    
+print('redes: g_lit, g_lit_reg, g_apms, g_y2h')
+print('pares: {:.0f}, {:.0f}, {:.0f}, {:.0f}'.format(*pares))
+print('pares_mismotipo: {:.0f}, {:.0f}, {:.0f}, {:.0f}'.format(*pares_mismotipo))
+print('esperados: {:.0f}, {:.0f}, {:.0f}, {:.0f}'.format(*esperados))
+print('incertezas: {:.0f}, {:.0f}, {:.0f}, {:.0f}'.format(*incertezas))
+print('Z-scores: {:.2f}, {:.2f}, {:.2f}, {:.2f}'.format(*zscores))
+
+# Resultados con numvecinos = [3,3,3,3]:
+#redes: g_lit, g_lit_reg, g_apms, g_y2h
+#pares: 718, 10777, 11569, 522
+#pares_mismotipo: 383, 6187, 5875, 352
+#esperados: 378, 5791, 6074, 291
+#incertezas: 18, 150, 3516, 60
+#Z-scores: 0.27, 2.65, -0.06, 1.02
+
 
 # La red LIT_REG da casi lo mismo que en el paper (en el cual da
 # 10777, 6143).
 
+# Resultados con numvecinos = [1,3,3,1]:
+#redes: g_lit, g_lit_reg, g_apms, g_y2h
+#pares: 9934, 10777, 11569, 23013
+#pares_mismotipo: 5767, 6187, 5875, 15045
+#esperados: 5008, 5791, 6074, 14204
+#incertezas: 100, 144, 2505, 1737
+#Z-scores: 7.56, 2.75, -0.08, 0.48
+
+# Resultados con numvecinos = [1,1,1,1]:
+#redes: g_lit, g_lit_reg, g_apms, g_y2h
+#pares: 9934, 220167, 25915, 23013
+#pares_mismotipo: 5767, 127589, 13004, 15045
+#esperados: 5008, 118693, 12923, 14204
+#incertezas: 83, 3007, 3884, 1822
+#Z-scores: 9.16, 2.96, 0.02, 0.46
+
+# En conclusión, se puede rechazar el modelo de He para las redes
+# g_lit, g_lit_reg pero no para las redes apms e y2h.
+#%%
+# Hacemos la tabla prolija linda
+pares_prolijo = [int(x) for x in pares]
+pares_mismotipo_prolijo = [int(x) for x in pares_mismotipo]
+esperados_prolijo = ['{} +/- {}'.format(int(x), int(y)) for x, y in zip(esperados, incertezas)]
+zscores_prolijo = ['{:.2f}'.format(x) for x in zscores]
+
+tabla5 = pd.DataFrame(data = {'Número total de pares': pares_prolijo,
+                              '# pares del mismo tipo': pares_mismotipo_prolijo,
+                              '# esperado de pares dle mismo tipo': esperados_prolijo,
+                              'Z-scores': zscores_prolijo},
+                      index=['Lit', 'Lit_reg', 'APMS', 'Y2H'])
+tabla5
+
+#%%
+n = 10
+p, pmt = np.zeros((2, n))
+for i in range(n):
+    p[i], pmt[i] = calcular_pares(g_apms, 3)
+#%%
+print('{:.2g} +/- {:.2g}'.format(np.average(p), np.std(p)))
+print('{:.2g} +/- {:.2g}'.format(np.average(pmt), np.std(pmt)))
