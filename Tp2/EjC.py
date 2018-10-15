@@ -13,8 +13,6 @@ from matplotlib import pyplot as plt
 import pandas as pd
 import random
 import collections
-import time
-
 
 from os.path import join as osjoin
 import sys
@@ -258,8 +256,8 @@ def analisis_desarme_esenciales(g, ess, numero_de_tiradas):
         
     return lista, valor_real
 #%%    
-nombre_archivo = 'Tp2/Ej c/apms_nuevo(1000 tiradas).npz'
-ti = time.time()
+nombre_archivo = 'Tp2/Ej c/lit(1000 tiradas).npz'
+import time; ti = time.time()
 lista, valor_real = analisis_desarme_esenciales(g_lit, ess, int(1e3))
 np.savez(nombre_archivo, lista=lista,
          valor_real=valor_real)
