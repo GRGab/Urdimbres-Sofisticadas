@@ -96,12 +96,12 @@ def desarme(g, ess):
     for a, b in g.degree():
         nodos.append(a)
         k.append(b)
-    threshold = np.arange(0, max(k)+1, 1)
+    k_posibles = np.arange(max(k)+1)
     y = []
     x = []
-    for j in threshold:
+    for j in k_posibles:
         y_i = 0
-        x_i = 0
+        x_i = 0 # nro de nodos con grado k
         for i in range(len(nodos)):
             if k[i] == j:
                 x_i += 1
@@ -111,6 +111,62 @@ def desarme(g, ess):
             y.append(y_i/x_i)
             x.append(j)
     return x, y
+#%%
+import statsmodels.api as sm
+nombres = {g_apms: "APMS", g_lit: "Lit", g_lit_reg: "Lit_reg",
+           g_y2h: "Y2H"}
+
+with plt.style.context(('seaborn')):
+    fig, ax = plt.subplots(2, 2, figsize=(12,8),
+                           sharex=True, sharey=True)
+ax = np.ravel(ax)
+
+ms, bs = np.zeros((2, 4)) # 4 grafos, 2 parámetros a ajustar
+sigma_ms, sigma_bs = np.zeros((2, 4))
+
+grafos = [g_lit, g_lit_reg, g_apms, g_y2h]
+for i, g in enumerate(grafos):
+    k_0, y_0 = desarme(g, ess)
+    k_1, y_1 = k_0[:10], y_0[:10]
+    y_2 = [np.log(1 - yi) for yi in y_1]
+    k_2 = sm.add_constant(k_1) # para que haya param ordenada al origen
+    results = sm.OLS(y_2, k_2).fit()
+    # El orden de los params es 1) ordenada al origen, 2) pendiente
+    bs[i] = results.params[0]
+    sigma_bs[i] = results.bse[0]
+    ms[i] = results.params[1]
+    sigma_ms[i] = results.bse[1]
+    # print('Grafo: {}'.format(nombres[g]))
+    # print(results.summary())
+    
+    # Dibujamos
+    xs = np.array(k_1)
+    ys = y_2
+    fontsize = 18
+    ticksize = 16
+    ax[i].plot(xs, ys, 'o', color='dodgerblue')#, label=nombres[g])
+    ax[i].plot(xs, ms[i] * xs + bs[i], '-', label='Ajuste lineal',
+               color='deeppink')
+    # ax[i].plot([], [], ' ', label='algo')
+    # ax[i].legend(fontsize=fontsize)
+    ax[i].tick_params(labelsize=ticksize)
+    if i in [0, 3]:
+        ax[i].set_xlabel('Grado', fontsize=fontsize)
+    if i in [0, 1]:
+        ax[i].set_ylabel(r'$\log(1-P_E)$', fontsize=fontsize)
+    ax[i].set_title(nombres[g], fontsize=fontsize)
+    
+fig.tight_layout()
+
+# Obtenemos alfas y betas
+alfas = 1 - np.exp(ms)
+betas = 1 - np.exp(bs)
+# Propagación de errores (chequeé con Monte Carlos que la propagación es correcta)
+sigma_alfas = np.exp(ms) * sigma_ms
+sigma_betas = np.exp(bs) * sigma_bs
+#%%
+
+
 #%%
 fig, ax = plt.subplots()
 
