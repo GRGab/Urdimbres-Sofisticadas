@@ -47,9 +47,9 @@ ess = np.unique(ess)
 for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
     agregar_esencialidad_dict(g, ess)
 
-def k_medio(G):
-    N = G.order()
-    k_med = sum(k for (nodo, k) in G.degree) / N
+def k_medio(g):
+    N = g.order()
+    k_med = sum(k for (nodo, k) in g.degree) / N
     return k_med
 
 #%%
@@ -57,24 +57,30 @@ def k_medio(G):
 
 ######## Tabla 1 de Zotenko: propiedades de las bases de datos
 
-def tabla_1(red):
-    red = max(nx.connected_component_subgraphs(red), key=len)
-    N = red.order()
-    L = red.size()
-    K = k_medio(red)
-    Ci = np.average(list(nx.clustering(red).values()))
-    return [N,L,K,Ci]
+def fila_tabla_1(g):
+    g = max(nx.connected_component_subgraphs(g), key=len)
+    N = g.order()
+    L = g.size()
+    K = k_medio(g)
+    Ci = np.average(list(nx.clustering(g).values()))
+    return N, L, K, Ci
 
+grafos = [g_lit, g_lit_reg, g_apms, g_y2h]
+Ns, Ls, Ks, Cis = [], [], [], []
+for g in grafos:
+    N, L, K, Ci = fila_tabla_1(g)
+    Ns.append(N)
+    Ls.append(L)
+    Ks.append(K)
+    Cis.append(Ci)
 
-data = pd.DataFrame({"Nombre de la red": ['Y2H','AP-MS','Lit', 'Lit_reg'],
-                     "N":[tabla_1(g_y2h)[0],tabla_1(g_lit)[0],tabla_1(g_apms)[0],
-                          tabla_1(g_lit_reg)[0]],
-                     "L":[tabla_1(g_y2h)[1],tabla_1(g_lit)[1],tabla_1(g_apms)[1],
-                          tabla_1(g_lit_reg)[1]],
-                     "$$<C_{i}>$$":[tabla_1(g_y2h)[2],tabla_1(g_lit)[2],tabla_1(g_apms)[2],
-                           tabla_1(g_lit_reg)[2]],
-                    })#empty dataframe
-data
+tabla1 = pd.DataFrame(data={'Número de nodos':Ns,
+                            'Número de enlaces':Ls,
+                            'Grado medio':Ks,
+                            'Coef. de clustering medio':Cis}, 
+                      index=['Lit', 'Lit_reg', 'APMS', 'Y2H'])
+pd.set_option('precision', 2)
+tabla1 
 
 #%%
 ######## Tabla 2 de Zotenko: overlap entre bases de datos
@@ -93,25 +99,70 @@ def comparten_enlaces(data1,data2):
     g.add_edges_from(data1)
     return n/g.size()
 
+listas_enlaces = [lit, lit_r, apms, y2h]
+enlaces_compartidos = np.zeros((4,4))
+for i in range(4):
+    for j in range(4):
+        if i==j:
+            enlaces_compartidos[i,j] = 1
+        else:
+            enlaces_compartidos[i,j] = comparten_enlaces(listas_enlaces[i],
+                                                         listas_enlaces[j])
+            
+print(enlaces_compartidos)
+# Vemos que este método falla, asignando 373% de enlaces compartidos con
+# lit_reg en la red lit.
+# Esto probablemente tiene que ver con que este método no considera correctamente
+# la posibilidad de existencia de repetidos en las listas de enlaces.
+# Además, habría que hacer la cuenta únicamente sobre la componente gigante.
+# Para esto nos conviene trabajar con los grafos directamente.
+#%%   
 
-comparten_enlaces(apms,apms)
+def comparten_enlaces2(grafo1, grafo2):
+    """Por convención, devuelve la fracción de enlaces del grafo 1 que se 
+    encuentran en el grafo 2. """
+    # Nos quedamos con las componentes gigantes
+    grafo1 = max(nx.connected_component_subgraphs(grafo1), key=len)
+    grafo2 = max(nx.connected_component_subgraphs(grafo2), key=len)
+    # Comienza el cálculo
+    n = 0
+    for (x, y) in grafo1.edges:
+        for (a, b) in grafo2.edges:
+            if (a == y and b == x) or (a == x and b == y):
+                n += 1
+                break # Ya no va a encontrar más así que nos ahorramos pasos
+    return n/grafo1.size()
 
+grafos = [g_lit, g_lit_reg, g_apms, g_y2h]
+enlaces_compartidos2 = np.zeros((4,4))
+for i in range(4):
+    for j in range(4):
+        if i==j:
+            enlaces_compartidos2[i,j] = 1
+        else:
+            enlaces_compartidos2[i,j] = comparten_enlaces2(grafos[i], grafos[j])
+
+#%% Comparamos ambos métodos
+np.savez('Tp2/tc02Data/tabla2zotenko.npz', data=enlaces_compartidos2)
+print(enlaces_compartidos2)
+
+# Este segundo método da resultados razonables en todos los casos.
+#%%
+tabla2 = pd.DataFrame()
 #%%
 ##### Figura 1.a de Zotenko
 
 def essfrac_vs_hubfrac(g):
-    """Toma grafo que ya tiene incorporada la información de esencialidad"""
+    """Toma grafo que ya tiene incorporada la información de esencialidad
+    Trabaja únicamente sobre la componente gigante (como hicieron Zotenko et al.)"""
     
+    g = max(nx.connected_component_subgraphs(g), key=len)
     kmax = max(dict(g.degree).values())
-#    thresholds = np.arange(kmax+1)[::-1] # el k considerado como umbral en cada caso
     num_hubs, num_hubs_esens = np.zeros((2, kmax+1))
     for node, degree in g.degree():
         num_hubs[:degree+1] += np.ones((degree+1))
         if g.nodes[node]['esencialidad'] == 1:
             num_hubs_esens[:degree+1] += np.ones((degree+1))
-#        for i in range(degree, kmax+1):
-#            frac_hubs[i] += 1
-#            frac_esens[i] += g.nodes[node]['esencialidad']
     frac_hubs_sonesens = num_hubs_esens / num_hubs
     frac_sonhubs = num_hubs / g.order()
     return frac_sonhubs, frac_hubs_sonesens
