@@ -19,7 +19,7 @@ import time
 from os.path import join as osjoin
 import sys
 sys.path.append('./Tp2/')
-from agregar_esencialidad import agregar_esencialidad
+from agregar_esencialidad import agregar_esencialidad_dict
 from histograma import histograma
 from funciones_de_desarme_ejc import (agregar_centralidad, 
                                         desarme_por_centralidad,
@@ -51,6 +51,9 @@ ess = ldata('Tp2/tc02Data/Essential_ORFs_paperHe.txt')
 ess =  ess[2:-4]
 ess = [fila[1] for fila in ess]
 ess = np.unique(ess)
+
+for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
+    agregar_esencialidad_dict(g, ess)
 #%%
 #    Ejercico c
 #Punto I
@@ -65,47 +68,15 @@ for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
         curvas['{}_{}'.format(nombres[g], criterio)] = [data['cant_nodos_red'],
                                                         data['cant_nodos_cg']]
         
-#%% Graficar para cada red por separado
-        
-fontsize = 18
-ticksize = 16
-        
-for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
-    with plt.style.context(('seaborn')):
-        fig, ax = plt.subplots(figsize=(12,8))
-    for criterio in ['degree', 'eigen', 'sub', 'bet', 'flow', 'random']:
-        xs = curvas['{}_{}'.format(nombres[g], criterio)][0]
-        ys = curvas['{}_{}'.format(nombres[g], criterio)][1]
-        if criterio is 'random': # Promedio las 100 historias
-            xs = np.average(xs, axis=0)
-            ys = np.average(ys, axis=0)
-            ax.plot(xs, ys, '-', label=criterio)
-        else:
-            ax.plot(xs, ys, '.-', label=criterio)
-    # Acá falta plotear el puntito de remoción de esenciales
-    ax.tick_params(labelsize=ticksize)
-    ax.set_xlabel('Fracción de nodos remanentes',
-              fontsize=fontsize)
-    ax.set_ylabel('Tamaño relativo de la componente gigante',
-              fontsize=fontsize)
-    ax.legend(fontsize=fontsize)
-    ax.set_title(nombres[g], fontsize=fontsize)
-    ax.set_xlim([-0.01, 0.4])
-#    ax.set_xscale('log')
-    fig.tight_layout()
-#%%
-#Punto II
-#1015 vs 1179
+# Además de las curvas, queremos el puntito que nos marca a dónde va a parar
+# el tamaño de la cg cuando eliminamos de un saque todas las esenciales
+
 def desarme_esenciales_saco_ess(g,ess):
     '''
-    Toma una red y una lista de nodos esenciales. Primero, elimina los nodos
-    esenciales. Luego, elimina nodos al azar pero con el mismo grado
-    que los nodos esenciales. En ambos casos se calcula la fraccion de nodos 
-    que sobreviven de la componente gigante.
+    Toma una red y una lista de nodos esenciales. Elimina los nodos esenciales
+    y calcula el tamaño relativo de la componente gigante en la nueva red.
     '''
-    ##Primero calculamos la fraccion sacando proteinas esenciales
-   
-    #Parametros para la normalizacion
+   #Parametros para la normalizacion
     cg_original = max(nx.connected_component_subgraphs(g), key=len).order()
     #Copio la red para hacerla bolsa
     G = g.copy()
@@ -115,7 +86,52 @@ def desarme_esenciales_saco_ess(g,ess):
     maxcomp = cg.order()
     a = maxcomp/cg_original #Lo que da sacando esenciales
     return a
+#%% Graficar para cada red por separado
+        
+fontsize = 18
+ticksize = 16
+        
+for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
+    with plt.style.context(('seaborn')):
+        fig, ax = plt.subplots(figsize=(10,8))
+        
+    # Dibujamos las curvas
+    for criterio in ['degree', 'eigen', 'sub', 'bet', 'flow', 'random']:
+        xs = curvas['{}_{}'.format(nombres[g], criterio)][0]
+        ys = curvas['{}_{}'.format(nombres[g], criterio)][1]
+        if criterio is 'random': # Promedio las 100 historias
+            xs = np.average(xs, axis=0)
+            ys = np.average(ys, axis=0)
+            ax.plot(xs, ys, '-', label=criterio)
+        else:
+            ax.plot(xs, ys, '.-', label=criterio)
+            
+    ### Dibujamos puntito de remoción de esenciales
+    # Cuento nodos esenciales en esta red particular
+    num_esenciales = sum(dict(g.nodes(data='esencialidad')).values())
+    # Calculo fracción
+    fracnodos_esenciales = num_esenciales / g.order() # Esto habría que cambiarlo si rehiciéramos las curvas con las cg únicamente
+    # Calculo tamaño de la cg al eliminarlos
+    cg_sinesenciales = desarme_esenciales_saco_ess(g, ess)
+    # Dibujo
+    ax.plot(fracnodos_esenciales, cg_sinesenciales, '*', label='Esenciales',
+            ms=10)
+    
+    # Emprolijamos
+    ax.tick_params(labelsize=ticksize)
+    ax.set_xlabel('Fracción de nodos removidos',
+              fontsize=fontsize)
+    ax.set_ylabel('Tamaño relativo de la componente gigante',
+              fontsize=fontsize)
+    ax.legend(fontsize=fontsize)
+    ax.set_title(nombres[g], fontsize=fontsize)
+    ax.set_xlim([-0.01, 0.45])
+    fig.tight_layout()
+    fig.savefig('Tp2/Ej c/curvas_desarme_{}.png'.format(nombres[g]))
+    
 #%%
+#Punto II
+#1015 vs 1179
 def ordenar_grados(lista,k,cercania=0):
     '''dada una lista de grados, devuelve el grado mas cercano al grado k. 
     Si cercania es n, devuelve el grado en el puesto n de cercania.'''
@@ -243,28 +259,28 @@ def analisis_desarme_esenciales(g, ess, numero_de_tiradas):
     return lista, valor_real
 #%%    
 nombre_archivo = 'Tp2/Ej c/apms_nuevo(1000 tiradas).npz'
-import time; ti = time.time()
+ti = time.time()
 lista, valor_real = analisis_desarme_esenciales(g_lit, ess, int(1e3))
 np.savez(nombre_archivo, lista=lista,
          valor_real=valor_real)
 tf = time.time(); print(tf-ti, 'segundos')
 #%%
 nombre_archivo = 'Tp2/Ej c/lit_reg_(1000 tiradas).npz'
-import time; ti = time.time()
+ti = time.time()
 lista, valor_real = analisis_desarme_esenciales(g_lit_reg, ess, int(1e3))
 np.savez(nombre_archivo, lista=lista,
          valor_real=valor_real)
 tf = time.time(); print(tf-ti, 'segundos')
 #%%
 nombre_archivo = 'Tp2/Ej c/y2h_(1000 tiradas).npz'
-import time; ti = time.time()
+ti = time.time()
 lista, valor_real = analisis_desarme_esenciales(g_y2h, ess, int(1e3))
 np.savez(nombre_archivo, lista=lista,
          valor_real=valor_real)
 tf = time.time(); print(tf-ti, 'segundos')
 #%%
 nombre_archivo = 'Tp2/Ej c/apms_(1000 tiradas).npz'
-import time; ti = time.time()
+ti = time.time()
 lista, valor_real = analisis_desarme_esenciales(g_apms, ess, int(1e3))
 np.savez(nombre_archivo, lista=lista,
          valor_real=valor_real)

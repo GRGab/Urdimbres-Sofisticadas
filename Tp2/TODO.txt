@@ -1,6 +1,3 @@
-- Ejercicio B:
-    - Hacer permutaciones en tabla 2 Zotenko
-
 - Ejercicio C:
     - Comparar remover esenciales con no esenciales igual grado
 
@@ -12,13 +9,13 @@
     
 Generar figuras:
 B
-Tabla 1 de Zotenko et. al. (2008) (listo, pero quizá haya que cambiar el orden de las redes)
-Tabla 2 de Zotenko et. al. (2008)
-Figura 1.a de Zotenko et. al. (2008)
+Tabla 1 de Zotenko et. al. (2008) CHECK
+Tabla 2 de Zotenko et. al. (2008) CHECK
+Figura 1.a de Zotenko et. al. (2008) CHECK
 C
-Figura 3 de Zotenko et. al. (2008)
-Tabla 3 de Zotenko et. al. (2008)
+Figura 3 de Zotenko et. al. (2008) CHECK
+Tabla 3 de Zotenko et. al. (2008) HMMM
 D
-Figura 2.b de He et. al. (2006) - Para cada una de las redes obtener α y β.
-Tabla de comparación de α y β via recableado y via ajustes
-Tabla 5 de Zotenko et. al. (2008)
+Figura 2.b de He et. al. (2006) - Para cada una de las redes obtener α y β. YA CASI
+Tabla de comparación de α y β via recableado y via ajustes HMMM
+Tabla 5 de Zotenko et. al. (2008) HMMM
