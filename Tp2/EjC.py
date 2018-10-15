@@ -79,7 +79,9 @@ for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
         if criterio is 'random': # Promedio las 100 historias
             xs = np.average(xs, axis=0)
             ys = np.average(ys, axis=0)
-        ax.plot(xs, ys, '.-', label=criterio)
+            ax.plot(xs, ys, '-', label=criterio)
+        else:
+            ax.plot(xs, ys, '.-', label=criterio)
     # Acá falta plotear el puntito de remoción de esenciales
     ax.tick_params(labelsize=ticksize)
     ax.set_xlabel('Fracción de nodos remanentes',
@@ -87,6 +89,8 @@ for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
     ax.set_ylabel('Tamaño relativo de la componente gigante',
               fontsize=fontsize)
     ax.legend(fontsize=fontsize)
+    ax.set_title(nombres[g], fontsize=fontsize)
+    ax.set_xlim([-0.01, 0.4])
 #    ax.set_xscale('log')
     fig.tight_layout()
 #%%
