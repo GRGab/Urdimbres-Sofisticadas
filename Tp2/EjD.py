@@ -118,7 +118,7 @@ nombres = {g_apms: "APMS", g_lit: "Lit", g_lit_reg: "Lit_reg",
 
 with plt.style.context(('seaborn')):
     fig, ax = plt.subplots(2, 2, figsize=(12,8),
-                           sharex=True, sharey=True)
+                           sharex=True)
 ax = np.ravel(ax)
 
 ms, bs = np.zeros((2, 4)) # 4 grafos, 2 parámetros a ajustar
@@ -144,19 +144,18 @@ for i, g in enumerate(grafos):
     ys = y_2
     fontsize = 18
     ticksize = 16
-    ax[i].plot(xs, ys, 'o', color='dodgerblue')#, label=nombres[g])
+    ax[i].plot(xs, ys, 'o', color='dodgerblue')
     ax[i].plot(xs, ms[i] * xs + bs[i], '-', label='Ajuste lineal',
                color='deeppink')
-    # ax[i].plot([], [], ' ', label='algo')
-    # ax[i].legend(fontsize=fontsize)
     ax[i].tick_params(labelsize=ticksize)
-    if i in [0, 3]:
+    if i in [2, 3]:
         ax[i].set_xlabel('Grado', fontsize=fontsize)
-    if i in [0, 1]:
+    if i in [0, 2]:
         ax[i].set_ylabel(r'$\log(1-P_E)$', fontsize=fontsize)
     ax[i].set_title(nombres[g], fontsize=fontsize)
     
 fig.tight_layout()
+fig.savefig('Tp2/Ej d/figura2b_He.png')
 
 # Obtenemos alfas y betas
 alfas = 1 - np.exp(ms)
@@ -164,8 +163,6 @@ betas = 1 - np.exp(bs)
 # Propagación de errores (chequeé con Monte Carlos que la propagación es correcta)
 sigma_alfas = np.exp(ms) * sigma_ms
 sigma_betas = np.exp(bs) * sigma_bs
-#%%
-
 
 #%%
 fig, ax = plt.subplots()

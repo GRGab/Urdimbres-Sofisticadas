@@ -16,6 +16,6 @@ C
 Figura 3 de Zotenko et. al. (2008) CHECK
 Tabla 3 de Zotenko et. al. (2008) HMMM
 D
-Figura 2.b de He et. al. (2006) - Para cada una de las redes obtener α y β. YA CASI
+Figura 2.b de He et. al. (2006) - CHECK
 Tabla de comparación de α y β via recableado y via ajustes HMMM
 Tabla 5 de Zotenko et. al. (2008) HMMM
