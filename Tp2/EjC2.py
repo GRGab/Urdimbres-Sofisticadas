@@ -126,18 +126,14 @@ def elimino_nodos(dict_total, k, valores_a_borrar, origen=[]):
 
 
 #%%
-def efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=False):
+def efecto_nodos_equivalentes_criterioviejo(g, ess, devolver_num_nodos_elim=False):
     """Elimina un conjunto aleatorio de nodos del grafo 'g' con igual secuencia
     de grados que la del conjunto de nodos esenciales 'ess' y devuelve la fracción
     que representa la componente gigante final respecto de la componente gigante
     inicial.
     
     El resultado es aleatorio, por lo cual es recomendable promediar sobre
-    varias historias.
-    
-    La diferencia con el caso anterior es que ahora vamos a adoptar un criterio
-    ligeramente distinto para lidiar con el caso (muy común) en el que no hay
-    suficientes nodos del grado deseado para eliminar."""   
+    varias historias."""   
     
     # Creamos lista de grados de los nodos esenciales (contiene repetidos)
     grados_esenciales = [] 
@@ -195,8 +191,7 @@ def efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=False):
             origen.append(k_agregado)
             # Agregamos todos los nodos de grado  k_agregado a la bolsa
             # de nodos para elegir
-            for m in list(grado_to_noesenciales[k_agregado]):
-                nodos_para_elegir.append(m)
+            nodos_para_elegir += grado_to_noesenciales[k_agregado]
             # Aumentamos i para ir a buscar a grados más lejanos al original,
             # en caso de ser encesario
             i += 1
@@ -219,7 +214,114 @@ def efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=False):
         return b, len(nodos_a_eliminar)
     else:
         return b
+#%%
+        
+def efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=False):
+    """Elimina un conjunto aleatorio de nodos del grafo 'g' con igual secuencia
+    de grados que la del conjunto de nodos esenciales 'ess' y devuelve la fracción
+    que representa la componente gigante final respecto de la componente gigante
+    inicial.
+    
+    El resultado es aleatorio, por lo cual es recomendable promediar sobre
+    varias historias."""   
+    
+    # Creamos lista de grados de los nodos esenciales (contiene repetidos)
+    grados_esenciales = [] 
+    for nodo in ess:
+        if nodo in g.nodes():
+            k = g.degree[nodo]
+            grados_esenciales.append(k)
+    # Dict con la cant de nodos esenciales que tienen cierto grado
+    # Esto nos dice cuántos nodos no esenciales hay que eliminar para cada grado
+    grado_to_numesenciales = dict(Counter(grados_esenciales))
+    # Lista de grados esenciales sin repetir de mayor a menor
+    # Sobre esto vamos a iterar para remover los nodos que correspondan
+    grados_esenciales = sorted(np.unique(grados_esenciales), reverse=True)
+    
+    # Dict que manda un valor de grado al conjunto de no esenciales con dicho grado
+    # De acá vamos sacando nodos y metiéndolos en la bolsa de nodos a eliminar
+    nodos_no_esenciales = [nodo for nodo in g.nodes() if nodo not in ess]
+#    import pdb; pdb.set_trace()
+    # Grados presentes en la red
+    grados_presentes = np.unique(list(dict(g.degree()).values()))
+    # Inicializamos el diccionario a completar
+    grado_to_noesenciales = {}
+    # Completamos
+    for k in grados_presentes:
+        noesenciales_con_grado_k = []
+        for nodo in nodos_no_esenciales:
+            if g.degree[nodo] == k:
+                noesenciales_con_grado_k.append(nodo)
+            if len(noesenciales_con_grado_k) != 0:
+                grado_to_noesenciales[k] = noesenciales_con_grado_k
+    # OJO: grado_to_noesenciales es mutable y va cambiando a medida que avanza
+    # la ejecución.
 
+    nodos_a_eliminar = []
+    for k in grados_esenciales: # sobre todo grado del cual tengo que sacar nodos      
+        # Cuántos falta marcar como eliminados
+        cuantos_faltan = grado_to_numesenciales[k] 
+        # Grados disponibles para eliminar
+        grados_disponibles = list(grado_to_noesenciales.keys())     
+        if grados_disponibles == []:
+            # Si todavía nos faltaban grados esenciales pero ya no queda
+            # ningún grado disponible, queremos terminar el for loop
+            # instantáneamente
+            break
+        if k not in grados_disponibles:
+            # Si no tenemos nodos no esenciales con el grado deseado, saltamos
+            # directamente al grado disponible más cercano
+            k = obtener_mascercano(grados_disponibles, k, cercania=0)
+        nodos_a_eliminar_temp = []
+        while cuantos_faltan > 0:
+            n_k = len(grado_to_noesenciales[k])
+            if  n_k < cuantos_faltan:
+                # Si no hay suficientes no esenciales de grado k,
+                # marco todos ellos para ser eliminados (con certeza) y me fijo
+                # en los nodos de grado disponible más cercano para completar
+                nodos_a_eliminar_temp += grado_to_noesenciales[k]
+                cuantos_faltan -= n_k
+                # Eliminamos los nodos nominados del dict en el cual vamos a
+                # seguir buscando más nodos (ya sea para esta iteración del for
+                # o para las siguientes)
+                grado_to_noesenciales = elimino_nodos(grado_to_noesenciales,
+                                                      k,
+                                                      grado_to_noesenciales[k])
+                # Actualizamos la lista de grados disponibles
+                grados_disponibles = list(grado_to_noesenciales.keys())
+                # Si no quedan más grados disponibles, ya está:
+                if grados_disponibles == []:
+                    break
+                # Si todavía quedan, actualizamos el valor de k para seguir
+                # buscando más nodos:
+                k = obtener_mascercano(grados_disponibles, k, cercania=0)
+                # cercania=0 siempre está bien porque el k viejo ya ha sido
+                # eliminado de los grados disponibles
+            else:
+                # Con este k ya nos basta! Elijamos al azar de acá y listo.
+                nominados = np.random.choice(grado_to_noesenciales[k],
+                                             size=cuantos_faltan,
+                                             replace=False)
+                nodos_a_eliminar_temp += list(nominados)
+                #Eliminamos del dict los nodos que ya marcamos para eliminar:
+                grado_to_noesenciales = elimino_nodos(grado_to_noesenciales,
+                                                      k,
+                                                      list(nominados))
+                cuantos_faltan = 0
+        # Si terminó el while es porque ya marcamos suficientes nodos para
+        # eliminar. Podemos pasar al siguiente for
+        nodos_a_eliminar += nodos_a_eliminar_temp
+    # Terminó el for. Ahora sí eliminamos todos los nodos marcados.
+    G = g.copy()
+    G.remove_nodes_from(nodos_a_eliminar)
+    cg_1 = max(nx.connected_component_subgraphs(G), key=len)
+    maxcomp_1 = cg_1.order()
+    tamaño_cg_original = max(nx.connected_component_subgraphs(g), key=len).order()
+    b = maxcomp_1 / tamaño_cg_original #Lo que da sacando nodos aleatorios
+    if devolver_num_nodos_elim:
+        return b, len(nodos_a_eliminar)
+    else:
+        return b
 #%%
 grafos = [g_lit, g_lit_reg, g_apms, g_y2h] # Respetar este orden
 nombres = {g_apms: "APMS", g_lit: "Lit", g_lit_reg: "Lit_reg",
@@ -242,7 +344,7 @@ for i, g in enumerate(grafos):
     resultados = np.zeros((n_historias))
     numnods_elim = np.zeros((n_historias))
     for j in range(n_historias):
-        resultados[j], numnods_elim[j] = efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=True)
+        resultados[j], numnods_elim[j] = efecto_nodos_equivalentes_criterioviejo(g, ess, devolver_num_nodos_elim=True)
     fracs_equiv[i] = np.average(resultados)
     sigmas[i] = np.std(resultados)
     print('# Nodos eliminados: {} +/- {}'.format(np.average(numnods_elim), np.std(numnods_elim)))
