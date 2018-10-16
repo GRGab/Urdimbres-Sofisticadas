@@ -138,8 +138,9 @@ def efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=False):
     La diferencia con el caso anterior es que ahora vamos a adoptar un criterio
     ligeramente distinto para lidiar con el caso (muy común) en el que no hay
     suficientes nodos del grado deseado para eliminar."""   
-        
-    grados_esenciales = [] # contiene repetidos
+    
+    # Creamos lista de grados de los nodos esenciales (contiene repetidos)
+    grados_esenciales = [] 
     for nodo in ess:
         if nodo in g.nodes():
             k = g.degree[nodo]
@@ -150,8 +151,6 @@ def efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=False):
     # Lista de grados esenciales sin repetir de mayor a menor
     # Sobre esto vamos a iterar para remover los nodos que correspondan
     grados_esenciales = sorted(np.unique(grados_esenciales), reverse=True)
-    
-
     
     # Dict que manda un valor de grado al conjunto de no esenciales con dicho grado
     # De acá vamos sacando nodos y metiéndolos en la bolsa de nodos a eliminar
@@ -169,28 +168,9 @@ def efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=False):
                 noesenciales_con_grado_k.append(nodo)
             if len(noesenciales_con_grado_k) != 0:
                 grado_to_noesenciales[k] = noesenciales_con_grado_k
-#    import pdb; pdb.set_trace()
     # OJO: grado_to_noesenciales es mutable y va cambiando a medida que avanza
     # la ejecución.
-    
-# =============================================================================
-#           CÓDIGO EN CUARENTENA
-#
-#     G_siness = g.copy()
-#     G_siness.remove_nodes_from(ess)
-#     dict_grados_siness = dict(nx.degree(G_siness)) #Dicconario con grados de los nodos de la red sin ess
-#     grado_to_noesenciales = {}
-#     nodos_no_ess = dict_grados_siness.keys()
-#     grados_no_ess = dict_grados_siness.values()
-#     for k in np.unique(list(grados_no_ess)):
-#         nodos_con_grado_k = []
-#         for nodo in nodos_no_ess:
-#             if dict_grados_siness[nodo] == k:
-#                 nodos_con_grado_k.append(nodo)
-#             grado_to_noesenciales[k] = nodos_con_grado_k
-# =============================================================================
-    
-    
+
     nodos_a_eliminar = []
     for k in grados_esenciales: # sobre todo grado del cual tengo que sacar nodos
 
@@ -202,39 +182,32 @@ def efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=False):
         # directamente al grado disponible más cercano
         if k not in grados_disponibles: 
             k = obtener_mascercano(grados_disponibles, k, cercania=0) # Grado más cercano
-
-# =============================================================================
-#         if k in grados_disponibles: # Si tenemos nodos no esenciales con el grado deseado
-#             i = 1 #OJO esto tiene que ser 1, no como en el de abajo
-#         else:
-#             k = obtener_mascercano(grados_disponibles, k, cercania=0) # Grado más cercano
-#             i = 0 #OJO esto es cero
-# =============================================================================
-        nodos_para_elegir = grado_to_noesenciales[k] # lista de nodos no ess con el grado deseado
+        # lista de nodos no esenciales con grado k
+        nodos_para_elegir = grado_to_noesenciales[k] 
         origen = []
-        
-        # Parámetros del loop while
-        procesando_k = True # Cuando se vuelve False, pasamos al siguiente k
         i = 1 # Aumenta cada vez que repito el loop
-        while procesando_k:
-            # Si la bolsa tiene suficientes elementos
-            if len(nodos_para_elegir) >= cuantos_sacar:
-                nominados = np.random.choice(nodos_para_elegir, size = cuantos_sacar, replace=False)
-                for n in nominados:
-                    nodos_a_eliminar.append(n)
-                #Eliminamos del dict los nodos que ya usamos:
-                eliminados = list(nominados)  
-                grado_to_noesenciales = elimino_nodos(grado_to_noesenciales, k, eliminados, origen)
-                procesando_k = False # Termina el while, pasamos al siguiente k
-
-            else: 
-                # si no hay suficientes nodos no esenciales de grado k, voy a buscar
-                # más y los agrego a la bolsa
-                k_agregado = obtener_mascercano(grados_disponibles, k, cercania=i)
-                origen.append(k_agregado)
-                for m in list(grado_to_noesenciales[k_agregado]):
-                    nodos_para_elegir.append(m)
-                i += 1
+        while len(nodos_para_elegir) < cuantos_sacar:
+            # si no hay suficientes nodos no esenciales de grado k, voy a buscar
+            # más y los agrego a la bolsa
+            k_agregado = obtener_mascercano(grados_disponibles, k, cercania=i)
+            # Dejamos registrado que k_agregado es uno de los grados de los
+            # cuales hay que eliminar los nodos:
+            origen.append(k_agregado)
+            # Agregamos todos los nodos de grado  k_agregado a la bolsa
+            # de nodos para elegir
+            for m in list(grado_to_noesenciales[k_agregado]):
+                nodos_para_elegir.append(m)
+            # Aumentamos i para ir a buscar a grados más lejanos al original,
+            # en caso de ser encesario
+            i += 1
+        
+        # Si terminó el while es porque ya hay suficientes no esenciales
+        # en la bolsa.
+        # Metemos la mano en la bosla y sacamos los nodos a eliminar
+        nominados = np.random.choice(nodos_para_elegir, size = cuantos_sacar, replace=False)
+        nodos_a_eliminar += list(nominados)
+        #Eliminamos del dict los nodos que ya marcamos para eliminar:
+        grado_to_noesenciales = elimino_nodos(grado_to_noesenciales, k, nominados, origen)
 
     G = g.copy()
     G.remove_nodes_from(nodos_a_eliminar)
