@@ -336,7 +336,7 @@ for i, g in enumerate(grafos):
 
 # Genero las fracciones correspondientes a remoción de equivalentes en grado
 fracs_equiv, sigmas = np.zeros((2, 4))
-n_historias = 10
+n_historias = 100
 ti = time()
 for i, g in enumerate(grafos):
     print('Eliminando nodos no esenciales equivalentes de la red ', nombres[g])
@@ -344,7 +344,7 @@ for i, g in enumerate(grafos):
     resultados = np.zeros((n_historias))
     numnods_elim = np.zeros((n_historias))
     for j in range(n_historias):
-        resultados[j], numnods_elim[j] = efecto_nodos_equivalentes_criterioviejo(g, ess, devolver_num_nodos_elim=True)
+        resultados[j], numnods_elim[j] = efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=True)
     fracs_equiv[i] = np.average(resultados)
     sigmas[i] = np.std(resultados)
     print('# Nodos eliminados: {} +/- {}'.format(np.average(numnods_elim), np.std(numnods_elim)))
@@ -352,8 +352,8 @@ tf = time(); print(tf - ti, ' segundos')
 
 zscores = (fracs_esen - fracs_equiv) / sigmas
 
-#np.savez('Tp2/tc02Data/unosdatos.npz', fracs_esen=fracs_esen,
-#         fracs_equiv=fracs_equiv, sigmas=sigmas, zscores=zscores)
+np.savez('Tp2/tc02Data/unosdatos_nuevos.npz', fracs_esen=fracs_esen,
+         fracs_equiv=fracs_equiv, sigmas=sigmas, zscores=zscores)
 
 # Tabla
 
