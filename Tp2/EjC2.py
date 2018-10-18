@@ -326,41 +326,119 @@ def efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=False):
 grafos = [g_lit, g_lit_reg, g_apms, g_y2h] # Respetar este orden
 nombres = {g_apms: "APMS", g_lit: "Lit", g_lit_reg: "Lit_reg",
            g_y2h: "Y2H"}
+n_historias = 100 # Para las remociones aleatorias
 
+print('--------------------------------------------------------')
+print('Tamaños relativos de las componentes gigantes luego', '\n',
+      'de la remoción de un subconjunto de nodos')
+print('--------------------------------------------------------')
 # Genero las fracciones correspondientes a remoción de esenciales
 fracs_esen = np.zeros((4))
-for i, g in enumerate(grafos):
-    print('Eliminando nodos esenciales de la red ', nombres[g])
-    fracs_esen[i], numnods_elim = desarme_esenciales_saco_ess(g, ess, devolver_num_nodos_elim=True)
-    print('# Nodos eliminados: ', numnods_elim)
-
-# Genero las fracciones correspondientes a remoción de equivalentes en grado
-fracs_equiv, sigmas = np.zeros((2, 4))
-n_historias = 100
+print('Eliminando nodos esenciales:')
 ti = time()
 for i, g in enumerate(grafos):
-    print('Eliminando nodos no esenciales equivalentes de la red ', nombres[g])
-    print('Número de historias: ', n_historias)
+    fracs_esen[i] = desarme_esenciales_saco_ess(g, ess)
+    print('\t', 'Grafo', i, nombres[g], ': listo')
+tf = time(); print('\t', tf - ti, ' segundos')
+
+# Genero las fracciones correspondientes a remoción de equivalentes en grado
+
+print('Eliminando nodos no esenciales equivalentes de manera aleatoria')
+
+# Criterio viejo (cv)
+print('Criterio: "viejo" (más aleatorio)')
+print('Número de historias: ', n_historias)
+ti = time()
+fracs_equiv_cv, sigmas_cv = np.zeros((2, 4))
+for i, g in enumerate(grafos):
     resultados = np.zeros((n_historias))
-    numnods_elim = np.zeros((n_historias))
     for j in range(n_historias):
-        resultados[j], numnods_elim[j] = efecto_nodos_equivalentes(g, ess, devolver_num_nodos_elim=True)
-    fracs_equiv[i] = np.average(resultados)
-    sigmas[i] = np.std(resultados)
-    print('# Nodos eliminados: {} +/- {}'.format(np.average(numnods_elim), np.std(numnods_elim)))
-tf = time(); print(tf - ti, ' segundos')
+        resultados[j] = efecto_nodos_equivalentes_criterioviejo(g, ess)
+    fracs_equiv_cv[i] = np.average(resultados)
+    sigmas_cv[i] = np.std(resultados)
+    print('\t', 'Grafo', i, nombres[g], ': listo')
+tf = time(); print('\t', tf - ti, ' segundos')
 
-zscores = (fracs_esen - fracs_equiv) / sigmas
+zscores_cv = (fracs_esen - fracs_equiv_cv) / sigmas_cv
+data_cv = np.array([fracs_equiv_cv, sigmas_cv, zscores_cv])
 
-np.savez('Tp2/tc02Data/unosdatos_nuevos.npz', fracs_esen=fracs_esen,
-         fracs_equiv=fracs_equiv, sigmas=sigmas, zscores=zscores)
 
-# Tabla
+# Criterio nuevo 
+print('Criterio: "nuevo" (menos aleatorio)')
+print('Número de historias: ', n_historias)
+ti = time()
+fracs_equiv_cn, sigmas_cn = np.zeros((2, 4))
+for i, g in enumerate(grafos):
+    resultados = np.zeros((n_historias))
+    for j in range(n_historias):
+        resultados[j] = efecto_nodos_equivalentes(g, ess)
+    fracs_equiv_cn[i] = np.average(resultados)
+    sigmas_cn[i] = np.std(resultados)
+    print('\t', 'Grafo', i, nombres[g], ': listo')
+tf = time(); print('\t', tf - ti, ' segundos')
 
-equiv_prolijo = ['{:.2f} +/- {:.2f}'.format(x, y) for x, y in zip(fracs_equiv, sigmas)]
+zscores_cn = (fracs_esen - fracs_equiv_cn) / sigmas_cn
+data_cn = np.array([fracs_equiv_cn, sigmas_cn, zscores_cn])
+
+#np.savez('Tp2/tc02Data/unosdatos_nuevos.npz', fracs_esen=fracs_esen,
+#         fracs_equiv=fracs_equiv, sigmas=sigmas, zscores=zscores)
+
+print('\n')
+
+output_path = 'Tp2/tc02Data/datos_tabla3_100historias_2criterios.npz'
+print('Guardando datos en', output_path)
+np.savez(output_path,
+         fracs_esen=fracs_esen,
+         data_cv=data_cv,
+         data_cn=data_cn)
+print('Guardado con éxito!')
+
+print('\n')
+
+# Tabla criterio viejo
+equiv_prolijo_cv = ['{:.2f} +/- {:.2f}'.format(x, y) for x, y in zip(fracs_equiv_cv, sigmas_cv)]
 pd.set_option('precision', 2)
-tabla3 = pd.DataFrame(data={'Esenciales':fracs_esen,
-                            'No esenciales equivalentes:':equiv_prolijo,
-                            'Z-scores':zscores},
+tabla3_cv = pd.DataFrame(data={'Esenciales':fracs_esen,
+                            'No esenciales equivalentes:':equiv_prolijo_cv,
+                            'Z-scores':zscores_cv},
                       index=['Lit', 'Lit_reg', 'APMS', 'Y2H'])
-tabla3
+
+print('--------------------', '\n',
+      'Tabla criterio viejo',
+      '\n', '--------------------')
+print(tabla3_cv)
+
+# Tabla criterio nuevo
+equiv_prolijo_cn = ['{:.2f} +/- {:.2f}'.format(x, y) for x, y in zip(fracs_equiv_cn, sigmas_cn)]
+pd.set_option('precision', 2)
+tabla3_cn = pd.DataFrame(data={'Esenciales':fracs_esen,
+                            'No esenciales equivalentes:':equiv_prolijo_cn,
+                            'Z-scores':zscores_cn},
+                      index=['Lit', 'Lit_reg', 'APMS', 'Y2H'])
+
+print('--------------------', '\n',
+      'Tabla criterio nuevo',
+      '\n', '--------------------')
+print(tabla3_cn)
+
+#%%
+# Para importar los datos e.g. en Jupyter y graficar las tablas de forma linda
+
+npzfile = np.load('Tp2/tc02Data/datos_tabla3_100historias_2criterios.npz')
+fracs_esen = npzfile['fracs_esen']
+fracs_equiv_cv, sigmas_cv, zscores_cv = npzfile['data_cv']
+fracs_equiv_cn, sigmas_cn, zscores_cn = npzfile['data_cn']
+
+equiv_prolijo_cv = ['{:.2f} +/- {:.2f}'.format(x, y) for x, y in zip(fracs_equiv_cv, sigmas_cv)]
+pd.set_option('precision', 2)
+tabla3_cv = pd.DataFrame(data={'Esenciales':fracs_esen,
+                            'No esenciales equivalentes':equiv_prolijo_cv,
+                            'Z-scores':zscores_cv},
+                      index=['Lit', 'Lit_reg', 'APMS', 'Y2H'])
+
+equiv_prolijo_cn = ['{:.2f} +/- {:.2f}'.format(x, y) for x, y in zip(fracs_equiv_cn, sigmas_cn)]
+pd.set_option('precision', 2)
+tabla3_cn = pd.DataFrame(data={'Esenciales':fracs_esen,
+                            'No esenciales equivalentes':equiv_prolijo_cn,
+                            'Z-scores':zscores_cn},
+                      index=['Lit', 'Lit_reg', 'APMS', 'Y2H'])
