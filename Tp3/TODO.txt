@@ -1,0 +1,3 @@
+Funciones generales:
+
+- Revisar cómo colorear según particiones y hacer una función que lo haga genéricamente

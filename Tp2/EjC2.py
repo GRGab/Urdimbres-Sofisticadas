@@ -342,6 +342,7 @@ for i, g in enumerate(grafos):
 tf = time(); print('\t', tf - ti, ' segundos')
 
 # Genero las fracciones correspondientes a remoción de equivalentes en grado
+
 print('Eliminando nodos no esenciales equivalentes de manera aleatoria')
 
 # Criterio viejo (cv)
@@ -378,6 +379,9 @@ tf = time(); print('\t', tf - ti, ' segundos')
 
 zscores_cn = (fracs_esen - fracs_equiv_cn) / sigmas_cn
 data_cn = np.array([fracs_equiv_cn, sigmas_cn, zscores_cn])
+
+#np.savez('Tp2/tc02Data/unosdatos_nuevos.npz', fracs_esen=fracs_esen,
+#         fracs_equiv=fracs_equiv, sigmas=sigmas, zscores=zscores)
 
 print('\n')
 
