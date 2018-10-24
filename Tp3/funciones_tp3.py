@@ -15,6 +15,8 @@ from networkx.algorithms.community.centrality import girvan_newman
 from networkx import NetworkXError
 from networkx.utils import not_implemented_for
 from networkx.algorithms.community.community_utils import is_partition
+from networkx.readwrite.gml import read_gml
+
 
 import igraph as igraph
 import community # instalar como python-Louvain
@@ -31,7 +33,7 @@ def calculate_partition(np_adj_list, method="infomap"):
     #    labels = g.community_label_propagation(weights="weight").membership
         if method=="fastgreedy":
             labels = g.community_fastgreedy(edge_weights="weight").membership
-   if method == 'edge_bet':
+    if method == 'edge_bet':
        labels = girvan_newman(g)
     print("Duración: {}s".format(time.time()-t0))
     return labels
