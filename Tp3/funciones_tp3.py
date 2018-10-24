@@ -5,41 +5,96 @@ Created on Fri Oct 19 19:13:06 2018
 @author: Gabo
 """
 
-import matplotlib.pyplot as plt
 import numpy as np
 
-import time
-
 import networkx as nx
-from networkx.algorithms.community.centrality import girvan_newman
 from networkx import NetworkXError
-from networkx.utils import not_implemented_for
 from networkx.algorithms.community.community_utils import is_partition
+from networkx.readwrite.gml import read_gml
+
 
 import igraph as igraph
-import community # instalar como python-Louvain
+
+#%%
+def formatear_particion(particion):
+    """Dada una partición representada de alguna manera no deseada,
+    devuelve una lista de listas en la que cada sublista contiene
+    el número de cada uno de los nodos que pertenece a una cierta comunidad.
+    
+    'particion' puede ser una lista con las etiquetas de las comunidades a las
+    que pertenece cada nodo, o bien un diccionario que a cada nodo le asigna
+    el número de su cluster.
+    
+    Todo esto asume que los nodos están bien ordenados siempre.
+    
+    PENDIENTE
+    ---------
+    - Reemplazar los mensajes de error por errores posta."""
+    
+    output = []
+    if isinstance(particion, list):
+        if isinstance(particion[0], list):
+            print('La partición ya pareciera estar en el formato deseado.')
+            return
+        else:
+            for i in set(particion):
+                lista_por_comunidades = np.where(np.array(particion) == i)[0].tolist()
+                output.append(lista_por_comunidades)
+    elif isinstance(particion, dict):
+        for i in set(particion.values()):
+            lista_por_comunidades = []
+            for j in particion.keys():
+                if particion[j] == i:
+                    lista_por_comunidades.append(j)
+            output.append(lista_por_comunidades)
+    else:
+        print('No se reconoce el formato de entrada.')
+        return
+    return output
+
+
+def calcular_particion(nx_Graph, method="infomap", out_format='listadelistas'):
+    """
+    Calcula el agrupamiento en comunidades de un grafo.
+    
+    In:
+        nx_Graph: grafo de networkx
+        method: metodo de clustering, puede ser: "infomap", "fastgreedy", "eigenvector", "louvain", "edge_betweenness","label_prop", "walktrap", ""
+        
+    Out:
+        labels_dict: diccionario de nodo : a label al cluster al que pertenece.
+    """
+    if method == "edge_betweenness":
+        nx_Graph = max(nx.connected_component_subgraphs(nx_Graph), key=len)#se queda con la componente más grande.
+        print("AVISO: restringiendo a la componente connexa más grade. De otro modo falla el algoritmo de detección de comunidades edge_betweenness.")
+    
+    isdirected = nx.is_directed(nx_Graph)
+    np_adj_list = nx.to_numpy_matrix(nx_Graph)
+    g = igraph.Graph.Weighted_Adjacency(np_adj_list.tolist(),mode=igraph.ADJ_UPPER)
+   
+    if method=="infomap":
+        labels = g.community_infomap(edge_weights="weight").membership
+    if method=="label_prop":
+        labels = g.community_label_propagation(weights="weight").membership
+    if method=="fastgreedy":
+        labels = g.community_fastgreedy(weights="weight").as_clustering().membership
+    if method=="eigenvector":
+        labels = g.community_leading_eigenvector(weights="weight").membership
+    if method=="louvain":
+        labels = g.community_multilevel(weights="weight").membership
+    if method=="edge_betweenness":
+        labels = g.community_edge_betweenness(weights="weight", directed=isdirected).as_clustering().membership
+    if method=="walktrap":
+        labels = g.community_walktrap(weights="weight").as_clustering().membership
+    
+    if out_format == 'listadelistas':
+        output = formatear_particion(labels)
+    elif out_format == 'dict':
+        output = {node:label for node,label in zip(nx_Graph.nodes(), labels)}
+    return output
 
 
 #%%
-
-def calculate_partition(np_adj_list, method="infomap"):
-    t0=time.time()
-    if method in ['infomap', 'fastgreedy']:
-        g = igraph.Graph.Weighted_Adjacency(np_adj_list.tolist(),mode=igraph.ADJ_UPPER)
-        if method=="infomap":
-            labels = g.community_infomap(edge_weights="weight").membership
-    #    labels = g.community_label_propagation(weights="weight").membership
-        if method=="fastgreedy":
-            labels = g.community_fastgreedy(edge_weights="weight").membership
-   if method == 'edge_bet':
-       labels = girvan_newman(g)
-    print("Duración: {}s".format(time.time()-t0))
-    return labels
-
-
-__all__ = ['coverage', 'modularity', 'performance'] # ??????????????
-
-
 class NotAPartition(NetworkXError):
     """Raised if a given collection is not a partition.
 
@@ -51,7 +106,7 @@ class NotAPartition(NetworkXError):
         super(NotAPartition, self).__init__(msg)
 
 
-def modularity(G, communities, weight='weight'):
+def calcular_modularidad(G, communities, weight='weight'):
     r"""Returns the modularity of the given partition of the graph.
 
     Modularity is defined in [1]_ as
@@ -127,32 +182,14 @@ def modularity(G, communities, weight='weight'):
     return Q * norm
 
 #%%
-def atribuir_comunidades(criterio):
-    """Toma una lista con las etiquetas de las comunidades a las que pertenece
-    cada nodo, y devuelve una lista de listas en la que cada sublista contiene
-    a todos los nodos de una única comunidad."""
-    lista = []
-    for i in np.unique(criterio):
-        lista_por_comunidades = np.where(np.array(criterio) == i)[0].tolist()
-        if len(lista_por_comunidades) > 0:
-            lista.append(lista_por_comunidades)
-    return lista
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+    import time
 
-#%%
-""" Hacer particion con louvain"""
-partition = community.best_partition(G)
-#%%
-""" fast-greedy sin igraph"""
-import networkx as nx
-import matplotlib.pyplot as plt
-G = nx.balanced_tree(h=3,r=2)
-nx.draw(G,with_labels=True)
-plt.show()
-#%%
-comus = nx.algorithms.community.greedy_modularity_communities(G, weight=None)
-list(comus)
-#%%
-"""Girvan-newman"""
-com = nx.algorithms.community.centrality.girvan_newman(G)
-com = list(com)
-com = [list([list(conjunto) for conjunto in tupla]) for tupla in com]
+    G = nx.balanced_tree(h=3,r=2)
+    nx.draw(G,with_labels=True)
+    plt.show()
+    
+    particion = calcular_particion(G, method='infomap')
+    modularidad = calcular_modularidad(G, particion)
+    print('La modularidad es', modularidad)
