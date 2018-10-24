@@ -10,6 +10,8 @@ import numpy as np
 import networkx as nx
 from networkx import NetworkXError
 from networkx.algorithms.community.community_utils import is_partition
+from itertools import product
+
 
 import igraph as igraph
 
