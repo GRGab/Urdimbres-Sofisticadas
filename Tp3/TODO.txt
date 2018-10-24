@@ -1,3 +1,27 @@
 Funciones generales:
 
+- Mejorar calculate_partition agregando todos los métodos
 - Revisar cómo colorear según particiones y hacer una función que lo haga genéricamente
+
+
+- Silhouette
+    - Computar valores
+    - Graficar curva
+
+Punto b:
+
+- Recableado:
+    - Hacer 100 recableados de la red de Dolphins.
+        - Aplicar método para eliminar multi-enlaces y autoloops
+    - Para cada recableado, calcular y guardar la partición que se obtiene por cada método
+
+    - Calcular modularidad y curva de silhouette para cada partición para cada recableado
+    - Obtener histogramas de modularidad y de silhouette medio
+    - Curva de silhouette con franja de incerteza: averiguar
+        - Cuántos nodos tienen silhouette negativa?
+        - Valor parejo de silhouette entre distintos silhouette. En general la idea es
+        que cada cluster tenga un silhouette similar.
+        
+
+
+- Punto c:  información mutua
