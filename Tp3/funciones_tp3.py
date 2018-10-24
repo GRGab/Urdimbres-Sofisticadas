@@ -11,6 +11,7 @@ import networkx as nx
 from networkx import NetworkXError
 from networkx.algorithms.community.community_utils import is_partition
 from itertools import product
+from networkx.readwrite.gml import read_gml
 
 
 import igraph as igraph
@@ -52,6 +53,7 @@ def formatear_particion(particion):
         return
     return output
 
+
 def calcular_particion(nx_Graph, method="infomap", out_format='listadelistas'):
     """
     Calcula el agrupamiento en comunidades de un grafo.
@@ -91,6 +93,7 @@ def calcular_particion(nx_Graph, method="infomap", out_format='listadelistas'):
     elif out_format == 'dict':
         output = {node:label for node,label in zip(nx_Graph.nodes(), labels)}
     return output
+
 
 #%%
 class NotAPartition(NetworkXError):
@@ -179,6 +182,34 @@ def calcular_modularidad(G, communities, weight='weight'):
     Q = sum(val(u, v) for c in communities for u, v in product(c, repeat=2))
     return Q * norm
 
+def comunidad_a_color(g, lista):
+    """
+    Funcion para asignar colores a las comunidades. Devuelve una lista con colores
+    con el mismo orden que la lista de nodos, para meter en la funcion 
+    nx.draw(G, node_color = comunidad_a_color(G, lista)). 
+    La lista corresponde a la lista de listas, donde cada sublista corresponde a
+    una comunidad.
+    
+    Input: (g, lista)   (grafo de networkx, lista de listas)
+    
+    Returns:
+            colores   (lista)
+    .
+    .
+    """
+    colores_posibles = ['r', 'b', 'g', 'k', 'c', 'y', 'violet',
+                        'sandybrown', 'orange', 'indianred',
+                        'darkgray', 'darksalmon']
+    colores_random = np.random.randint(len(colores_posibles), size = len(lista))
+    nodos = list(g.nodes())
+    colores = list(np.zeros(len(nodos)))
+    for i in range(len(lista)):
+        for j in range(len(nodos)):
+            index = colores_random[i]
+            if nodos[j] in lista[i]:
+                colores[j] = colores_posibles[index]
+    return colores
+
 #%%
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
@@ -188,6 +219,9 @@ if __name__ == '__main__':
     nx.draw(G,with_labels=True)
     plt.show()
     
+    print('Prueba con infomap')
     particion = calcular_particion(G, method='infomap')
     modularidad = calcular_modularidad(G, particion)
     print('La modularidad es', modularidad)
+    colores = comunidad_a_color(G, particion)
+    nx.draw(G, with_labels=True, node_color=colores)
