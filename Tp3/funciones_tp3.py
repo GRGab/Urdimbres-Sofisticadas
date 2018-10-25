@@ -39,6 +39,8 @@ def formatear_particion(particion):
             print('La partición ya pareciera estar en el formato deseado.')
             return
         else:
+            # Asumimos que 'particion' es una lista con los labels
+            # de cada nodo
             for i in set(particion):
                 lista_por_comunidades = np.where(np.array(particion) == i)[0].tolist()
                 output.append(lista_por_comunidades)
@@ -201,13 +203,14 @@ def comunidad_a_color(g, lista):
     colores_posibles = ['r', 'b', 'g', 'k', 'c', 'y', 'violet',
                         'sandybrown', 'orange', 'indianred',
                         'darkgray', 'darksalmon']
-    colores_random = np.random.randint(len(colores_posibles), size = len(lista))
+    colores_random = np.random.choice(np.arange(len(colores_posibles)), size=len(lista),
+                                      replace=False)
     nodos = list(g.nodes())
     colores = list(np.zeros(len(nodos)))
     for i in range(len(lista)):
         for j in range(len(nodos)):
             index = colores_random[i]
-            if nodos[j] in lista[i]:
+            if j in lista[i]:
                 colores[j] = colores_posibles[index]
     return colores
 
@@ -296,15 +299,14 @@ if __name__ == '__main__':
 
     G = nx.balanced_tree(h=3,r=2)
 #    nx.draw(G,with_labels=True)
-    plt.show()
-    
+#    plt.show()
     print('Prueba con infomap')
     particion = calcular_particion(G, method='infomap')
     modularidad = calcular_modularidad(G, particion)
     print('La modularidad es', modularidad)
     colores = comunidad_a_color(G, particion)
     nx.draw(G, with_labels=True, node_color=colores)
-    #%% Pueba de la funcion de particiones
+    #%% Pueba de la funcion de particiones (Punto 1-b)
     dolph = read_gml('Tp3/dolphins.gml')    
     lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
              , "edge_betweenness", "walktrap"]
