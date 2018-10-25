@@ -12,6 +12,7 @@ from networkx import NetworkXError
 from networkx.algorithms.community.community_utils import is_partition
 from itertools import product
 from networkx.readwrite.gml import read_gml
+from histograma import histograma
 
 
 import igraph as igraph
@@ -210,13 +211,91 @@ def comunidad_a_color(g, lista):
                 colores[j] = colores_posibles[index]
     return colores
 
+def indices_to_nodos(graph, lista_de_indices):
+    """Dada una lista de numeros enteros como indices, devuelve una lista del
+    mismo tamaño reemplazando cada elemento por el nodo correspondientes a
+    dicho indice."""
+    lista_nueva = []
+    lista_nodos = list(graph.nodes())
+    for i in lista_de_indices:
+        lista_nueva.append(lista_nodos[i])
+    return lista_nueva
+
+
+def indices_to_nodos_particion(graph, particion):
+    '''Dada una lista de listas de los indicies de los nodos de una particion,
+    devuelve una lista de listas del mismo tamaño reemplazando los indices
+    por los nodos correspondientes.'''
+    for i in range(len(particion)):
+        particion[i] = indices_to_nodos(graph, particion[i])
+    return particion
+
+
+def guardar_particiones(graph_original, Numero_de_recableos ,lista_de_metodos):
+    ''' Toma el grafo orginal y realiza N recableos de la red. Para cada 
+    recableo, calcula las particion de la red segun un metodo de particion
+    (por ejemplo, infomap) utilizando la funcion calcular_particiones. La 
+    funcion guarda la informacion en un array de N*M, donde N es la cant de
+    recableos y M es la cant de metodos para particionar. Cada elemento del
+    array es una lista de listas con los clusters de la red. Ademas, para el
+    grafo original, devuelve una lista con M elementos, donde cada uno es una
+    lista de listas para cada particion.'''
+    
+    salida_grafo_original = []
+    for metodo in lista_de_metodos:
+        lista_nodos_original =  indices_to_nodos_particion(graph_original,
+                                                 calcular_particion(
+                                                         graph_original,
+                                                         method = metodo))
+        salida_grafo_original.append(lista_nodos_original)
+   
+    
+    G = graph_original.copy()    
+    salida = []
+    for metodo in lista_de_metodos:
+        salida_por_rewire = []
+        for i in range(Numero_de_recableos): 
+            g_rewire = nx.double_edge_swap(G, nswap=Numero_de_recableos,
+                                           max_tries=300)
+            lista_nodos = indices_to_nodos_particion(g_rewire, 
+                                           calcular_particion(g_rewire,
+                                                              method = metodo))
+            salida_por_rewire.append(lista_nodos)
+        
+        salida.append(salida_por_rewire)
+    output_path = 'Tp3/tc03Data/Ej_b_particiones.npz'
+    np.savez(output_path, salida = salida, 
+             salida_grafo_original = salida_grafo_original) 
+    
+def graficar_dist_modularidades(graph, lista_de_clusters, lista_de_metodos
+                                , metodo = 0):
+    '''Toma un grafo y la gran lista con todas las particiones generadas, para
+    todos los metodos(la variable 'lista de clusters').
+    Dado un metodo, grafica el histograma de las modularidades para todos
+    los recableados y tambien dibuja la modularidad de la red original. '''
+    dict_metodos = {}
+    for k in range (len(lista_de_metodos)):
+        dict_metodos[k] = lista_de_metodos[k] 
+    
+    modularidades = []
+    for i in range (len(lista_de_clusters[metodo])):            
+        modularidades.append(calcular_modularidad(dolph, rewire[metodo][i]))   
+    valor_real = calcular_modularidad(dolph,original[metodo])
+    fig, ax = histograma(modularidades, bins=15, density=True,
+                         titulo=r'{} - Distribución de modularidad bajo $H_0$'
+                         .format(lista_de_metodos[metodo]),
+                         xlabel='Modularidad')
+    ax.axvline(valor_real, color='deeppink',
+               label='Valor real = {}'.format(valor_real))
+    ax.legend()
+    plt.show()
 #%%
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import time
 
     G = nx.balanced_tree(h=3,r=2)
-    nx.draw(G,with_labels=True)
+#    nx.draw(G,with_labels=True)
     plt.show()
     
     print('Prueba con infomap')
@@ -225,3 +304,17 @@ if __name__ == '__main__':
     print('La modularidad es', modularidad)
     colores = comunidad_a_color(G, particion)
     nx.draw(G, with_labels=True, node_color=colores)
+    #%% Pueba de la funcion de particiones
+    dolph = read_gml('Tp3/dolphins.gml')    
+    lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
+             , "edge_betweenness", "walktrap"]
+    guardar_particiones(dolph, 200, lista)
+    #%%
+    npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
+    rewire = npzfile['salida']
+    original = npzfile['salida_grafo_original']
+    #%% Hay un problema con  Edge Betweenness, chequear.
+    for i in [0,1,2,3,4,6]:
+        graficar_dist_modularidades(dolph, rewire, lista, metodo = i) 
+    
+
