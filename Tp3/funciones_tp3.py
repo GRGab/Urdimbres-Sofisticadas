@@ -234,7 +234,7 @@ def indices_to_nodos_particion(graph, particion):
     return particion
 
 
-def guardar_particiones(graph_original, Numero_de_recableos ,lista_de_metodos):
+def guardar_particiones(graph_original, N, Numero_de_recableos ,lista_de_metodos):
     ''' Toma el grafo orginal y realiza N recableos de la red. Para cada 
     recableo, calcula las particion de la red segun un metodo de particion
     (por ejemplo, infomap) utilizando la funcion calcular_particiones. La 
@@ -258,15 +258,15 @@ def guardar_particiones(graph_original, Numero_de_recableos ,lista_de_metodos):
     for metodo in lista_de_metodos:
         salida_por_rewire = []
         for i in range(Numero_de_recableos): 
-            g_rewire = nx.double_edge_swap(G, nswap=Numero_de_recableos,
-                                           max_tries=300)
+            g_rewire = nx.double_edge_swap(G, nswap=N,
+                                           max_tries=Numero_de_recableos * 1.5)
             lista_nodos = indices_to_nodos_particion(g_rewire, 
                                            calcular_particion(g_rewire,
                                                               method = metodo))
             salida_por_rewire.append(lista_nodos)
         
         salida.append(salida_por_rewire)
-    output_path = 'Tp3/tc03Data/Ej_b_particiones.npz'
+    output_path = 'Tp3/tc03Data/Ej_b_particiones_tomi.npz'
     np.savez(output_path, salida = salida, 
              salida_grafo_original = salida_grafo_original) 
     
@@ -306,17 +306,50 @@ if __name__ == '__main__':
     print('La modularidad es', modularidad)
     colores = comunidad_a_color(G, particion)
     nx.draw(G, with_labels=True, node_color=colores)
-    #%% Pueba de la funcion de particiones (Punto 1-b)
-    dolph = read_gml('Tp3/dolphins.gml')    
-    lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
-             , "edge_betweenness", "walktrap"]
-    guardar_particiones(dolph, 200, lista)
-    #%%
-    npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
-    rewire = npzfile['salida']
-    original = npzfile['salida_grafo_original']
+#%% Pueba de la funcion de particiones (Punto 1-b)
+t0 = time.time()
+genders = dict(ldata('Tp3/dolphinsGender.txt'))
+for nodo, dict_nodo in dict(dolph.nodes).items():
+    dict_nodo['gender'] = genders[nodo]
+dolph = read_gml('Tp3/dolphins.gml')    
+lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
+         , "edge_betweenness", "walktrap"]
+guardar_particiones(dolph, 200 + (np.random.random() * 50), 2000, lista)
+
+elapsed = time.time() - t0
+
+print(elapsed/60)
+#%%
+npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
+rewire = npzfile['salida']
+original = npzfile['salida_grafo_original']
     #%% Hay un problema con  Edge Betweenness, chequear.
     for i in [0,1,2,3,4,6]:
         graficar_dist_modularidades(dolph, rewire, lista, metodo = i) 
     
+#%%
+colors = []
+for metodo in lista:
+    nodes = calcular_particion(dolph, method = metodo)
+    colors.append(comunidad_a_color(dolph, nodes))
 
+fig, axes = plt.subplots(3,2)
+axes = axes.flatten()
+ns = 30
+#nx.draw(dolph, node_color = colors[0])
+
+nx.draw(dolph, ax = axes[0], node_size = ns, node_color=colors[0])
+# Posicionamiento en un círculo
+nx.draw(dolph, ax = axes[1], node_size = ns, node_color=colors[1])
+# Posicionamiento en círculos concéntricos
+
+nx.draw(dolph, ax = axes[2], node_size = ns, node_color=colors[2])
+# Posicionamiento al azar
+nx.draw(dolph, ax = axes[3], node_size = ns, node_color=colors[3])
+# Posicionamiento espectral
+nx.draw(dolph, ax = axes[4], node_size = ns, node_color=colors[4])
+# Posicionamiento por resortes
+nx.draw(dolph, ax = axes[5], node_size = ns, node_color=colors[5])
+# Posicionamiento multipartito al azar. Posiciono al azar y
+# luego desplazo lateralmente según género
+nx.draw(dolph, ax = axes[6], node_size = ns, node_color=colors[6])
