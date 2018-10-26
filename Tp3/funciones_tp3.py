@@ -289,44 +289,18 @@ if __name__ == '__main__':
     colores = comunidad_a_color(G, particion)
 
 
-plt.figure(); nx.draw(G, with_labels=True, node_color=colores)
-#%% Pueba de la funcion de particiones (Punto 1-b)
-dolph = read_gml('Tp3/dolphins.gml')    
-lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
-     , "edge_betweenness", "walktrap"]
-# guardar_particiones(dolph, 200, lista)
-#%%
-npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
-rewire = npzfile['salida']
-original = npzfile['salida_grafo_original']
-
-#%% Hay un problema con  Edge Betweenness, chequear.
-for i in [0,1,2,3,4,6]:
-graficar_dist_modularidades(dolph, rewire, lista, metodo = i) 
+    plt.figure(); nx.draw(G, with_labels=True, node_color=colores)
+    #%% Pueba de la funcion de particiones (Punto 1-b)
+    dolph = read_gml('Tp3/dolphins.gml')    
+    lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
+         , "edge_betweenness", "walktrap"]
+    # guardar_particiones(dolph, 200, lista)
+    #%%
+    npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
+    rewire = npzfile['salida']
+    original = npzfile['salida_grafo_original']
     
-#%%
-colors = []
-for metodo in lista:
-    nodes = calcular_particion(dolph, method = metodo)
-    colors.append(comunidad_a_color(dolph, nodes))
-
-fig, axes = plt.subplots(3,2)
-axes = axes.flatten()
-ns = 30
-#nx.draw(dolph, node_color = colors[0])
-
-nx.draw(dolph, ax = axes[0], node_size = ns, node_color=colors[0])
-# Posicionamiento en un círculo
-nx.draw(dolph, ax = axes[1], node_size = ns, node_color=colors[1])
-# Posicionamiento en círculos concéntricos
-
-nx.draw(dolph, ax = axes[2], node_size = ns, node_color=colors[2])
-# Posicionamiento al azar
-nx.draw(dolph, ax = axes[3], node_size = ns, node_color=colors[3])
-# Posicionamiento espectral
-nx.draw(dolph, ax = axes[4], node_size = ns, node_color=colors[4])
-# Posicionamiento por resortes
-nx.draw(dolph, ax = axes[5], node_size = ns, node_color=colors[5])
-# Posicionamiento multipartito al azar. Posiciono al azar y
-# luego desplazo lateralmente según género
-nx.draw(dolph, ax = axes[6], node_size = ns, node_color=colors[6])
+    #%% Hay un problema con  Edge Betweenness, chequear.
+    for i in [0,1,2,3,4,6]:
+        graficar_dist_modularidades(dolph, rewire, lista, metodo = i) 
+    
