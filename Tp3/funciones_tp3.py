@@ -17,42 +17,24 @@ from histograma import histograma
 
 import igraph as igraph
 #%%
-def formatear_particion(particion):
-    """Dada una partición representada de alguna manera no deseada,
+def formatear_particion(nodos, labels):
+    """Dada una partición representada de manera no deseada,
     devuelve una lista de listas en la que cada sublista contiene
-    el número de cada uno de los nodos que pertenece a una cierta comunidad.
+    los nombres de los nodos que pertenecen a una cierta comunidad.
     
-    'particion' puede ser una lista con las etiquetas de las comunidades a las
-    que pertenece cada nodo, o bien un diccionario que a cada nodo le asigna
-    el número de su cluster.
-    
-    Todo esto asume que los nodos están bien ordenados siempre.
-    
-    PENDIENTE
-    ---------
-    - Reemplazar los mensajes de error por errores posta."""
+    nodos : list
+        Lista con los nombres de cada nodo
+    labels : list
+        Lista con las etiquetas de las comunidades a las que pertenece cada
+        nodo.
+    """
     
     output = []
-    if isinstance(particion, list):
-        if isinstance(particion[0], list):
-            print('La partición ya pareciera estar en el formato deseado.')
-            return
-        else:
-            # Asumimos que 'particion' es una lista con los labels
-            # de cada nodo
-            for i in set(particion):
-                lista_por_comunidades = np.where(np.array(particion) == i)[0].tolist()
-                output.append(lista_por_comunidades)
-    elif isinstance(particion, dict):
-        for i in set(particion.values()):
-            lista_por_comunidades = []
-            for j in particion.keys():
-                if particion[j] == i:
-                    lista_por_comunidades.append(j)
-            output.append(lista_por_comunidades)
-    else:
-        print('No se reconoce el formato de entrada.')
-        return
+    labels = np.array(labels)
+    for label in set(labels):
+        indices_cluster = np.where(labels == label)[0].tolist()
+        cluster = [nodos[i] for i in indices_cluster]
+        output.append(cluster)
     return output
 
 
@@ -89,14 +71,17 @@ def calcular_particion(nx_Graph, method="infomap", out_format='listadelistas'):
         labels = g.community_edge_betweenness(weights="weight", directed=isdirected).as_clustering().membership
     if method=="walktrap":
         labels = g.community_walktrap(weights="weight").as_clustering().membership
+    
+    nodos = list(nx_Graph.nodes())
     if out_format == 'listadelistas':
-        output = formatear_particion(labels)
+        output = formatear_particion(nodos, labels)
     elif out_format == 'dict':
-        output = {node:label for node,label in zip(nx_Graph.nodes(), labels)}
+        output = {node:label for node,label in zip(nodos, labels)}
+        
     return output
 
 
-#%%
+
 class NotAPartition(NetworkXError):
     """Raised if a given collection is not a partition.
 
@@ -208,7 +193,7 @@ def comunidad_a_color(g, lista):
     for i in range(len(lista)):
         for j in range(len(nodos)):
             index = colores_random[i]
-            if j in lista[i]:
+            if nodos[j] in lista[i]:
                 colores[j] = colores_posibles[index]
     return colores
 
@@ -232,6 +217,7 @@ def indices_to_nodos_particion(graph, particion):
     return particion
 
 
+
 def guardar_particiones(graph_original, N, Numero_de_recableos ,lista_de_metodos):
     ''' Toma el grafo orginal y realiza N recableos de la red. Para cada 
     recableo, calcula las particion de la red segun un metodo de particion
@@ -242,12 +228,9 @@ def guardar_particiones(graph_original, N, Numero_de_recableos ,lista_de_metodos
     grafo original, devuelve una lista con M elementos, donde cada uno es una
     lista de listas para cada particion.'''
     
-    salida_grafo_original = []
+    salida_grafo_original = [] 
     for metodo in lista_de_metodos:
-        lista_nodos_original =  indices_to_nodos_particion(graph_original,
-                                                 calcular_particion(
-                                                         graph_original,
-                                                         method = metodo))
+        lista_nodos_original = calcular_particion(graph_original, method=metodo)
         salida_grafo_original.append(lista_nodos_original)
    
     
@@ -256,6 +239,7 @@ def guardar_particiones(graph_original, N, Numero_de_recableos ,lista_de_metodos
     for metodo in lista_de_metodos:
         salida_por_rewire = []
         for i in range(Numero_de_recableos): 
+
             g_rewire = nx.double_edge_swap(G, nswap=N,
                                            max_tries=Numero_de_recableos * 1.5)
             lista_nodos = indices_to_nodos_particion(g_rewire, 
