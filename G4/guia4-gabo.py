@@ -15,9 +15,8 @@ import matplotlib.pyplot as plt
 import seaborn as sn
 sys.path.append('./Tp3/')
 
-from scipy.cluster.hierarchy import dendrogram
-from scipy.cluster.hierarchy import linkage
-from scipy.cluster.hierarchy import cophenet
+from scipy.cluster.hierarchy import (linkage, dendrogram, cophenet, leaves_list)
+                                     
 from scipy.spatial.distance import pdist
 
 def ldata(archive):
@@ -46,7 +45,7 @@ ax1.set_title('Matriz de similaridades')
 sn.heatmap(S, ax=ax1, square=True)
 ax2.set_title('Matriz de adyacencia')
 sn.heatmap(A, ax=ax2, square=True, cbar=False)
-
+fig.tight_layout()
 #%%
 fig, axes = plt.subplots(3,3, figsize=(9,9))
 axes = np.ravel(axes)
@@ -137,6 +136,49 @@ def matrix_to_condensed(matrix):
     
 # Convierto las similaridades a condensed
 condensed_S = matrix_to_condensed(S)
-linkage_matrix = linkage(condensed_S)
+linkage_matrix_single = linkage(condensed_S, method='single')#, optimal_ordering=True)
+linkage_matrix_complete = linkage(condensed_S, method='complete')#, optimal_ordering=True)
 fig, ax = plt.subplots()
-dendrogram(linkage_matrix)
+dendrogram(linkage_matrix_single)
+fig, ax = plt.subplots()
+dendrogram(linkage_matrix_complete)
+
+#%% Ordenamos piola las matrices de correlación
+orden_single = leaves_list(linkage_matrix_single)
+orden_complete = leaves_list(linkage_matrix_complete)
+
+#%%
+matriz_de_prueba = np.eye(3)
+
+matriz_de_prueba[[1,0,2], :]
+matriz_de_prueba[:, [1,0,2]]
+# Ok cualquiera de estas dos formas pareciera alcanzar para reordenar la matriz
+# Y si le meto un array en vez de lista, funciona igual?
+
+arr = np.array([1, 0, 2])
+matriz_de_prueba[arr, :] # Eso parece!
+#%%
+
+S_single = S[:, orden_single][orden_single, :]
+S_complete = S[:, orden_complete][orden_complete, :]
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+ax1.set_title('Matriz de similaridades\nordenada por "single"')
+sn.heatmap(S_single, ax=ax1, square=True)
+ax2.set_title('Matriz de similaridades\nordenada por "complete"')
+sn.heatmap(S_complete, ax=ax2, square=True, cbar=True)
+fig.tight_layout()
+
+#%% Me gustó la single, aunque no estoy seguro de estar haciendo bien las cosas
+
+fig, axes = plt.subplots(3,3, figsize=(9,9))
+axes = np.ravel(axes)
+
+umbrales = np.linspace(0, 1, 9)[::-1]
+matrices = []
+for ax, umbral in zip(axes, umbrales):
+    arr = np.array(S_single >= umbral, dtype=int)
+    matrices.append(arr)
+    ax.set_title('Umbral = {}'.format(umbral))
+    sn.heatmap(arr, ax=ax, cbar=False, square=True)
+fig.tight_layout()

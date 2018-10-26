@@ -16,7 +16,6 @@ from histograma import histograma
 
 
 import igraph as igraph
-
 #%%
 def formatear_particion(particion):
     """Dada una partición representada de alguna manera no deseada,
@@ -90,7 +89,6 @@ def calcular_particion(nx_Graph, method="infomap", out_format='listadelistas'):
         labels = g.community_edge_betweenness(weights="weight", directed=isdirected).as_clustering().membership
     if method=="walktrap":
         labels = g.community_walktrap(weights="weight").as_clustering().membership
-    
     if out_format == 'listadelistas':
         output = formatear_particion(labels)
     elif out_format == 'dict':
@@ -282,8 +280,8 @@ def graficar_dist_modularidades(graph, lista_de_clusters, lista_de_metodos
     
     modularidades = []
     for i in range (len(lista_de_clusters[metodo])):            
-        modularidades.append(calcular_modularidad(dolph, rewire[metodo][i]))   
-    valor_real = calcular_modularidad(dolph,original[metodo])
+        modularidades.append(calcular_modularidad(graph, rewire[metodo][i]))   
+    valor_real = calcular_modularidad(graph, original[metodo])
     fig, ax = histograma(modularidades, bins=15, density=True,
                          titulo=r'{} - Distribución de modularidad bajo $H_0$'
                          .format(lista_de_metodos[metodo]),
@@ -305,27 +303,22 @@ if __name__ == '__main__':
     modularidad = calcular_modularidad(G, particion)
     print('La modularidad es', modularidad)
     colores = comunidad_a_color(G, particion)
-    nx.draw(G, with_labels=True, node_color=colores)
+
+
+plt.figure(); nx.draw(G, with_labels=True, node_color=colores)
 #%% Pueba de la funcion de particiones (Punto 1-b)
-t0 = time.time()
-genders = dict(ldata('Tp3/dolphinsGender.txt'))
-for nodo, dict_nodo in dict(dolph.nodes).items():
-    dict_nodo['gender'] = genders[nodo]
 dolph = read_gml('Tp3/dolphins.gml')    
 lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
-         , "edge_betweenness", "walktrap"]
-guardar_particiones(dolph, 200 + (np.random.random() * 50), 2000, lista)
-
-elapsed = time.time() - t0
-
-print(elapsed/60)
+     , "edge_betweenness", "walktrap"]
+# guardar_particiones(dolph, 200, lista)
 #%%
 npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
 rewire = npzfile['salida']
 original = npzfile['salida_grafo_original']
-    #%% Hay un problema con  Edge Betweenness, chequear.
-    for i in [0,1,2,3,4,6]:
-        graficar_dist_modularidades(dolph, rewire, lista, metodo = i) 
+
+#%% Hay un problema con  Edge Betweenness, chequear.
+for i in [0,1,2,3,4,6]:
+graficar_dist_modularidades(dolph, rewire, lista, metodo = i) 
     
 #%%
 colors = []
