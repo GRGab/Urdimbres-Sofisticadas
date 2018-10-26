@@ -16,7 +16,6 @@ from histograma import histograma
 
 
 import igraph as igraph
-
 #%%
 def formatear_particion(particion):
     """Dada una partición representada de alguna manera no deseada,
@@ -90,7 +89,6 @@ def calcular_particion(nx_Graph, method="infomap", out_format='listadelistas'):
         labels = g.community_edge_betweenness(weights="weight", directed=isdirected).as_clustering().membership
     if method=="walktrap":
         labels = g.community_walktrap(weights="weight").as_clustering().membership
-    
     if out_format == 'listadelistas':
         output = formatear_particion(labels)
     elif out_format == 'dict':
@@ -282,8 +280,8 @@ def graficar_dist_modularidades(graph, lista_de_clusters, lista_de_metodos
     
     modularidades = []
     for i in range (len(lista_de_clusters[metodo])):            
-        modularidades.append(calcular_modularidad(dolph, rewire[metodo][i]))   
-    valor_real = calcular_modularidad(dolph,original[metodo])
+        modularidades.append(calcular_modularidad(graph, rewire[metodo][i]))   
+    valor_real = calcular_modularidad(graph, original[metodo])
     fig, ax = histograma(modularidades, bins=15, density=True,
                          titulo=r'{} - Distribución de modularidad bajo $H_0$'
                          .format(lista_de_metodos[metodo]),
@@ -305,12 +303,12 @@ if __name__ == '__main__':
     modularidad = calcular_modularidad(G, particion)
     print('La modularidad es', modularidad)
     colores = comunidad_a_color(G, particion)
-    nx.draw(G, with_labels=True, node_color=colores)
+    plt.figure(); nx.draw(G, with_labels=True, node_color=colores)
     #%% Pueba de la funcion de particiones (Punto 1-b)
     dolph = read_gml('Tp3/dolphins.gml')    
     lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
              , "edge_betweenness", "walktrap"]
-    guardar_particiones(dolph, 200, lista)
+    # guardar_particiones(dolph, 200, lista)
     #%%
     npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
     rewire = npzfile['salida']
