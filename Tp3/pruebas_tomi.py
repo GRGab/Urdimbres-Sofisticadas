@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
 import time
+
+import sys
+sys.path.append('./Tp3/')
 
 import networkx as nx
 from networkx.algorithms.community.centrality import girvan_newman
@@ -10,9 +12,6 @@ from networkx.utils import not_implemented_for
 from networkx.algorithms.community.community_utils import is_partition
 from networkx.readwrite.gml import read_gml
 from lectura import ldata
-
-import sys
-sys.path.append('./Tp3/')
 
 import igraph as igraph
 import community # instalar como python-Louvain
@@ -43,6 +42,8 @@ def comunidad_a_color(g, lista):
     for i in range(len(lista)):
         for j in range(len(nodos)):
             index = colores_random[i]
-            if nodos[j] in lista[i]:
+            if j in lista[i]:
                 colores[j] = colores_posibles[index]
     return colores
+
+lista = calcular_particion(dolph)

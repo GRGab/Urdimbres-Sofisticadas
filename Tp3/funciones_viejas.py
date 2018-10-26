@@ -29,7 +29,7 @@ def calcular_particion(np_adj_list, method):
     #    labels = g.community_label_propagation(weights="weight").membership
         if method=="fastgreedy":
             labels = g.community_fastgreedy(edge_weights="weight").membership
-   if method == 'edge_bet':
+    if method == 'edge_bet':
        labels = girvan_newman(g)
     print("Duración: {}s".format(time.time()-t0))
     return labels
