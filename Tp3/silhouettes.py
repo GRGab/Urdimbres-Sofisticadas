@@ -10,15 +10,19 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from networkx.algorithms.community.community_utils import is_partition
 
+from networkx.readwrite.gml import read_gml
+
+
 import sys
 sys.path.append('./Tp3')
 from funciones_tp3 import calcular_particion, NotAPartition, indices_to_nodos_particion
 
 from networkx.readwrite.gml import read_gml
-
-def donde(i, particion):
+#%%
+def donde(nodo, particion):
+    """Devuelve el índice del cluster de la partición al que pertence el nodo."""
     for j, cluster in enumerate(particion):
-        if i in cluster:
+        if nodo in cluster:
             return j
 
 def silhouettes(G, particion):
@@ -39,30 +43,35 @@ def silhouettes(G, particion):
     b(i) también se suele llamar "distancia media al cluster más cercano".
     
     'particion' es lista de listas. Cada sublista es un cluster y sus elementos
-    son los índices de los nodos que pertenecen a dicho cluster.
+    son los nombres de los nodos que pertenecen a dicho cluster.
     """
     
-    p = indices_to_nodos_particion(G, particion)
-    if not is_partition(G, p):
-        raise NotAPartition(G, p)
+    if not is_partition(G, particion):
+        raise NotAPartition(G, particion)
 
     ds = list(nx.all_pairs_shortest_path_length(G))
+    d = lambda i,j: ds[i][1][j]
     # ds[i][1][j] es la distancia (longitud del camino más corto)
     # entre i y j
     
     n = G.order()
     output = np.zeros((n))
-    for i in range(n):
-        k = donde(i, particion)
+    for i, nodo in enumerate(G.nodes()):
+        k = donde(nodo, particion)
         cluster_actual = particion[k]
         otros_clusters = (particion[j] for j in range(len(particion)) if j != k)
-        a = np.average([ds[i][1][j] for j in cluster_actual])
+        a = np.average([d(i,j) for j in cluster_actual])
         
-        dists_interclusters = [np.average([ds[i][1][j] for j in cluster]) \
+        dists_interclusters = [np.average([d(i,j) for j in cluster]) \
                                for cluster in otros_clusters]
         b = min(dists_interclusters)
+        
         output[i] = b - a / max(a, b)
     return output
+
+#def graficar_silhouettes():
+    
+    
 #%%
 if __name__ == '__main__':
     G = nx.balanced_tree(h=3,r=2)
@@ -71,6 +80,10 @@ if __name__ == '__main__':
     #%%
     dolph = read_gml('Tp3/dolphins.gml')
     plt.figure(); nx.draw(dolph)
-    part = calcular_particion(dolph, 'fastgreedy')
+    
+    npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
+    rewire = npzfile['salida']
+    original = npzfile['salida_grafo_original']
+    part = original[0]
     sil = silhouettes(dolph, part)
         

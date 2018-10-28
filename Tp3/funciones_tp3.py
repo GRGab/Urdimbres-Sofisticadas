@@ -184,8 +184,8 @@ def comunidad_a_color(g, lista):
     .
     """
     colores_posibles = ['r', 'b', 'g', 'k', 'c', 'y', 'violet',
-                        'sandybrown', 'orange', 'indianred',
-                        'darkgray', 'darksalmon']
+                        'orange', 'indianred',
+                        'darkgray']
     colores_random = np.random.choice(np.arange(len(colores_posibles)), size=len(lista),
                                       replace=False)
     nodos = list(g.nodes())
@@ -250,8 +250,7 @@ def guardar_particiones(graph_original, N_swaps, Numero_de_recableos ,lista_de_m
     np.savez(output_path, salida = salida, 
              salida_grafo_original = salida_grafo_original) 
     
-def graficar_dist_modularidades(graph, lista_de_clusters, lista_de_metodos
-                                , metodo = 0):
+def graficar_dist_modularidades(graph, lista_de_clusters, lista_de_metodos, metodo = 0):
     '''Toma un grafo y la gran lista con todas las particiones generadas, para
     todos los metodos(la variable 'lista de clusters').
     Dado un metodo, grafica el histograma de las modularidades para todos
@@ -300,7 +299,6 @@ if __name__ == '__main__':
     print('La modularidad es', modularidad)
     colores = comunidad_a_color(G, particion)
 
-
 plt.figure(); nx.draw(G, with_labels=True, node_color=colores)
 #%% Pueba de la funcion de particiones (Punto 1-b)
 dolph = read_gml('Tp3/dolphins.gml')    
@@ -344,3 +342,18 @@ nx.draw(dolph, ax = axes[5], node_size = ns, node_color=colors[5])
 # Posicionamiento multipartito al azar. Posiciono al azar y
 # luego desplazo lateralmente según género
 nx.draw(dolph, ax = axes[6], node_size = ns, node_color=colors[6])
+#%% Chequear si va esto de abajo.
+    plt.figure(); nx.draw(G, with_labels=True, node_color=colores)
+    #%% Pueba de la funcion de particiones (Punto 1-b)
+    dolph = read_gml('Tp3/dolphins.gml')    
+    lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
+         , "edge_betweenness", "walktrap"]
+    # guardar_particiones(dolph, 200, lista)
+    #%%
+    npzfile = np.load('Tp3/tc03Data/Ej_b_particiones_tomi.npz')
+    rewire = npzfile['salida']
+    original = npzfile['salida_grafo_original']
+    
+    #%% Hay un problema con  Edge Betweenness, chequear.
+    for i in [0,1,2,3,4,6]:
+        graficar_dist_modularidades(dolph, rewire, lista, metodo = i)
