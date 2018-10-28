@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Oct 19 19:13:06 2018
-
-@author: Gabo
-"""
-
 import numpy as np
 
 import networkx as nx
@@ -189,13 +182,15 @@ def comunidad_a_color(g, lista):
     colores_random = np.random.choice(np.arange(len(colores_posibles)), size=len(lista),
                                       replace=False)
     nodos = list(g.nodes())
-    colores = list(np.zeros(len(nodos)))
+    colores_nodos = list(np.zeros(len(nodos)))
+    colores_clusters = list(np.zeros((len(lista))))
     for i in range(len(lista)):
+        index = colores_random[i]
+        colores_clusters[i] = colores_posibles[index]
         for j in range(len(nodos)):
-            index = colores_random[i]
             if nodos[j] in lista[i]:
-                colores[j] = colores_posibles[index]
-    return colores
+                colores_nodos[j] = colores_posibles[index]
+    return colores_nodos, colores_clusters
 
 def indices_to_nodos(graph, lista_de_indices):
     """Dada una lista de numeros enteros como indices, devuelve una lista del
@@ -276,6 +271,7 @@ def graficar_dist_modularidades(graph, lista_de_clusters, lista_de_metodos, meto
 #%%
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
+    plt.ion()
     import time
 
     G = nx.balanced_tree(h=3,r=2)
@@ -285,7 +281,7 @@ if __name__ == '__main__':
     particion = calcular_particion(G, method='infomap')
     modularidad = calcular_modularidad(G, particion)
     print('La modularidad es', modularidad)
-    colores = comunidad_a_color(G, particion)
+    colores, _ = comunidad_a_color(G, particion)
 
 
     plt.figure(); nx.draw(G, with_labels=True, node_color=colores)
