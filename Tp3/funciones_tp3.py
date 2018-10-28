@@ -49,10 +49,10 @@ def calcular_particion(nx_Graph, method="infomap", out_format='listadelistas'):
     Out:
         labels_dict: diccionario de nodo : a label al cluster al que pertenece.
     """
-    if method == "edge_betweenness":
-        nx_Graph = max(nx.connected_component_subgraphs(nx_Graph), key=len)#se queda con la componente más grande.
-        print("AVISO: restringiendo a la componente connexa más grade. De otro modo falla el algoritmo de detección de comunidades edge_betweenness.")
-    
+#    if method == "edge_betweenness":
+#        nx_Graph = max(nx.connected_component_subgraphs(nx_Graph), key=len)#se queda con la componente más grande.
+#        print("AVISO: restringiendo a la componente connexa más grade. De otro modo falla el algoritmo de detección de comunidades edge_betweenness.")
+#    
     isdirected = nx.is_directed(nx_Graph)
     np_adj_list = nx.to_numpy_matrix(nx_Graph)
     g = igraph.Graph.Weighted_Adjacency(np_adj_list.tolist(),mode=igraph.ADJ_UPPER)
@@ -218,7 +218,7 @@ def indices_to_nodos_particion(graph, particion):
 
 
 
-def guardar_particiones(graph_original, N, Numero_de_recableos ,lista_de_metodos):
+def guardar_particiones(graph_original, N_swaps, Numero_de_recableos ,lista_de_metodos):
     ''' Toma el grafo orginal y realiza N recableos de la red. Para cada 
     recableo, calcula las particion de la red segun un metodo de particion
     (por ejemplo, infomap) utilizando la funcion calcular_particiones. La 
@@ -240,15 +240,13 @@ def guardar_particiones(graph_original, N, Numero_de_recableos ,lista_de_metodos
         salida_por_rewire = []
         for i in range(Numero_de_recableos): 
 
-            g_rewire = nx.double_edge_swap(G, nswap=N,
-                                           max_tries=Numero_de_recableos * 1.5)
-            lista_nodos = indices_to_nodos_particion(g_rewire, 
-                                           calcular_particion(g_rewire,
-                                                              method = metodo))
+            g_rewire = nx.double_edge_swap(G, nswap=N_swaps,
+                                           max_tries=N_swaps * 1.5)
+            lista_nodos =calcular_particion(g_rewire, method = metodo)
             salida_por_rewire.append(lista_nodos)
         
         salida.append(salida_por_rewire)
-    output_path = 'Tp3/tc03Data/Ej_b_particiones_tomi.npz'
+    output_path = 'Tp3/tc03Data/Ej_b_particiones_tomi_1.npz'
     np.savez(output_path, salida = salida, 
              salida_grafo_original = salida_grafo_original) 
     
@@ -261,19 +259,33 @@ def graficar_dist_modularidades(graph, lista_de_clusters, lista_de_metodos
     dict_metodos = {}
     for k in range (len(lista_de_metodos)):
         dict_metodos[k] = lista_de_metodos[k] 
-    
-    modularidades = []
-    for i in range (len(lista_de_clusters[metodo])):            
-        modularidades.append(calcular_modularidad(graph, rewire[metodo][i]))   
-    valor_real = calcular_modularidad(graph, original[metodo])
-    fig, ax = histograma(modularidades, bins=15, density=True,
-                         titulo=r'{} - Distribución de modularidad bajo $H_0$'
-                         .format(lista_de_metodos[metodo]),
-                         xlabel='Modularidad')
-    ax.axvline(valor_real, color='deeppink',
-               label='Valor real = {}'.format(valor_real))
-    ax.legend()
-    plt.show()
+    if metodo != 5: 
+        modularidades = []
+        for i in range (len(lista_de_clusters[metodo])):            
+            modularidades.append(calcular_modularidad(graph, rewire[metodo][i]))   
+        valor_real = calcular_modularidad(graph, original[metodo])
+        fig, ax = histograma(modularidades, bins=15, density=True,
+                             titulo=r'{} - Distribución de modularidad bajo $H_0$'
+                             .format(lista_de_metodos[metodo]),
+                             xlabel='Modularidad')
+        ax.axvline(valor_real, color='deeppink',
+                   label='Valor real = {}'.format(valor_real))
+        ax.legend()
+        plt.show()
+    else:
+        modularidades_bet = []
+        for i in range (len(lista_de_clusters[5])):            
+            modularidades_bet.append(calcular_modularidad(graph, rewire[metodo][i]))   
+        valor_real = calcular_modularidad(graph, original[metodo])
+        fig, ax = histograma(modularidades, bins=15, density=True,
+                             titulo=r'{} - Distribución de modularidad bajo $H_0$'
+                             .format(lista_de_metodos[metodo]),
+                             xlabel='Modularidad')
+        ax.axvline(valor_real, color='deeppink',
+                   label='Valor real = {}'.format(valor_real))
+        ax.legend()
+        plt.show()
+        
 #%%
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
@@ -294,16 +306,18 @@ plt.figure(); nx.draw(G, with_labels=True, node_color=colores)
 dolph = read_gml('Tp3/dolphins.gml')    
 lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
      , "edge_betweenness", "walktrap"]
-# guardar_particiones(dolph, 200, lista)
+guardar_particiones(dolph, 200,10, lista)
 #%%
-npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
+#npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
+npzfile = np.load('Tp3/tc03Data/Ej_b_particiones_tomi_1.npz')
 rewire = npzfile['salida']
 original = npzfile['salida_grafo_original']
 
 #%% Hay un problema con  Edge Betweenness, chequear.
 for i in [0,1,2,3,4,6]:
-graficar_dist_modularidades(dolph, rewire, lista, metodo = i) 
-    
+    graficar_dist_modularidades(dolph, rewire, lista, metodo = i) 
+max_comp = max(nx.connected_component_subgraphs(dolph), key=len)
+graficar_dist_modularidades(max_comp, rewire, lista, metodo = 5)
 #%%
 colors = []
 for metodo in lista:
