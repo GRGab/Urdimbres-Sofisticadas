@@ -11,7 +11,7 @@ dolph = read_gml('Tp3/dolphins.gml')
 lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
         , "edge_betweenness", "walktrap"]
 
-metodos = ["infomap", "fastgreedy", "eigenvector", "louvain", "edge_betweenness","label_prop", "walktrap"]
+metodos = ["fastgreedy", "eigenvector","edge_betweenness", "louvain", "walktrap", "infomap", "label_prop"]
 
 
 def I_M(g, method_1, method_2):
@@ -55,5 +55,9 @@ def I_M(g, method_1, method_2):
 tabla = np.zeros([len(metodos), len(metodos)])
 for i in range(len(metodos)):
     for j in range(len(metodos)):
-        tabla[i, j] = round(I_M(dolph, metodos[i], metodos[j]), 5)
+        tabla[i, j] = round(I_M(dolph, metodos[i], metodos[j]), 4)
 
+import copy
+tabla2 = copy.deepcopy(tabla)
+
+tabla2 = (tabla + np.transpose(tabla)) / 2
