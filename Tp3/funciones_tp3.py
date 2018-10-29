@@ -313,29 +313,3 @@ if __name__ == '__main__':
 
     max_comp = max(nx.connected_component_subgraphs(dolph), key=len)
     graficar_dist_modularidades(max_comp, rewire, lista, metodo = 5)
-#%%
-    colors = []
-    for metodo in lista:
-        nodes = calcular_particion(dolph, method = metodo)
-        colors.append(comunidad_a_color(dolph, nodes))
-
-    fig, axes = plt.subplots(3,2)
-    axes = axes.flatten()
-    ns = 30
-    #nx.draw(dolph, node_color = colors[0])
-
-    nx.draw(dolph, ax = axes[0], node_size = ns, node_color=colors[0])
-    # Posicionamiento en un círculo
-    nx.draw(dolph, ax = axes[1], node_size = ns, node_color=colors[1])
-    # Posicionamiento en círculos concéntricos
-
-    nx.draw(dolph, ax = axes[2], node_size = ns, node_color=colors[2])
-    # Posicionamiento al azar
-    nx.draw(dolph, ax = axes[3], node_size = ns, node_color=colors[3])
-    # Posicionamiento espectral
-    nx.draw(dolph, ax = axes[4], node_size = ns, node_color=colors[4])
-    # Posicionamiento por resortes
-    nx.draw(dolph, ax = axes[5], node_size = ns, node_color=colors[5])
-    # Posicionamiento multipartito al azar. Posiciono al azar y
-    # luego desplazo lateralmente según género
-    nx.draw(dolph, ax = axes[6], node_size = ns, node_color=colors[6])
