@@ -77,16 +77,19 @@ def silhouettes(G, particion):
     nodos_to_indices = crear_nodos_to_indices(particion)
     # Recorremos los nodos en el ordenamiento global correspondiente
     # a la función distancia 'd'
-    for i, nodo in enumerate(G.nodes()):
-        m, n = nodos_to_indices[nodo]
-        cluster_actual = particion[m]
-        otros_clusters = (particion[l] for l in range(nc) if l != m)
-        a = np.average([d(i,j) for j in cluster_actual])
-        
-        dists_interclusters = [np.average([d(i,j) for j in cluster]) \
-                                                  for cluster in otros_clusters]
-        b = min(dists_interclusters)
-        s_values[m][n] = (b - a) / max(a, b)
+    try:
+        for i, nodo in enumerate(G.nodes()):
+            m, n = nodos_to_indices[nodo]
+            cluster_actual = particion[m]
+            otros_clusters = (particion[l] for l in range(nc) if l != m)
+            a = np.average([d(i,j) for j in cluster_actual])
+            
+            dists_interclusters = [np.average([d(i,j) for j in cluster]) \
+                                                    for cluster in otros_clusters]
+            b = min(dists_interclusters)
+            s_values[m][n] = (b - a) / max(a, b)
+    except ValueError:
+        print('La partición tiene un solo elemento. Devolviendo lista de listas vacías.')
     return s_values
 
 def graficar_silhouettes(sil_vals, colores=None, ax=None, titulo=None):
@@ -159,6 +162,8 @@ if __name__ == '__main__':
     rewire = npzfile['salida']
     original = npzfile['salida_grafo_original']
     particion = original[0]
+    ### Para probar el manejo de errores en silhouettes():
+    # particion = [list(dolph.nodes())]
     sil = silhouettes(dolph, particion)
 
     colores_nodos, colores_clusters = comunidad_a_color(dolph, particion)
