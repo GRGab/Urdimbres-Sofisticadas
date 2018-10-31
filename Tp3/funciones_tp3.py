@@ -11,58 +11,11 @@ import sys
 import igraph as igraph
 
 #%%
-
 def donde(nodo, particion):
     """Devuelve el índice del cluster de la partición al que pertence el nodo."""
     for j, cluster in enumerate(particion):
         if nodo in cluster:
             return j
-
-def silhouettes(G, particion):
-    """
-    Calcula el valor de silhouette para cada nodo del grafo 'G' dada una
-    partición 'particion' como lista de listas. Dicho valor está dado por
-    
-    s(i) = (b(i) - a(i)) / max(a(i), b(i))
-    
-    donde a(i) es la distancia media a todos los nodos del mismo cluster que i
-    y b(i) es la mínima de las distancias medias a los distintos clusters a los
-    cuales no pertenece i. Para mayor claridad, sea c_i el cluster al que
-    pertenece i, y sea Q = particion - c_i el conjunto de los clusters a los cuales
-    no pertenece i. Entonces se define
-    
-    b(i) = min{promedio{d(i,j) : j in cluster} : cluster in Q}
-    
-    b(i) también se suele llamar "distancia media al cluster más cercano".
-    
-    'particion' es lista de listas. Cada sublista es un cluster y sus elementos
-    son los nombres de los nodos que pertenecen a dicho cluster.
-    """
-    
-    if not is_partition(G, particion):
-        raise NotAPartition(G, particion)
-
-    ds = list(nx.all_pairs_shortest_path_length(G))
-    d = lambda i,j: ds[i][1][j]
-    # ds[i][1][j] es la distancia (longitud del camino más corto)
-    # entre i y j
-    
-    n = G.order()
-    output = np.zeros((n))
-    for i, nodo in enumerate(G.nodes()):
-        k = donde(nodo, particion)
-        cluster_actual = particion[k]
-        otros_clusters = (particion[j] for j in range(len(particion)) if j != k)
-        a = np.average([d(i,j) for j in cluster_actual])
-        
-        dists_interclusters = [np.average([d(i,j) for j in cluster]) \
-                               for cluster in otros_clusters]
-        b = min(dists_interclusters)
-        
-        output[i] = b - a / max(a, b)
-    return output
-
-
 
 def formatear_particion(nodos, labels):
     """Dada una partición representada de manera no deseada,
@@ -265,110 +218,7 @@ def indices_to_nodos_particion(graph, particion):
     for i in range(len(particion)):
         particion[i] = indices_to_nodos(graph, particion[i])
     return particion
-
-
-
-def guardar_particiones(graph_original, N_swaps,
-                        Numero_de_recableos ,lista_de_metodos,
-                        guardar_grafos = False, 
-                        output_path = None):
-    
-    ''' Toma el grafo orginal y realiza N recableos de la red. Para cada 
-    recableo, calcula las particion de la red segun un metodo de particion
-    (por ejemplo, infomap) utilizando la funcion calcular_particiones. Si 
-    guardar_grafo = True, la funcion guarda la informacion en un array de N*M,
-    donde N es la cant de recableos y M es la cant de metodos para particionar.
-    Cada elemento del array es una lista de listas con los clusters de la red.
-    Ademas, guarda un array donde el i-esimo elemento es la i -esima red
-    de networkx recableada. 
-    Finalmente, para el grafo original, devuelve una lista con M elementos, 
-    donde cada uno es una lista de listas para cada particion.
-    
-    Si guardar_datos = False, las modularidades se guardan en un array de M*N.
-    Ademas, e guarda un array de M componentes para todos los metodo aplicados 
-    a la red original.
-    Para siluette, tambien devuelve una lista, donde cada elemento representa
-    la lista con los siluette de cada nodo para una particion. Es decir, 
-    la longitud de la lista total es N, siendo N la cant de recableos. 
-    Finalmente, tambien devuelve la lista con los siluettes del grafo original.
-    '''
-    if guardar_grafos == False:
-        ##MODULARIDADES:
-        #Primero hacemos un array con las modularidades de la red original.
-        mod_original = np.zeros(len(lista_de_metodos))
-        for i, metodo in enumerate(lista_de_metodos):
-            particiones_original = calcular_particion(graph_original, method=metodo)
-            mod = calcular_modularidad(graph_original,
-                        particiones_original)
-            mod_original[i] = mod
-       #Ahora creamos la matriz con las modularidades para cada particion y 
-       #cada recableo.       
-        mod_rewire = np.zeros((len(lista_de_metodos),Numero_de_recableos))
-        G = graph_original.copy()    
-        for j, metodo in enumerate(lista_de_metodos):
-            for i in range(Numero_de_recableos): 
-                g_rewire = nx.double_edge_swap(G, nswap=N_swaps,
-                                               max_tries=N_swaps * 1.5)
-                mod = calcular_particion(g_rewire, method = metodo)
-                particiones_rewire = mod
-                mod_rewire[j,i] =calcular_modularidad(g_rewire,
-                      particiones_rewire)                 
-        ##SILUETTES:
-        #Primero hacemos un array con la lista de las siluettes original,
-        #para cada metodo de dicha red.
-        sil_original = []
-        for i, metodo in enumerate(lista_de_metodos):
-            particiones_original = calcular_particion(graph_original, method=metodo)
-            sil_original.append(silhouettes(graph_original,
-                        particiones_original))
-       #Ahora creamos la matriz con las silhouettes para cada particion y 
-       #cada recableo.       
-        G = graph_original.copy()    
-        sil_rewire = []#np.zeros((len(lista_de_metodos),Numero_de_recableos))
-        for j, metodo in enumerate(lista_de_metodos):
-            sil_un_metodo = []
-            for i in range(Numero_de_recableos): 
-                g_rewire = nx.double_edge_swap(G, nswap=N_swaps,
-                                               max_tries=N_swaps * 1.5)
-                particiones_rewire =calcular_particion(g_rewire,
-                                                       method = metodo)
-                sil_un_metodo.append(silhouettes(g_rewire,
-                        particiones_rewire))
-                sil_rewire.append(sil_un_metodo)
-            
-        #Guardamos la listas y las matrces 
-        if output_path == None:
-            output_path = 'Tp3/tc03Data/Ej_b_particiones_numeros.npz'
-        np.savez(output_path, mod_original = mod_original, 
-                 mod_rewire = mod_rewire
-#                 , sil_original = sil_original, sil_rewire = sil_rewire
-                 ) 
-        
-    if guardar_grafos == False: 
-        salida_grafo_original = [] 
-        for metodo in lista_de_metodos:
-            lista_nodos_original = calcular_particion(graph_original,
-                                                      method=metodo)
-            salida_grafo_original.append(lista_nodos_original)
-        G = graph_original.copy()    
-        salida = []
-        grafos_rewire = []
-        for metodo in lista_de_metodos:
-            salida_por_rewire = []
-            for i in range(Numero_de_recableos): 
-    
-                g_rewire = nx.double_edge_swap(G, nswap=N_swaps,
-                                               max_tries=N_swaps * 1.5)
-                lista_nodos =calcular_particion(g_rewire, method = metodo)
-                salida_por_rewire.append(lista_nodos)
-                grafos_rewire.append(g_rewire)
-            salida.append(salida_por_rewire)
-        if output_path == None:
-            output_path = 'Tp3/tc03Data/Ej_b_con_grafos.npz'
-        np.savez(output_path, salida = salida, 
-                 salida_grafo_original = salida_grafo_original,
-                 grafos_rewire = grafos_rewire) 
-        
+       
         
 def graficar_dist(graph, lista_de_metodos, modularidades,
                   valor_real, metodo = 0):
