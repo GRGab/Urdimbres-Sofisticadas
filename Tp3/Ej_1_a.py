@@ -1,6 +1,7 @@
 import numpy as np
 import networkx as nx
 from networkx.readwrite.gml import read_gml
+
 import sys
 sys.path.append('./Tp3/')
 from funciones_tp3 import calcular_particion, comunidad_a_color
