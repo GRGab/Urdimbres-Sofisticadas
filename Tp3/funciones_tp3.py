@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Oct 19 19:13:06 2018
-
-@author: Gabo
-"""
-
 import numpy as np
 
 import networkx as nx
@@ -16,6 +9,7 @@ from histograma import histograma
 
 
 import igraph as igraph
+
 #%%
 def formatear_particion(nodos, labels):
     """Dada una partición representada de manera no deseada,
