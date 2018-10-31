@@ -14,7 +14,7 @@ from networkx.readwrite.gml import read_gml
 
 
 import sys
-sys.path.append('./Tp3')
+sys.path.append('./Tp3/')
 from funciones_tp3 import calcular_particion, NotAPartition, indices_to_nodos_particion
 
 from networkx.readwrite.gml import read_gml
@@ -80,7 +80,6 @@ if __name__ == '__main__':
     #%%
     dolph = read_gml('Tp3/dolphins.gml')
     plt.figure(); nx.draw(dolph)
-    
     npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
     rewire = npzfile['salida']
     original = npzfile['salida_grafo_original']

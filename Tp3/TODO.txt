@@ -11,9 +11,10 @@ Funciones generales:
 Punto b:
 
 - Recableado:
-    - Hacer 100 recableados de la red de Dolphins.
-        - Aplicar método para eliminar multi-enlaces y autoloops
-    - Para cada recableado, calcular y guardar la partición que se obtiene por cada método
+    - Para cada recableado, gurdar la modularidad (numero) y siluette para
+    cada nodo (lista de numeros). 
+    - Para cada recableado, calcular y guardar la partición que se obtiene por
+     cada método y su grafo correspondiente
 
     - Calcular modularidad y curva de silhouette para cada partición para cada recableado
     - Obtener histogramas de modularidad y de silhouette medio
