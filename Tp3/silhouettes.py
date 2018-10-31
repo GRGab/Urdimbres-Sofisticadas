@@ -11,7 +11,7 @@ import sys
 sys.path.append('./Tp3')
 from funciones_tp3 import (calcular_particion, NotAPartition, indices_to_nodos_particion,
                            comunidad_a_color)
-
+#%%
 def crear_nodos_to_indices(particion):
     """Crea un diccionario que a cada nombre de nodo le asigna los índices
     (m, n) tales que particion[m][n] == nombre.

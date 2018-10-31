@@ -1,18 +1,13 @@
 import numpy as np
 import networkx as nx
 from networkx.readwrite.gml import read_gml
+from lectura import ldata
 import sys
 sys.path.append('./Tp3/')
 from funciones_tp3 import calcular_particion, comunidad_a_color
 import matplotlib.pyplot as plt
 import igraph as igraph
 #%%
-dolph = read_gml('Tp3/dolphins.gml')    
-lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
-        , "edge_betweenness", "walktrap"]
-
-metodos = ["fastgreedy", "eigenvector","edge_betweenness", "louvain", "walktrap", "infomap", "label_prop"]
-
 def particionar_por_genero(G, orden={'f':0, 'NA':1, 'm':2}):
     particiones = [[], [], []]
     for key in dict(G.nodes).keys():
@@ -66,30 +61,39 @@ def I_M(g, method_1, method_2, genero = False):
     
     return I_M
 #%%
-
-tabla = np.zeros([len(metodos), len(metodos)])
-for i in range(len(metodos)):
-    for j in range(len(metodos)):
-        tabla[i, j] = round(I_M(dolph, metodos[i], metodos[j]), 4)
-
-import copy
-tabla2 = copy.deepcopy(tabla)
-
-tabla2 = (tabla + np.transpose(tabla)) / 2
-
-import pandas as pd
-cuadro = pd.DataFrame(tabla2, columns = metodos, index = metodos)
+if __name__ == '__main__':
+    dolph = read_gml('Tp3/dolphins.gml')    
+    lista = ["infomap","label_prop", "fastgreedy", "eigenvector", "louvain"
+            , "edge_betweenness", "walktrap"]
+    
+    metodos = ["fastgreedy", "eigenvector","edge_betweenness", "louvain", "walktrap", "infomap", "label_prop"]
+    
+    
+    tabla = np.zeros([len(metodos), len(metodos)])
+    for i in range(len(metodos)):
+        for j in range(len(metodos)):
+            tabla[i, j] = round(I_M(dolph, metodos[i], metodos[j]), 4)
+    
+    import copy
+    tabla2 = copy.deepcopy(tabla)
+    
+    tabla2 = (tabla + np.transpose(tabla)) / 2
+    
+    import pandas as pd
+    cuadro = pd.DataFrame(tabla2, columns = metodos, index = metodos)
 #%%
-genders = dict(ldata('Tp3/dolphinsGender.txt'))
-
-# Agrego los sexos a los dicts de cada delfín
-for nodo, dict_nodo in dict(dolph.nodes).items():
-    dict_nodo['gender'] = genders[nodo] # agrego el sexo del delfín a su dict
-#    print('Key = {}, Value = {}'.format(nodo, dict_nodo)) # para chequear que anda
-
-tabla = np.zeros(len(metodos))
-for i in range(len(metodos)):
-    tabla[i] = I_M(dolph, 'asd', metodos[i], genero = True)
-np.save('tabla_info_mutua_generos', tabla)
-import pandas as pd
-cuadro = pd.DataFrame(tabla, columns = ['Genero'], index = metodos)
+    genders = dict(ldata('Tp3/dolphinsGender.txt'))
+    
+    # Agrego los sexos a los dicts de cada delfín
+    for nodo, dict_nodo in dict(dolph.nodes).items():
+        dict_nodo['gender'] = genders[nodo] # agrego el sexo del delfín a su dict
+    #    print('Key = {}, Value = {}'.format(nodo, dict_nodo)) # para chequear que anda
+    
+    tabla = np.zeros(len(metodos))
+    for i in range(len(metodos)):
+        tabla[i] = I_M(dolph, 'asd', metodos[i], genero = True)
+    np.save('tabla_info_mutua_generos', tabla)
+    import pandas as pd
+    cuadro = pd.DataFrame(tabla, columns = ['Genero'], index = metodos)
+    
+    
