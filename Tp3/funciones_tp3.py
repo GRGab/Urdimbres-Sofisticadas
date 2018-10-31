@@ -176,9 +176,8 @@ def comunidad_a_color(g, lista):
     .
     .
     """
-    colores_posibles = ['r', 'b', 'g', 'k', 'c', 'y', 'violet',
-                        'orange', 'indianred',
-                        'darkgray']
+    colores_posibles = ['r', 'b', 'g', 'k', 'c', 'y', 'violet', 
+                        'orange', 'indianred', 'darkgray']
     colores_random = np.random.choice(np.arange(len(colores_posibles)), size=len(lista),
                                       replace=False)
     nodos = list(g.nodes())
