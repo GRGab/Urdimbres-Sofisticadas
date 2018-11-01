@@ -77,19 +77,25 @@ def silhouettes(G, particion):
     nodos_to_indices = crear_nodos_to_indices(particion)
     # Recorremos los nodos en el ordenamiento global correspondiente
     # a la función distancia 'd'
-    try:
-        for i, nodo in enumerate(G.nodes()):
-            m, n = nodos_to_indices[nodo]
-            cluster_actual = particion[m]
-            otros_clusters = (particion[l] for l in range(nc) if l != m)
-            a = np.average([d(i,j) for j in cluster_actual])
-            
+    for i, nodo in enumerate(G.nodes()):
+        m, n = nodos_to_indices[nodo]
+        cluster_actual = particion[m]
+        otros_clusters = (particion[l] for l in range(nc) if l != m)
+        a = np.average([d(i,j) for j in cluster_actual])    
+        try:
             dists_interclusters = [np.average([d(i,j) for j in cluster]) \
-                                                    for cluster in otros_clusters]
+                                                for cluster in otros_clusters]
+        except KeyError:
+            print('El grafo no es conexo y la distancia entre algunos clusters',
+                  'es infinita por lo que no se puede realizar por completo el',
+                  'análisis de silhouettes. Devolviendo lista de listas vacías.')
+            return s_values
+        try:
             b = min(dists_interclusters)
-            s_values[m][n] = (b - a) / max(a, b)
-    except ValueError:
-        print('La partición tiene un solo elemento. Devolviendo lista de listas vacías.')
+        except ValueError:
+            print('La partición tiene un solo elemento. Devolviendo lista de listas vacías.')
+            return s_values
+        s_values[m][n] = (b - a) / max(a, b)
     return s_values
 
 def graficar_silhouettes(sil_vals, colores=None, ax=None, titulo=None):
@@ -153,21 +159,34 @@ def graficar_silhouettes(sil_vals, colores=None, ax=None, titulo=None):
 #%%
 if __name__ == '__main__':
     plt.ion()
-    # G = nx.balanced_tree(h=3,r=2)
-    # particion = calcular_particion(G, method='infomap')
-    # sil = silhouettes(G, particion)
-    #%%
-    dolph = read_gml('Tp3/dolphins.gml')
-    npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
-    rewire = npzfile['salida']
-    original = npzfile['salida_grafo_original']
-    particion = original[0]
-    ### Para probar el manejo de errores en silhouettes():
-    # particion = [list(dolph.nodes())]
-    sil = silhouettes(dolph, particion)
 
-    colores_nodos, colores_clusters = comunidad_a_color(dolph, particion)
-    with plt.style.context(('seaborn')):
-        fig, (ax1, ax2) = plt.subplots(1, 2)#, figsize=(10, 8))
-    nx.draw(dolph, node_color=colores_nodos, ax=ax1, node_size=50)
-    graficar_silhouettes(sil, ax=ax2, colores=colores_clusters)
+    prueba_infomap = True
+    if prueba_infomap:
+        g = nx.balanced_tree(h=3,r=2)
+        particion = calcular_particion(g, method='infomap')
+        sil = silhouettes(g, particion)
+    
+    prueba_dolph = False
+    if prueba_dolph:
+        g = read_gml('Tp3/dolphins.gml')
+        npzfile = np.load('Tp3/tc03Data/Ej_b_particiones.npz')
+        rewire = npzfile['salida']
+        original = npzfile['salida_grafo_original']
+        particion = original[0]
+        ### Para probar el manejo de errores en silhouettes():
+        # particion = [list(dolph.nodes())]
+        sil = silhouettes(g, particion)
+
+    prueba_disconexos = False
+    if prueba_disconexos:
+        g = nx.Graph([[0, 1], [0, 2], [1,2], [3,4], [3,5], [4,5]])
+        particion = [[0,1,2], [3,4,5]]
+        sil = silhouettes(g, particion)
+
+    prueba_graficar = True
+    if prueba_graficar:
+        colores_nodos, colores_clusters = comunidad_a_color(g, particion)
+        with plt.style.context(('seaborn')):
+            fig, (ax1, ax2) = plt.subplots(1, 2)#, figsize=(10, 8))
+        nx.draw(g, node_color=colores_nodos, ax=ax1, node_size=50)
+        graficar_silhouettes(sil, ax=ax2, colores=colores_clusters)
