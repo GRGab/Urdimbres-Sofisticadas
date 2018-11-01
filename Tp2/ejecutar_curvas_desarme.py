@@ -66,25 +66,25 @@ for g in [g_apms, g_lit, g_lit_reg, g_y2h]:
         # Esto es por si ya fueron generadas estas curvas
         # if ((g is g_apms and criterio in ['degree', 'sub', 'flow']) or
         #    (g is g_lit and criterio is 'sub')):
-            pass
+        #    pass
+        # else:
+        if criterio is 'flow':
+            desarme = desarme_por_centralidad_flow
+        elif criterio is 'random':
+            desarme = desarme_por_centralidad_random
         else:
-            if criterio is 'flow':
-                desarme = desarme_por_centralidad_flow
-            elif criterio is 'random':
-                desarme = desarme_por_centralidad_random
-            else:
-                desarme = desarme_por_centralidad
-            
-            print('Procesando g = ', nombres[g], ', crit = ', criterio)
-            try:
-                ti = time.time()
-                cant_nodos_red, cant_nodos_cg = desarme(g, criterio=criterio)
-                tf = time.time(); print(tf-ti, 'segundos')
-                np.savez('curva_desarme_{}_{}.npz'.format(nombres[g], criterio),
-                         cant_nodos_red=cant_nodos_red,
-                         cant_nodos_cg=cant_nodos_cg)
-                print('Guardado con éxito!')
-            except Exception as ex:
-                log_traceback(ex)
-                print('La ejecución falló. Continuamos con el próximo caso.')
-    print('Terminó el script.')
+            desarme = desarme_por_centralidad
+        
+        print('Procesando g = ', nombres[g], ', crit = ', criterio)
+        try:
+            ti = time.time()
+            cant_nodos_red, cant_nodos_cg = desarme(g, criterio=criterio)
+            tf = time.time(); print(tf-ti, 'segundos')
+            np.savez('curva_desarme_{}_{}.npz'.format(nombres[g], criterio),
+                        cant_nodos_red=cant_nodos_red,
+                        cant_nodos_cg=cant_nodos_cg)
+            print('Guardado con éxito!')
+        except Exception as ex:
+            log_traceback(ex)
+            print('La ejecución falló. Continuamos con el próximo caso.')
+print('Terminó el script.')
