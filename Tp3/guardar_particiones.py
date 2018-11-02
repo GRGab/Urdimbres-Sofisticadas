@@ -16,6 +16,7 @@ from itertools import product
 from networkx.readwrite.gml import read_gml
 from histograma import histograma
 import sys
+sys.path.append('./Tp3/')
 import igraph as igraph
 from silhouettes import silhouettes
 from funciones_tp3 import * 
@@ -36,7 +37,7 @@ def guardar_particiones(graph_original, N_swaps,
     Finalmente, para el grafo original, devuelve una lista con M elementos, 
     donde cada uno es una lista de listas para cada particion.
     
-    Si guardar_datos = False, las modularidades se guardan en un array de M*N.
+    Si guardar_grafos = False, las modularidades se guardan en un array de M*N.
     Ademas, e guarda un array de M componentes para todos los metodo aplicados 
     a la red original.
     Para siluette, tambien devuelve una lista, donde cada elemento representa
@@ -71,22 +72,24 @@ def guardar_particiones(graph_original, N_swaps,
         sil_original = []
         for i, metodo in enumerate(lista_de_metodos):
             particiones_original = calcular_particion(graph_original, method=metodo)
-            sil_original.append(silhouettes(graph_original,
-                        particiones_original))
+            sil_actual = silhouettes(graph_original, particiones_original)
+            sil_original.append(sil_actual)
        #Ahora creamos la matriz con las silhouettes para cada particion y 
        #cada recableo.       
         G = graph_original.copy()    
         sil_rewire = []#np.zeros((len(lista_de_metodos),Numero_de_recableos))
         for j, metodo in enumerate(lista_de_metodos):
             sil_un_metodo = []
+            print(metodo)
             for i in range(Numero_de_recableos): 
                 g_rewire = nx.double_edge_swap(G, nswap=N_swaps,
                                                max_tries=N_swaps * 1.5)
                 particiones_rewire =calcular_particion(g_rewire,
                                                        method = metodo)
-                sil_un_metodo.append(silhouettes(g_rewire,
-                        particiones_rewire))
-                sil_rewire.append(sil_un_metodo)
+                print(len(particiones_rewire))
+                sil_actual = silhouettes(g_rewire, particiones_rewire)
+                sil_un_metodo.append(sil_actual)
+            sil_rewire.append(sil_un_metodo)
             
         #Guardamos la listas y las matrces 
         if output_path == None:
@@ -96,7 +99,7 @@ def guardar_particiones(graph_original, N_swaps,
 #                 , sil_original = sil_original, sil_rewire = sil_rewire
                  ) 
         
-    if guardar_grafos == False: 
+    if guardar_grafos == True: 
         salida_grafo_original = [] 
         for metodo in lista_de_metodos:
             lista_nodos_original = calcular_particion(graph_original,
@@ -111,7 +114,7 @@ def guardar_particiones(graph_original, N_swaps,
     
                 g_rewire = nx.double_edge_swap(G, nswap=N_swaps,
                                                max_tries=N_swaps * 1.5)
-                lista_nodos =calcular_particion(g_rewire, method = metodo)
+                lista_nodos = calcular_particion(g_rewire, method = metodo)
                 salida_por_rewire.append(lista_nodos)
                 grafos_rewire.append(g_rewire)
             salida.append(salida_por_rewire)
@@ -124,12 +127,17 @@ def guardar_particiones(graph_original, N_swaps,
 if __name__ == '__main__':
     import time
     sys.path.append('./Tp3/')
-    dolph = read_gml('Tp3/dolphins.gml')    
-    lista_de_metodos = ["infomap","label_prop", "fastgreedy", "eigenvector",
-                        "louvain", "edge_betweenness", "walktrap"] 
-    guardar_particiones(dolph, 200, 1000 , lista_de_metodos)
-    
-    
-    
-    
-    
+    G = nx.balanced_tree(h=5,r=2)
+    lista_de_metodos = ["infomap","label_prop"] 
+#    guardar_particiones(G, 200, 10 , lista_de_metodos,
+#                        output_path = 'Tp3/tc03Data/pruebita_Ej_b.npz')
+    dolph = read_gml('Tp3/dolphins.gml')
+    guardar_particiones(dolph, 100, 10, lista_de_metodos,
+                        output_path='lala')
+    #%%Importamos
+    npzfile = np.load('Tp3/tc03Data/pruebita_Ej_b.npz')
+    rewire = npzfile['mod_rewire']
+    original = npzfile['mod_original']
+    for i in range(0,len(lista_de_metodos)):
+        graficar_dist(dolph, lista_de_metodos, rewire[i], original[i],
+                      metodo = i)    

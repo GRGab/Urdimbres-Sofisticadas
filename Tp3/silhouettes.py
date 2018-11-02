@@ -83,9 +83,8 @@ def silhouettes(G, particion):
             cluster_actual = particion[m]
             otros_clusters = (particion[l] for l in range(nc) if l != m)
             a = np.average([d(i,j) for j in cluster_actual])
-            
-            dists_interclusters = [np.average([d(i,j) for j in cluster]) \
-                                                    for cluster in otros_clusters]
+         
+            dists_interclusters = [np.average([d(i,j) for j in cluster]) for cluster in otros_clusters]
             b = min(dists_interclusters)
             s_values[m][n] = (b - a) / max(a, b)
     except ValueError:
