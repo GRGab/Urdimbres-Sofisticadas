@@ -150,7 +150,7 @@ def graficar_silhouettes(sil_vals, colores=None, ax=None, titulo=None):
 
     if titulo is not None:
         ax.set_title(titulo)
-    ax.set_xlabel("Coeficientes de Silhouette")
+    ax.set_xlabel("Coef. de Silhouette")
     ax.set_ylabel("Nodos")
 
     # The vertical line for average silhouette score of all the values

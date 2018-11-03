@@ -223,24 +223,54 @@ def indices_to_nodos_particion(graph, particion):
         particion[i] = indices_to_nodos(graph, particion[i])
     return particion
        
-        
-def graficar_dist(graph, lista_de_metodos, modularidades,
-                  valor_real, metodo = 0):
-    '''Toma un grafo y la gran lista con todas las particiones generadas, para
-    todos los metodos(la variable 'lista de clusters').
-    Dado un metodo, grafica el histograma de las modularidades para todos
-    los recableados y tambien dibuja la modularidad de la red original. '''
-    dict_metodos = {}
-    for k in range (len(lista_de_metodos)):
-        dict_metodos[k] = lista_de_metodos[k] 
-    fig, ax = histograma(modularidades, bins=15, density=True,
-                         titulo=r'{} - Distribución de modularidad bajo $H_0$'
-                         .format(lista_de_metodos[metodo]),
-                         xlabel='Modularidad')
-    ax.axvline(valor_real, color='deeppink',
-               label='Valor real = {}'.format(valor_real))
-    ax.legend()
-    plt.show()        
+def histograma_recableo(valores, valor_obs, nombre_metodo, nombre_variable, bins=15):
+    fig, ax = histograma(valores, bins=bins, density=False,
+                         titulo=r'{} - Distribución de {} bajo $H_0$'
+                         .format(nombre_metodo, nombre_variable),
+                         xlabel=nombre_variable)
+    ax.axvline(valor_obs, color='deeppink',
+               label='Valor obs. = {:.2g}'.format(valor_obs))
+    # Estimación del p-valor
+    if valor_obs > np.mean(valores):
+        pval = np.sum(np.array(valores) >= valor_obs) / len(valores)
+    else:
+        pval = np.sum(np.array(valores) <= valor_obs) / len(valores)
+    # Si la estimación da 0, entonces decimos que p < 1/(numero de recableos)
+    label = 'p = {:.2g}'.format(pval) if pval > 0 else 'p < {:2g}'.format(1/len(valores))
+    ax.plot([], [], ' ', label=label)
+    ax.legend(fontsize=16)
+    fig.tight_layout()
+    plt.show()
+    return fig, ax
+
+def histograma_recableo_multimetodo(valores, valores_obs, nombres_metodos,
+                                    nombre_variable, bins=15):
+    """Asume que son 8 métodos máximo."""
+    n_metodos = len(nombres_metodos)
+    with plt.style.context(('seaborn')):
+        fig, axes = plt.subplots(2, 4, figsize=(16, 10))
+        axes = np.ravel(axes)
+    for i in range(n_metodos):
+        histograma(valores[i], bins=bins, density=False,
+                    titulo=nombres_metodos[i],
+                    xlabel=nombre_variable,
+                    ax=axes[i])
+        axes[i].axvline(valores_obs[i], color='deeppink',
+                   label='Valor obs. = {:.2g}'.format(valores_obs[i]))
+        # Estimación del p-valor
+        if valores_obs[i] > np.mean(valores[i]):
+            pval = np.sum(np.array(valores[i]) >= valores_obs[i]) / len(valores[i])
+        else:
+            pval = np.sum(np.array(valores[i]) <= valores_obs[i]) / len(valores[i])
+        # Si la estimación da 0, entonces decimos que p < 1/(numero de recableos)
+        label = 'p = {:.2g}'.format(pval) if pval > 0 else 'p < {:2g}'.format(1/len(valores[i]))
+        axes[i].plot([], [], ' ', label=label)
+        axes[i].legend(fontsize=12)
+    for i in range(n_metodos, 8):
+        axes[i].axis('off')
+    plt.show()
+    return fig, axes
+
 #%%
 if __name__ == '__main__':
     import matplotlib.pyplot as plt

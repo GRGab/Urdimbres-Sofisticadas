@@ -40,11 +40,11 @@ Punto b:
 - 1b)
     - Discutir gráficos de silhouettes para la red original
     X Agregar al código de recableo un while para que el grafo final sea conexo.
-    - Resolver problemillas?
+    X Resolver problemillas?
     - Ejecutar código y guardar las 10.000 particiones para cada métoodo.
-    - Generar histograma de modularidad y p-valor para la modularidad observada para cada método
+    X Generar histograma de modularidad y p-valor para la modularidad observada para cada método
     - Silhouette para cada recableado:
-        - Valor promedio sobre toda la red y histograma de esto, p-value etc.
+        X Valor promedio sobre toda la red y histograma de esto, p-value etc.
                         - Fracción de cuántos nodos negativos hay (sobre todos los clusters, globalmente) -> histograma y p-valor.
                         - Fluctuabilidad silhouética (para una dada partición, primero calculamos silhouette promedio por cluster,
                         y luego calculamos la desviación estándar de dichos números). Histograma y p-valor

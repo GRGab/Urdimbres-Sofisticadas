@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Oct 31 14:24:15 2018
-
-@author: matias
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -145,6 +137,3 @@ def guardar_particiones(graph_original, N_swaps,
 #     npzfile = np.load('Tp3/tc03Data/pruebita_Ej_b.npz')
 #     rewire = npzfile['mod_rewire']
 #     original = npzfile['mod_original']
-#     for i in range(0,len(lista_de_metodos)):
-#         graficar_dist(dolph, lista_de_metodos, rewire[i], original[i],
-#                       metodo = i)    
