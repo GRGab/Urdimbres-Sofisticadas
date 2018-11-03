@@ -11,11 +11,6 @@ import sys
 import igraph as igraph
 
 #%%
-def donde(nodo, particion):
-    """Devuelve el índice del cluster de la partición al que pertence el nodo."""
-    for j, cluster in enumerate(particion):
-        if nodo in cluster:
-            return j
 
 def formatear_particion(nodos, labels):
     """Dada una partición representada de manera no deseada,
@@ -176,14 +171,21 @@ def comunidad_a_color(g, lista):
     """
     Funcion para asignar colores a las comunidades. Devuelve una lista con colores
     con el mismo orden que la lista de nodos, para meter en la funcion 
-    nx.draw(G, node_color = comunidad_a_color(G, lista)). 
-    La lista corresponde a la lista de listas, donde cada sublista corresponde a
+    nx.draw(G, node_color = comunidad_a_color(G, lista)). Además devuelve otra lista
+    con los colores asociados a cada cluster.
+
+    La lista input corresponde a la lista de listas, donde cada sublista corresponde a
     una comunidad.
     
     Input: (g, lista)   (grafo de networkx, lista de listas)
     
     Returns:
-            colores   (lista)
+            colores_nodos : lista
+                Lista con el color de cada nodo, ordenada según el orden de los nodos
+                en el objeto nx.Graph
+            colores_clusters : lista
+                Lista con el color correspondiente a cada cluster, ordenada según el
+                orden de los clusters en la lista de listas input.
     .
     .
     """
@@ -248,11 +250,11 @@ if __name__ == '__main__':
     from silhouettes import silhouettes
 
     G = nx.balanced_tree(h=3,r=2)
+#    nx.draw(G,with_labels=True)
+#    plt.show()
     print('Prueba con infomap')
     particion = calcular_particion(G, method='infomap')
     modularidad = calcular_modularidad(G, particion)
     print('La modularidad es', modularidad)
     colores, _ = comunidad_a_color(G, particion)
-#    nx.draw(G,with_labels=True)
-#    plt.show()
 
