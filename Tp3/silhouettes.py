@@ -142,15 +142,16 @@ def graficar_silhouettes(sil_vals, colores=None, ax=None, titulo=None):
                           facecolor=color, edgecolor=color, alpha=0.7)
 
         # Label the silhouette plots with their cluster numbers at the middle
-        ax.text(-0.05, y_lower + 0.5 * size_cluster_i, str(i))
+        # DESACTIVO ESTO porque muchas veces no queda lindo.
+        # ax.text(-0.05, y_lower + 0.5 * size_cluster_i, str(i))
 
         # Compute the new y_lower for next plot
         y_lower = y_upper + sep
 
     if titulo is not None:
         ax.set_title(titulo)
-    ax.set_xlabel("Coeficiente de Silhouette")
-    ax.set_ylabel("Comunidad")
+    ax.set_xlabel("Coeficientes de Silhouette")
+    ax.set_ylabel("Nodos")
 
     # The vertical line for average silhouette score of all the values
     ax.axvline(x=sil_medio, color="red", linestyle="--")

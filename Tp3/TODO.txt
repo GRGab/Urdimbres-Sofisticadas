@@ -29,15 +29,17 @@ Punto b:
 
 
 02/11/18
+(Con una X van las cosas terminadas)
+
 - 1a) Generar visualización del 1a y al mismo tiempo de silhouettes
-    - Un gráfico para cada método por separado (usar fig.tight_layout())
-    - Gráfico todos juntos (2 filas)
-    - Todo con mismo layout y mismos colores
-    - Gráfico coloreado por géneros con mismo layout.
+    X Un gráfico para cada método por separado (usar fig.tight_layout())
+    X Gráfico todos juntos (2 filas)
+    X Todo con mismo layout y mismos colores
+    X Gráfico coloreado por géneros con mismo layout.
     - Discutir: cuándo los métodos coinciden, cuándo no. Quizá decir algo cualitativo de los géneros
 - 1b)
     - Discutir gráficos de silhouettes para la red original
-    - Agregar al código de recableo un while para que el grafo final sea conexo.
+    X Agregar al código de recableo un while para que el grafo final sea conexo.
     - Resolver problemillas?
     - Ejecutar código y guardar las 10.000 particiones para cada métoodo.
     - Generar histograma de modularidad y p-valor para la modularidad observada para cada método
