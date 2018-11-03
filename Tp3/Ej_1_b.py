@@ -25,14 +25,15 @@ nombres_metodos = ["Infomap","Label Prop", "Fastgreedy", "Eigenvectors", "Louvai
 #%%
 #### Recablear y guardar
 # t = time()
-# guardar_particiones(dolph, 200, 1000, lista_de_metodos,
-#                     output_path='Tp3/tc03Data/Ej_b_particiones_1000recableos',
+# guardar_particiones(dolph, 200, 10000, lista_de_metodos,
+#                     output_path='Tp3/tc03Data/Ej_b_particiones_10000recableos',
 #                     silencioso=True)
 # print(time() - t, 'segundos')
+# En compu escritorio Gabo tardó 50 minutos
 
 #%%
 #### Importar datos guardados
-npzfile = np.load('Tp3/tc03Data/Ej_b_particiones_1000recableos.npz')
+npzfile = np.load('Tp3/tc03Data/Ej_b_particiones_10000recableos.npz')
 mod_rewire = npzfile['mod_rewire']
 mod_original = npzfile['mod_original']
 sil_rewire = npzfile['sil_rewire']
@@ -47,13 +48,13 @@ for i, metodo in enumerate(nombres_metodos):
                                 'Modularidad', bins=nbins)
     # uso 'lista_de_metodos[i]' en vez de 'metodo' para que el nombre
     # del archivo quede sin espacios en blanco.
-    fig.savefig('Tp3/graficos/hist_mod_{}.png'.format(lista_de_metodos[i]))
+    fig.savefig('Tp3/graficos/10000recableos/hist_mod_{}.png'.format(lista_de_metodos[i]))
 
 # Histogramas todos juntos
 fig, _ = histograma_recableo_multimetodo(mod_rewire, mod_original,
                                          nombres_metodos, 'Modularidad',
                                          bins=nbins)
-fig.savefig('Tp3/graficos/hist_mod_todos.png')
+fig.savefig('Tp3/graficos/10000recableos/hist_mod_todos.png')
 
 #%%
 #### Análisis de silhouettes
@@ -73,9 +74,11 @@ for metodo, sils_metodo in zip(lista_de_metodos, sil_rewire):
     print(acc2 / acc1, 'de las veces que se aplicó el método',
     metodo, 'se detectó una única comunidad.')
 
-# Vemos que para infomap se obtienen clusters únicos un 12% de
-# las veces, para label_prop un 76% de las veces, y nunca para
-# los demás métodos.
+# Análisis 10000 recableos
+# Vemos que para infomap se obtienen clusters únicos un 14% de
+# las veces, para label_prop un 78% de las veces, y nunca para
+# los demás métodos (o casi nunca: con eigenvectors ocurrió
+# 9 veces de 10000).
 # ----------------
 # Decisión: hacemos análisis de silhouettes para infomap
 # excluyendo los casos en los que hubo una única comunidad
@@ -111,11 +114,12 @@ for sils_por_metodo in sil_rewire:
             sprom_por_metodo.append(np.nan)
     sils_prom_rewire.append(sprom_por_metodo)
 
-# Elimino los nans de infomap antes
-# de pasarle los valores a la función histograma.
-sils_prom_rewire_infomap = np.array(sils_prom_rewire[0])
-sils_prom_rewire_infomap = sils_prom_rewire_infomap[~np.isnan(sils_prom_rewire_infomap)]
-sils_prom_rewire[0] = list(sils_prom_rewire_infomap)
+# Elimino los nans antes de pasarle los valores
+# a la función histograma.
+for i in range(len(sils_prom_rewire)):
+    arr = np.array(sils_prom_rewire[i])
+    arr = arr[~np.isnan(arr)]
+    sils_prom_rewire[i] = list(arr)
 
 # Graficamos
 nbins = 15
@@ -126,11 +130,10 @@ for i, metodo in enumerate(nombres_metodos_s):
                                  metodo, 'Silhouette medio', bins=nbins)
     # uso 'lista_de_metodos[i]' en vez de 'metodo' para que el nombre
     # del archivo quede sin espacios en blanco.
-    fig.savefig('Tp3/graficos/hist_sprom_{}.png'.format(lista_de_metodos_s[i]))
-    print(i)
+    fig.savefig('Tp3/graficos/10000recableos/hist_sprom_{}.png'.format(lista_de_metodos_s[i]))
 
 # Histogramas todos juntos.
 fig, _ = histograma_recableo_multimetodo(sils_prom_rewire, sils_prom_original,
                                          nombres_metodos_s, 'Silhouette medio',
                                          bins=nbins)
-fig.savefig('Tp3/graficos/hist_sprom_todos.png')
+fig.savefig('Tp3/graficos/10000recableos/hist_sprom_todos.png')

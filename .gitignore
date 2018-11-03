@@ -111,3 +111,6 @@ venv.bak/
 .goutputstream-LC3IPZ
 notebook.tex
 vandelay-py.js
+
+# Cosas específicas Urdimbre Sofisticadas
+Tp3/tc03Data/Ej_b_particiones_10000recableos.npz
