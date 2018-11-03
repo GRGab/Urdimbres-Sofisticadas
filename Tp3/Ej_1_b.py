@@ -18,13 +18,13 @@ from networkx.readwrite.gml import read_gml
 import sys
 sys.path.append('./Tp3')
 from funciones_tp3 import (calcular_particion, NotAPartition, indices_to_nodos_particion,
-                           comunidad_a_color)
-from funciones_tp3 import(guardar_particiones, graficar_dist)
+                           comunidad_a_color, graficar_dist)
+from guardar_particiones import guardar_particiones
 #%%
 dolph = read_gml('Tp3/dolphins.gml')    
 lista_de_metodos = ["infomap","label_prop", "fastgreedy", "eigenvector",
                     "louvain", "edge_betweenness", "walktrap"]
-guardar_particiones(dolph, 1000,200, lista_de_metodos)
+guardar_particiones(dolph, 200,1000, lista_de_metodos)
 #%% Importamos todo y graficamos
 npzfile = np.load('Tp3/tc03Data/Ej_b_particiones_numeros.npz')
 rewire = npzfile['mod_rewire']

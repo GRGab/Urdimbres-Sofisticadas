@@ -60,19 +60,21 @@ def calcular_particion(nx_Graph, method="infomap", out_format='listadelistas',
    
     if method=="infomap":
         labels = g.community_infomap(edge_weights="weight").membership
-    if method=="label_prop":
+    elif method=="label_prop":
         labels = g.community_label_propagation(weights="weight").membership
-    if method=="fastgreedy":
+    elif method=="fastgreedy":
         labels = g.community_fastgreedy(weights="weight").as_clustering().membership
-    if method=="eigenvector":
+    elif method=="eigenvector":
         labels = g.community_leading_eigenvector(weights="weight").membership
-    if method=="louvain":
+    elif method=="louvain":
         labels = g.community_multilevel(weights="weight").membership
-    if method=="edge_betweenness":
+    elif method=="edge_betweenness":
         labels = g.community_edge_betweenness(weights="weight", directed=isdirected).as_clustering().membership
-    if method=="walktrap":
+    elif method=="walktrap":
         labels = g.community_walktrap(weights="weight").as_clustering().membership
-    
+    else:
+        print('Metodo no reconocido!')
+        return None
     
     if only_labels == True:
         return labels
@@ -246,11 +248,11 @@ if __name__ == '__main__':
     from silhouettes import silhouettes
 
     G = nx.balanced_tree(h=3,r=2)
-#    nx.draw(G,with_labels=True)
-#    plt.show()
     print('Prueba con infomap')
     particion = calcular_particion(G, method='infomap')
     modularidad = calcular_modularidad(G, particion)
     print('La modularidad es', modularidad)
     colores, _ = comunidad_a_color(G, particion)
+#    nx.draw(G,with_labels=True)
+#    plt.show()
 
