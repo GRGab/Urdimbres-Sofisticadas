@@ -32,7 +32,7 @@ def crear_nodos_to_indices(particion):
             dicc[particion[m][n]] = (m, n)
     return dicc
 
-def silhouettes(G, particion):
+def silhouettes(G, particion, silencioso=False):
     """
     Calcula el valor de silhouette para cada nodo del grafo 'G' dada una
     partición 'particion' como lista de listas. Dicho valor está dado por
@@ -73,7 +73,8 @@ def silhouettes(G, particion):
     nc = len(particion)
     # Creamos lista de lista con iguales longitudes que 'particion'
     s_values = [[[] for n in range(len(particion[m]))] for m in range(nc)]
-    # La iremos rellenando con valores de silhouette.
+    # Las listas vacías son "dummies" o "placeholders" para los valores
+    # de silhouette, que irán reemplazándolas.
     nodos_to_indices = crear_nodos_to_indices(particion)
     # Recorremos los nodos en el ordenamiento global correspondiente
     # a la función distancia 'd'
@@ -86,15 +87,17 @@ def silhouettes(G, particion):
             dists_interclusters = [np.average([d(i,j) for j in cluster]) \
                                                 for cluster in otros_clusters]
         except KeyError:
-            print('El grafo no es conexo y la distancia entre algunos clusters',
-                  'es infinita por lo que no se puede realizar por completo el',
-                  'análisis de silhouettes. Devolviendo lista de listas vacías.')
-            return s_values
+            if not silencioso:
+                print('El grafo no es conexo y la distancia entre algunos clusters',
+                    'es infinita por lo que no se puede realizar por completo el',
+                    'análisis de silhouettes. Devolviendo lista vacía.')
+            return []
         try:
             b = min(dists_interclusters)
         except ValueError:
-            print('La partición tiene un solo elemento. Devolviendo lista de listas vacías.')
-            return s_values
+            if not silencioso:
+                print('La partición tiene un solo elemento. Devolviendo lista vacía.')
+            return []
         s_values[m][n] = (b - a) / max(a, b)
     return s_values
 
