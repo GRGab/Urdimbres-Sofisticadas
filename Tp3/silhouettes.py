@@ -163,7 +163,7 @@ if __name__ == '__main__':
     original = npzfile['salida_grafo_original']
     particion = original[0]
     ### Para probar el manejo de errores en silhouettes():
-    # particion = [list(dolph.nodes())]
+    # particion = [list(dolph.nodes())] # funciona
     sil = silhouettes(dolph, particion)
 
     colores_nodos, colores_clusters = comunidad_a_color(dolph, particion)
@@ -171,3 +171,5 @@ if __name__ == '__main__':
         fig, (ax1, ax2) = plt.subplots(1, 2)#, figsize=(10, 8))
     nx.draw(dolph, node_color=colores_nodos, ax=ax1, node_size=50)
     graficar_silhouettes(sil, ax=ax2, colores=colores_clusters)
+
+    

@@ -1,18 +1,16 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Wed Oct 31 14:47:21 2018
 
 @author: matias
 """
 
-from percolation_clique import *
+sys.path.append('./Tp3/')
 import networkx as nx
 from matplotlib import pyplot as plt
 from networkx.readwrite.gml import read_gml
 from collections import defaultdict
 import sys
-sys.path.append('./Tp3/')
+from percolation_clique import *
 #%%
 dolph = read_gml('Tp3/dolphins.gml')    
 
