@@ -57,6 +57,7 @@ colores_por_genero = [genero_a_color(g) for g in nx.get_node_attributes(dolph, "
 fig, ax = plt.subplots()
 nx.draw(dolph, node_color=colores_por_genero, pos=pos, node_size=ns)
 plt.tight_layout()
+fig.savefig('Tp3/graficos/silhouette_corregido/grafo_generos.png')
 
 #### Gráficos coloreados por clusterización
 fig, axes = plt.subplots(2, 4, figsize=(12,6))
@@ -70,10 +71,10 @@ for i, metodo in enumerate(metodos):
     ax_temp.set_title(metodo)
     nx.draw(dolph, node_size=ns, node_color=colores_nodos[i], pos=pos)
     fig_temp.tight_layout()
-    fig_temp.savefig('Tp3/graficos/Grafo {}.png'.format(metodo))
+    fig_temp.savefig('Tp3/graficos/silhouette_corregido/Grafo {}.png'.format(metodo))
 axes[7].axis('off')
 fig.tight_layout()
-fig.savefig('Tp3/graficos/grafos_clustering.png')
+fig.savefig('Tp3/graficos/silhouette_corregido/grafos_clustering.png')
 
 
 
@@ -94,7 +95,7 @@ for ax, metodo, sil_vals, colores, sprom in zip(axes, metodos, sils, colores_clu
     ax_temp.set_title(titulo)
     graficar_silhouettes(sil_vals, colores=colores, ax=ax_temp)
     fig_temp.tight_layout()
-    fig_temp.savefig('Tp3/graficos/Silhouettes {}.png'.format(metodo))
+    fig_temp.savefig('Tp3/graficos/silhouette_corregido/Silhouettes {}.png'.format(metodo))
 axes[7].axis('off')
 fig.tight_layout()
-fig.savefig('Tp3/graficos/silhouettes_todos.png')
+fig.savefig('Tp3/graficos/silhouette_corregido/silhouettes_todos.png')

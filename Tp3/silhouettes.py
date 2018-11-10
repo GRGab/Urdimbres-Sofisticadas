@@ -84,7 +84,7 @@ def silhouettes(G, particion, silencioso=False):
         otros_clusters = (particion[l] for l in range(nc) if l != m)
         a = np.average([d(i,j) for j in cluster_actual])    
         try:
-            dists_interclusters = [np.average([d(i,j) for j in cluster]) \
+            dists_interclusters = [np.average([d(i,j) for j in cluster if j != i]) \
                                                 for cluster in otros_clusters]
         except KeyError:
             if not silencioso:
