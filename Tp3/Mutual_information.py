@@ -87,8 +87,7 @@ if __name__ == '__main__':
     # Agrego los sexos a los dicts de cada delfín
     for nodo, dict_nodo in dict(dolph.nodes).items():
         dict_nodo['gender'] = genders[nodo] # agrego el sexo del delfín a su dict
-    #    print('Key = {}, Value = {}'.format(nodo, dict_nodo)) # para chequear que anda
-    
+#        print('Key = {}, Value = {}'.format(nodo, dict_nodo)) # para chequear que anda
     tabla = np.zeros(len(metodos))
     for i in range(len(metodos)):
         tabla[i] = I_M(dolph, 'asd', metodos[i], genero = True)

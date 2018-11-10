@@ -24,34 +24,7 @@ import seaborn as sns
 import sys
 sys.path.append('./Tp3/')
 from funciones_tp3 import calcular_particion
-from silhouettes import silhouettes
-
 #%%
-#def matriz_de_confusion_wiki(particion_1, particion_2, sum_all=False,
-#                             norm = False):
-#    '''
-#    OBSERVACION: Esta matriz en principio no tiene un sentido, pero la
-#    dejamos por las dudas.
-#    Dadas dos particiones en forma de listas de numeros, devuelve
-#    la matriz de confusion correspondiente. El elemento [i,j] 
-#    representa cuantos elementos de la particion de referencia del cluster i se
-#    encuentran en el cluster j de la particion secundaria.'
-#    '''
-#
-#    y_actu = pd.Series(particion_1, name='Actual')
-#    y_pred = pd.Series(particion_2, name='Predicted')
-#    if sum_all ==True:
-#        df_confusion = pd.crosstab(y_actu, y_pred, rownames=['Actual'],
-#                               colnames=['Predicted'], margins=True)
-#    else:
-#        df_confusion = pd.crosstab(y_actu, y_pred)
-#    if norm ==True:
-#        df_conf_norm = df_confusion / df_confusion.sum(axis=1)
-#        return df_conf_norm
-#    else:
-#        return df_confusion
-#    
-    
 def pares(stuff):   
     '''Dada una lista de numeros, devuelve una lista con todos los pares posibles
     a partir de los elementos de la lista. El orden de los pares siempre es 
@@ -62,6 +35,15 @@ def pares(stuff):
     for i in itertools.combinations(stuff,2):
         lista_de_pares.append(i)
     return lista_de_pares    
+
+def particionar_por_genero_en_lista(G, orden={'f':0, 'NA':1, 'm':2}):
+    lista_particiones = []
+    for key in dict(G.nodes).keys():
+        gender = G.nodes[key]['gender']
+        lista_particiones.append(orden[gender])
+    return lista_particiones
+
+
 
 def matriz_de_confusion(particion_1, particion_2, norm = False):
     '''Dadas dos particiones en forma de listas de numeros, devuelve
@@ -106,6 +88,9 @@ def matriz_de_confusion(particion_1, particion_2, norm = False):
         return matriz, presicion   
 
 def matriz_de_presiciones (graph, lista_de_metodos):    
+    '''A partir de un grafo y una lista de metodos a analizar,
+    devuelve una matriz en donde el elemento i-j es una comparacion
+    entre el metodo i con el j.'''
     diccionario = {} #Claves-->nombres de los metodos. Values-->indice del metodo
     for k, metodo in enumerate(lista_de_metodos):
         diccionario[metodo] = k
@@ -123,14 +108,32 @@ def matriz_de_presiciones (graph, lista_de_metodos):
         matriz_presicion[ind_2,ind_1] = presicion    
     return matriz_presicion
 
-def plot_matrix(matriz, etiquetas=None, annot = False):
-    df = pd.DataFrame(matriz, columns=etiquetas, index = etiquetas)
+def plot_matrix(matriz,
+                xlabel=None, ylabel=None, titulo=None,
+                labelsize_x=14, labelsize_y=18,
+                etiquetas=None, annot = False):
+    
+    df = pd.DataFrame(matriz, columns = etiquetas, index = etiquetas)
     ax = sns.heatmap(df, annot=annot, fmt=".2f", vmin = 0, vmax=1
                      , square=True)
+    ax.set_yticklabels(ax.get_yticklabels(), rotation = 0)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation = 0)
+#    for label in ax.get_yticklabels():
+#            label.set_size(7)
+#    for label in ax.get_xticklabels():
+#            label.set_size(7)
     for label in ax.get_yticklabels():
-            label.set_size(7)
+        label.set_size(labelsize_y)
     for label in ax.get_xticklabels():
-            label.set_size(7)
+        label.set_size(labelsize_x)
+    if titulo is not None:
+        ax.set_title(titulo, fontsize=max(labelsize_x, labelsize_y))
+    if xlabel is not None:
+        ax.set_xlabel(xlabel, fontsize=labelsize_x)
+    if ylabel is not None:
+        ax.set_ylabel(ylabel, fontsize=labelsize_y)
+    plt.tight_layout()
+    plt.show()
 #%% Pruebita
 if __name__ == '__main__':
     a=[1,1,1,2,2,2]

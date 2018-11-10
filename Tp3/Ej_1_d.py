@@ -126,3 +126,4 @@ plot_matrix(pfisher, columnas=nombres_metodos, titulo='p-valores (test de Fisher
             ylabel='Comunidad')
 plot_matrix(pfisher, columnas=nombres_metodos, titulo='p-valores (test de Fisher exacto)',
             ylabel='Comunidad', sobrerrep=sobrerrep)            
+#%%
